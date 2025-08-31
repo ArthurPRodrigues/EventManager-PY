@@ -1,2 +1,2 @@
-# Gestao-de-Eventos
-Repositório destinado ao projeto da disciplina INE5608 - Análise e Projeto de Sistemas. 
+# Event Manager System
+Repository for the project of the course INE5608 - Systems Analysis and Design.
