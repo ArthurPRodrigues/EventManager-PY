@@ -22,7 +22,7 @@ class SQLiteDatabase:
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
-                    email TEXT NOT NULL UNIQUE,
+                    email TEXT NOT NULL,
                     password_hash TEXT NOT NULL,
                     role TEXT NOT NULL
                 )
@@ -35,6 +35,8 @@ class SQLiteDatabase:
                     requester_client_id INTEGER NOT NULL,
                     requested_client_id INTEGER NOT NULL,
                     status TEXT NOT NULL,
+                    accepted_at TEXT,
+                    UNIQUE(requester_client_id, requested_client_id),
                     FOREIGN KEY(requested_client_id) REFERENCES users(id) ON DELETE CASCADE,
                     FOREIGN KEY(requester_client_id) REFERENCES users(id) ON DELETE CASCADE
                     )
