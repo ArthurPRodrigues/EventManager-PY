@@ -20,3 +20,8 @@ class SqliteFriendshipRepository:
                 ),
             )
             conn.commit()
+
+    def delete(self, friendship_id: int) -> None:
+        with self._db.connect() as conn:
+            conn.execute("DELETE FROM friendships WHERE id = ?", (friendship_id,))
+            conn.commit()
