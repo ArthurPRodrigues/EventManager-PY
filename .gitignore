@@ -1,0 +1,13 @@
+# Minimal ignores for Python
+__pycache__/
+*.py[cod]
+
+# Local SQLite databases
+data/
+
+# Virtual environments
+.venv/
+venv/
+
+# Editor
+.vscode/
