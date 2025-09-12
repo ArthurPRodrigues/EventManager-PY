@@ -30,7 +30,7 @@ class SQLiteDatabase:
             )
             conn.execute(
                 """
-                CREATE TABLE IF NOT EXISTS friendship (
+                CREATE TABLE IF NOT EXISTS friendships (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     requester_client_id INTEGER NOT NULL,
                     requested_client_id INTEGER NOT NULL,
