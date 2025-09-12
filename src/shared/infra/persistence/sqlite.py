@@ -35,7 +35,7 @@ class SQLiteDatabase:
                     requester_client_id INTEGER NOT NULL,
                     requested_client_id INTEGER NOT NULL,
                     status TEXT NOT NULL,
-                    accepted_at TEXT,
+                    accepted_at TIMESTAMP NULL,
                     UNIQUE(requester_client_id, requested_client_id),
                     FOREIGN KEY(requested_client_id) REFERENCES users(id) ON DELETE CASCADE,
                     FOREIGN KEY(requester_client_id) REFERENCES users(id) ON DELETE CASCADE
