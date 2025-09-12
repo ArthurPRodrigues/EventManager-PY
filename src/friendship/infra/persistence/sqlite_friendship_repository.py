@@ -64,9 +64,15 @@ class SqliteFriendshipRepository:
                 """
                 SELECT 1
                 FROM friendships
-                WHERE requester_client_id = ? AND requested_client_id = ?
+                WHERE (requester_client_id = ? AND requested_client_id = ?)
+                   OR (requester_client_id = ? AND requested_client_id = ?)
                 """,
-                (requester_client_id, requested_client_id),
+                (
+                    requester_client_id,
+                    requested_client_id,
+                    requested_client_id,
+                    requester_client_id,
+                ),
             )
             return cursor.fetchone() is not None
 
