@@ -12,3 +12,7 @@ class RequestedNotFoundError(AppError):
 
 class FriendshipAlreadyExistsError(AppError):
     pass
+
+
+class FriendshipNotFoundError(AppError):
+    pass

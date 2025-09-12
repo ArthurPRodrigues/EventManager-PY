@@ -14,20 +14,20 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
 
 
 @dataclass(frozen=True)
-class SendInviteInputDto:
+class SendFriendshipInviteInputDto:
     requester_client_email: str
     requested_client_email: str
 
 
 # TODO: Implement user repository and inject it
-class SendInviteUseCase:
+class SendFriendshipInviteUseCase:
     def __init__(
         self, friendship_repository: SqliteFriendshipRepository, user_repository
     ) -> None:
         self._friendship_repository = friendship_repository
         self._user_repository = user_repository
 
-    def execute(self, input_dto: SendInviteInputDto) -> Friendship:
+    def execute(self, input_dto: SendFriendshipInviteInputDto) -> Friendship:
         requester = self._user_repository.get_by_email(input_dto.requester_client_email)
         if not requester:
             raise RequesterNotFoundError(
