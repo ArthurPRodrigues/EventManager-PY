@@ -23,12 +23,30 @@ class Container:
     accept_friendship_invite_use_case: AcceptFriendshipInviteUseCase
 
 
+# TODO: Implement user repository
+def mock_user_repository():
+    class MockUserRepository:
+        def __init__(self):
+            self._users = {
+                "1": {"id": 1, "name": "Alice"},
+                "2": {"id": 2, "name": "Bob"},
+            }
+
+        def get_user(self, user_id: str):
+            return self._users.get(user_id)
+
+    return MockUserRepository()
+
+
 def build_container(db_path: Optional[str] = None) -> Container:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
 
     friendship_repo = SqliteFriendshipRepository(db)
-    send_friendship_invite_use_case = SendFriendshipInviteUseCase(friendship_repo)
+    user_repo = mock_user_repository()
+    send_friendship_invite_use_case = SendFriendshipInviteUseCase(
+        friendship_repo, user_repo
+    )
     accept_friendship_invite_use_case = AcceptFriendshipInviteUseCase(friendship_repo)
 
     return Container(

@@ -19,7 +19,6 @@ class SendFriendshipInviteInputDto:
     requested_client_email: str
 
 
-# TODO: Implement user repository and inject it
 class SendFriendshipInviteUseCase:
     def __init__(
         self, friendship_repository: SqliteFriendshipRepository, user_repository
