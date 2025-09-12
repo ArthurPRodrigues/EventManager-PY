@@ -3,11 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from shared.infra.persistence.sqlite import SQLiteDatabase
-from src.friendship.application.send_friendship_invite_use_case import SendInviteUseCase
-from src.friendship.infra.persistence.sqlite_friendship_repository import (
+from friendship.application.send_friendship_invite_use_case import SendInviteUseCase
+from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
+from shared.infra.persistence.sqlite import SQLiteDatabase
 
 
 @dataclass

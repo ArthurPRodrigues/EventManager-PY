@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from friendship.domain.friendship import Friendship
 from shared.infra.persistence.sqlite import SQLiteDatabase
-from src.friendship.domain.friendship import Friendship
 
 
 class SqliteFriendshipRepository:

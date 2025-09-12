@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.friendship.application.errors import (
+from friendship.application.errors import (
     FriendshipAlreadyExistsError,
     RequestedNotFoundError,
     RequesterNotFoundError,
 )
-from src.friendship.domain.friendship import Friendship
-from src.friendship.infra.persistence.sqlite_friendship_repository import (
+from friendship.domain.friendship import Friendship
+from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
 
