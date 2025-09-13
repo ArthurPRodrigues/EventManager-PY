@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from shared.infra.persistence.sqlite import SQLiteDatabase
-from user.domain.user import User
+from user.domain.user import User, UserRole
 
 
 class SqliteUsersRepository:
@@ -45,3 +47,21 @@ class SqliteUsersRepository:
             hashed_password=hashed_password,
             role=role,
         )
+
+    def get_by_email_and_role(self, email: str, role: UserRole) -> Optional[User]:
+        with self._db.connect() as conn:
+            cur = conn.execute(
+                "SELECT id, name, email, password_hash, role FROM users WHERE email = ? AND role = ?",
+                (email.strip().lower(), role.value),
+            )
+            row = cur.fetchone()
+            if not row:
+                return None
+            user_id, name, email, hashed_password, role = row
+            return User(
+                name=name,
+                email=email,
+                hashed_password=hashed_password,
+                role=UserRole(role),
+                id=user_id,
+            )
