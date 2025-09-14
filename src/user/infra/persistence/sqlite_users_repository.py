@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Optional
 
 from shared.infra.persistence.sqlite import SQLiteDatabase
@@ -11,9 +12,9 @@ class SqliteUsersRepository:
         self._db = db
 
     # todo: trocar conn para connection
-    def add(self, user: User) -> None:
+    def add(self, user: User) -> User:
         with self._db.connect() as conn:
-            conn.execute(
+            cursor = conn.execute(
                 "INSERT INTO users (name, email, hashed_password, role) VALUES (?, ?, ?, ?)",
                 (
                     user.name,
@@ -23,6 +24,7 @@ class SqliteUsersRepository:
                 ),
             )
             conn.commit()
+            return replace(user, id=cursor.lastrowid)
 
     def get_by_id(self, id: int) -> User | None:
         with self._db.connect() as conn:

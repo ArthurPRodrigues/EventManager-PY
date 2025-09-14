@@ -15,7 +15,8 @@ class CreateUserInputDto:
     password: str
     role: UserRole
 
-#todo: adicionar constraints de registro de usuário
+
+# todo: adicionar constraints de registro de usuário
 class CreateUserUseCase:
     def __init__(self, users_repository: SqliteUsersRepository) -> None:
         self._users_repository = users_repository
@@ -30,5 +31,5 @@ class CreateUserUseCase:
             password=input_dto.password,
             role=input_dto.role,
         )
-        self._users_repository.add(user)
-        return user
+        added_user = self._users_repository.add(user)
+        return added_user
