@@ -15,23 +15,25 @@ def _hash_password(raw: str) -> str:
 
 @dataclass(frozen=True)
 class User:
-    id: int | None
     name: str
     email: str
     hashed_password: str
     role: UserRole
+    id: int | None = None
 
     @staticmethod
-    def register(name: str, email: str, hashed_password: str, role: UserRole) -> "User":
+    def register(name: str, email: str, password: str, role: UserRole) -> "User":
         if not name or not name.strip():
             raise InvalidNameError()
         if not email or not email.strip():
             raise InvalidEmailError()
-        if not hashed_password or not hashed_password.strip():
+        if not password or not password.strip():
             raise InvalidPasswordError()
-        return User(name=name, email=email, hashed_password=hashed_password, role=role)
+        return User(
+            name=name, email=email, hashed_password=_hash_password(password), role=role
+        )
 
     def check_password(self, password: str) -> bool:
         if not password:
             return False
-        return self.password_hash == _hash_password(password)
+        return self.hashed_password == _hash_password(password)
