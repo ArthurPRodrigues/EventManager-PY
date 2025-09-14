@@ -30,6 +30,7 @@ class ListFriendshipsInputDto:
     size: int = 10
     requester_client_id: Optional[int] = None
     requested_client_id: Optional[int] = None
+    participant_client_id: Optional[int] = None  # participant_client_id can be either requester or requested
     status: Optional[str] = None
     accepted_at: Optional[datetime] = None
 
@@ -55,6 +56,7 @@ class ListFriendshipsWithUserEmailAndNameUseCase:
             size=input_dto.size,
             requester_client_id=input_dto.requester_client_id,
             requested_client_id=input_dto.requested_client_id,
+            participant_client_id=input_dto.participant_client_id,
             status=status_enum,
             accepted_at=input_dto.accepted_at,
         )
