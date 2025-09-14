@@ -117,7 +117,41 @@ class SqliteFriendshipRepository:
             rows = conn.execute(query, params).fetchall()
             total_count = conn.execute(count_query, count_params).fetchone()[0]
 
-        return rows, total_count
+        converted_rows: list[tuple] = []
+        for row in rows:
+            (
+                friendship_id,
+                friendship_status,
+                accepted_at_raw,
+                requester_id,
+                requester_name,
+                requester_email,
+                requested_id,
+                requested_name,
+                requested_email,
+            ) = row
+
+            parsed_accepted_at = None
+            if accepted_at_raw:
+                parsed_accepted_at = datetime.fromisoformat(
+                    str(accepted_at_raw).replace("Z", "+00:00")
+                )
+
+            converted_rows.append(
+                (
+                    friendship_id,
+                    friendship_status,
+                    parsed_accepted_at,
+                    requester_id,
+                    requester_name,
+                    requester_email,
+                    requested_id,
+                    requested_name,
+                    requested_email,
+                )
+            )
+
+        return converted_rows, total_count
 
     def friendship_exists(
         self, requester_client_id: int, requested_client_id: int
