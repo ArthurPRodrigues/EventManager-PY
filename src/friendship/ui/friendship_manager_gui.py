@@ -1,5 +1,6 @@
 import FreeSimpleGUI as sg
 
+from friendship.application.list_friendships_with_user_email_and_name_use_case import ListFriendshipsInputDto
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
 
@@ -7,6 +8,9 @@ from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableC
 class FriendshipManagerGUI(BaseGUI):
     def __init__(self, use_cases=None):
         super().__init__(title="Friendship Manager", use_cases=use_cases)
+        
+        # TODO: Mock user ID, later integrate with auth system
+        self.current_user_id = 1
 
         self.header = HeaderComponent(
             title="Friendship Manager",
@@ -17,15 +21,8 @@ class FriendshipManagerGUI(BaseGUI):
             },
         )
 
-        # TODO: Sample data for friends, remove when integrating with backend
-        table_data = [
-            ["Jorge", "jorge@email.com", "2024-01-15 14:30:00"],
-            ["Ana", "ana@email.com", "2024-02-20 09:15:00"],
-            ["Manoel", "manoel@email.com", "2024-03-10 16:45:00"],
-        ]
-
         self.table = TableComponent(
-            headers=["Name", "E-mail", "Friends Since"], data=table_data
+            headers=["Name", "E-mail", "Friends Since"], data=[]
         )
 
         self.action_buttons = ActionButtonsComponent(
@@ -108,7 +105,46 @@ class FriendshipManagerGUI(BaseGUI):
             self.show_warning_popup("No row selected!")
 
     def show(self):
+        self._load_friendships()
         return super().show()
+
+    def _load_friendships(self):
+        if not self.use_cases:
+            self.show_warning_popup("Sistema não inicializado!")
+            return
+
+        try:
+            input_dto = ListFriendshipsInputDto(
+                page=1,
+                size=50,
+                participant_client_id=self.current_user_id,
+                status="ACCEPTED"
+            )
+            
+            friendships, total = self.use_cases.list_friendships_use_case.execute(input_dto)
+            
+            table_data = self._convert_friendships_to_table_data(friendships)
+            self.table.update_data(table_data)
+            
+        except Exception as e:
+            self.show_warning_popup(f"Erro ao carregar amizades: {str(e)}")
+
+    def _convert_friendships_to_table_data(self, friendships):
+        table_data = []
+        
+        for friendship in friendships:
+            if friendship.requester_client_id == self.current_user_id:
+                friend_name = friendship.requested_name
+                friend_email = friendship.requested_email
+            else:
+                friend_name = friendship.requester_name
+                friend_email = friendship.requester_email
+            
+            friends_since = friendship.accepted_at.strftime("%Y-%m-%d %H:%M:%S") if friendship.accepted_at else "N/A"
+            
+            table_data.append([friend_name, friend_email, friends_since])
+        
+        return table_data
 
 
 if __name__ == "__main__":
