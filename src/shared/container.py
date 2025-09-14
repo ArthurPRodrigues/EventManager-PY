@@ -13,45 +13,41 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
 from shared.infra.persistence.sqlite import SQLiteDatabase
+from user.application.create_user_use_case import CreateUserUseCase
+from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
 @dataclass
+# todo: mudar nome da classe container para algo decente
 class Container:
     db: SQLiteDatabase
     friendship_repo: SqliteFriendshipRepository
     send_friendship_invite_use_case: SendFriendshipInviteUseCase
     accept_friendship_invite_use_case: AcceptFriendshipInviteUseCase
-
-
-# TODO: Implement user repository
-def mock_user_repository():
-    class MockUserRepository:
-        def __init__(self):
-            self._users = {
-                "1": {"id": 1, "name": "Alice"},
-                "2": {"id": 2, "name": "Bob"},
-            }
-
-        def get_user(self, user_id: str):
-            return self._users.get(user_id)
-
-    return MockUserRepository()
+    user_repo: SqliteUsersRepository
+    create_user_use_case: CreateUserUseCase
 
 
 def build_container(db_path: Optional[str] = None) -> Container:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
 
+    # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
-    user_repo = mock_user_repository()
+    user_repo = SqliteUsersRepository(db)
+
+    # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(
         friendship_repo, user_repo
     )
     accept_friendship_invite_use_case = AcceptFriendshipInviteUseCase(friendship_repo)
+    create_user_use_case = CreateUserUseCase(user_repo)
 
     return Container(
         db=db,
         friendship_repo=friendship_repo,
         send_friendship_invite_use_case=send_friendship_invite_use_case,
         accept_friendship_invite_use_case=accept_friendship_invite_use_case,
+        user_repo=user_repo,
+        create_user_use_case=create_user_use_case,
     )

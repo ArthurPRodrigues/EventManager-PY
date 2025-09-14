@@ -23,7 +23,7 @@ class SQLiteDatabase:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     email TEXT NOT NULL,
-                    password_hash TEXT NOT NULL,
+                    hashed_password TEXT NOT NULL,
                     role TEXT NOT NULL
                 )
                 """
