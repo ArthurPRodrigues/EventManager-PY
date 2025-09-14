@@ -14,7 +14,7 @@ class SqliteUsersRepository:
     def add(self, user: User) -> None:
         with self._db.connect() as conn:
             conn.execute(
-                "INSERT INTO friendships (name, email, hashed_password, role) VALUES (?, ?, ?, ?)",
+                "INSERT INTO users (name, email, hashed_password, role) VALUES (?, ?, ?, ?)",
                 (
                     user.name,
                     user.email,
