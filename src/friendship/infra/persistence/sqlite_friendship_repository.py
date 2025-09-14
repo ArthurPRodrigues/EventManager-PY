@@ -63,6 +63,7 @@ class SqliteFriendshipRepository:
         size: int,
         requester_client_id: int | None = None,
         requested_client_id: int | None = None,
+        participant_client_id: int | None = None,
         status: FriendshipStatus | None = None,
         accepted_at: datetime | None = None,
     ) -> tuple[list[tuple], int]:
@@ -86,17 +87,25 @@ class SqliteFriendshipRepository:
         params: list = []
         count_params: list = []
 
-        if requester_client_id is not None:
-            query += " AND f.requester_client_id = ?"
-            count_query += " AND f.requester_client_id = ?"
-            params.append(requester_client_id)
-            count_params.append(requester_client_id)
+        if participant_client_id is not None:
+            query += " AND (f.requester_client_id = ? OR f.requested_client_id = ?)"
+            count_query += (
+                " AND (f.requester_client_id = ? OR f.requested_client_id = ?)"
+            )
+            params.extend([participant_client_id, participant_client_id])
+            count_params.extend([participant_client_id, participant_client_id])
+        else:
+            if requester_client_id is not None:
+                query += " AND f.requester_client_id = ?"
+                count_query += " AND f.requester_client_id = ?"
+                params.append(requester_client_id)
+                count_params.append(requester_client_id)
 
-        if requested_client_id is not None:
-            query += " AND f.requested_client_id = ?"
-            count_query += " AND f.requested_client_id = ?"
-            params.append(requested_client_id)
-            count_params.append(requested_client_id)
+            if requested_client_id is not None:
+                query += " AND f.requested_client_id = ?"
+                count_query += " AND f.requested_client_id = ?"
+                params.append(requested_client_id)
+                count_params.append(requested_client_id)
 
         if status is not None:
             query += " AND f.status = ?"
