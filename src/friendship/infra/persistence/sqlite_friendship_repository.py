@@ -56,6 +56,69 @@ class SqliteFriendshipRepository:
             accepted_at=parsed_accepted_at,
         )
 
+    # NOTE (Clean Architecture VIOLATION): JOIN com users para evitar N+1
+    def list_with_user_email_and_name(
+        self,
+        page: int,
+        size: int,
+        requester_client_id: int | None = None,
+        requested_client_id: int | None = None,
+        status: FriendshipStatus | None = None,
+        accepted_at: datetime | None = None,
+    ) -> tuple[list[tuple], int]:
+        query = """
+        SELECT 
+            f.id, f.status, f.accepted_at,
+            f.requester_client_id, u1.name as requester_name, u1.email as requester_email,
+            f.requested_client_id, u2.name as requested_name, u2.email as requested_email
+        FROM friendships f
+        JOIN users u1 ON f.requester_client_id = u1.id
+        JOIN users u2 ON f.requested_client_id = u2.id
+        WHERE 1=1
+        """
+        count_query = """
+        SELECT COUNT(*)
+        FROM friendships f
+        JOIN users u1 ON f.requester_client_id = u1.id
+        JOIN users u2 ON f.requested_client_id = u2.id
+        WHERE 1=1
+        """
+        params: list = []
+        count_params: list = []
+
+        if requester_client_id is not None:
+            query += " AND f.requester_client_id = ?"
+            count_query += " AND f.requester_client_id = ?"
+            params.append(requester_client_id)
+            count_params.append(requester_client_id)
+
+        if requested_client_id is not None:
+            query += " AND f.requested_client_id = ?"
+            count_query += " AND f.requested_client_id = ?"
+            params.append(requested_client_id)
+            count_params.append(requested_client_id)
+
+        if status is not None:
+            query += " AND f.status = ?"
+            count_query += " AND f.status = ?"
+            params.append(status.value)
+            count_params.append(status.value)
+
+        if accepted_at is not None:
+            query += " AND f.accepted_at = ?"
+            count_query += " AND f.accepted_at = ?"
+            params.append(accepted_at.isoformat())
+            count_params.append(accepted_at.isoformat())
+
+        query += " ORDER BY f.id ASC LIMIT ? OFFSET ?"
+        params.extend([size, (page - 1) * size])
+
+        with self._db.connect() as conn:
+            rows = conn.execute(query, params).fetchall()
+            total_count = conn.execute(count_query, count_params).fetchone()[0]
+
+        return rows, total_count
+
     def friendship_exists(
         self, requester_client_id: int, requested_client_id: int
     ) -> bool:
