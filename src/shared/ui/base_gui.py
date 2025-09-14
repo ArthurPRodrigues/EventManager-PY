@@ -4,10 +4,11 @@ import FreeSimpleGUI as sg
 
 
 class BaseGUI(ABC):
-    def __init__(self, title: str, size: tuple = (800, 600)):
+    def __init__(self, title: str, size: tuple = (800, 600), use_cases=None):
         self.window = None
         self.title = title
         self.size = size
+        self.use_cases = use_cases
         self.event_map = {}
         sg.theme("Default1")
 

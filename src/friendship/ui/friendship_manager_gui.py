@@ -5,8 +5,8 @@ from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableC
 
 
 class FriendshipManagerGUI(BaseGUI):
-    def __init__(self):
-        super().__init__(title="Friendship Manager")
+    def __init__(self, use_cases=None):
+        super().__init__(title="Friendship Manager", use_cases=use_cases)
 
         self.header = HeaderComponent(
             title="Friendship Manager",
@@ -72,12 +72,21 @@ class FriendshipManagerGUI(BaseGUI):
             pass
 
     def _handle_pending_invites(self, values):
+        if not self.use_cases:
+            self.show_warning_popup("Sistema não inicializado!")
+            return
         self.show_info_popup("Pending Invites button clicked!")
 
     def _handle_add_friend(self, values):
+        if not self.use_cases:
+            self.show_warning_popup("Sistema não inicializado!")
+            return
         self.show_info_popup("Add Friend button clicked!")
 
     def _handle_remove_selected(self, values):
+        if not self.use_cases:
+            self.show_warning_popup("Sistema não inicializado!")
+            return
         selected_rows = values["-TABLE-"]
         if selected_rows:
             self.show_info_popup(
@@ -87,6 +96,9 @@ class FriendshipManagerGUI(BaseGUI):
             self.show_warning_popup("No row selected!")
 
     def _handle_transfer_ticket(self, values):
+        if not self.use_cases:
+            self.show_warning_popup("Sistema não inicializado!")
+            return
         selected_rows = values["-TABLE-"]
         if selected_rows:
             self.show_info_popup(
@@ -100,5 +112,5 @@ class FriendshipManagerGUI(BaseGUI):
 
 
 if __name__ == "__main__":
-    app = FriendshipManagerGUI()
+    app = FriendshipManagerGUI(use_cases=None)
     app.show()
