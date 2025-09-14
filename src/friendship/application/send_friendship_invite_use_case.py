@@ -11,6 +11,7 @@ from friendship.domain.friendship import Friendship
 from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
+from user.domain.user_role import UserRole
 
 
 @dataclass(frozen=True)
@@ -27,13 +28,17 @@ class SendFriendshipInviteUseCase:
         self._user_repository = user_repository
 
     def execute(self, input_dto: SendFriendshipInviteInputDto) -> Friendship:
-        requester = self._user_repository.get_by_email(input_dto.requester_client_email)
+        requester = self._user_repository.get_by_email_and_role(
+            input_dto.requester_client_email, UserRole.CLIENT
+        )
         if not requester:
             raise RequesterNotFoundError(
                 f"Requester with client_email {input_dto.requester_client_email} does not exist."
             )
 
-        requested = self._user_repository.get_by_email(input_dto.requested_client_email)
+        requested = self._user_repository.get_by_email_and_role(
+            input_dto.requested_client_email, UserRole.CLIENT
+        )
         if not requested:
             raise RequestedNotFoundError(
                 f"Requested user with client_email {input_dto.requested_client_email} does not exist."
@@ -45,5 +50,5 @@ class SendFriendshipInviteUseCase:
             )
 
         friendship = Friendship.create(requester.id, requested.id)
-        self._friendship_repository.add(friendship)
-        return friendship
+        added_friendship = self._friendship_repository.add(friendship)
+        return added_friendship

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime
 
 from friendship.domain.friendship import Friendship
@@ -11,9 +12,9 @@ class SqliteFriendshipRepository:
     def __init__(self, db: SQLiteDatabase) -> None:
         self._db = db
 
-    def add(self, friendship: Friendship) -> None:
+    def add(self, friendship: Friendship) -> Friendship:
         with self._db.connect() as conn:
-            conn.execute(
+            cursor = conn.execute(
                 "INSERT INTO friendships (requester_client_id, requested_client_id, status, accepted_at) VALUES (?, ?, ?, ?)",
                 (
                     friendship.requester_client_id,
@@ -23,6 +24,7 @@ class SqliteFriendshipRepository:
                 ),
             )
             conn.commit()
+            return replace(friendship, id=cursor.lastrowid)
 
     def get_by_id(self, id: int) -> Friendship | None:
         with self._db.connect() as conn:
