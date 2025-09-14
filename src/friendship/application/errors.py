@@ -16,3 +16,11 @@ class FriendshipAlreadyExistsError(AppError):
 
 class FriendshipNotFoundError(AppError):
     pass
+
+
+class InvalidPageError(AppError):
+    pass
+
+
+class InvalidPageSizeError(AppError):
+    pass
