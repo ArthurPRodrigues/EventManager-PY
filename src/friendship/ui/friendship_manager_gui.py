@@ -24,7 +24,10 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.table = TableComponent(
-            headers=["Name", "E-mail", "Friends Since"], data=[]
+            headers=["Name", "E-mail", "Friends Since"],
+            data_callback=self._load_friendships_callback,
+            key="-TABLE-",
+            items_per_page=10,
         )
 
         self.action_buttons = ActionButtonsComponent(
@@ -64,6 +67,9 @@ class FriendshipManagerGUI(BaseGUI):
         return layout
 
     def handle_events(self, event, values):
+        if self.table.handle_event(event, self.window):
+            return
+
         handler = self.event_map.get(event)
         if handler:
             handler(values)
@@ -77,32 +83,28 @@ class FriendshipManagerGUI(BaseGUI):
         self.show_info_popup("Add Friend button clicked!")
 
     def _handle_remove_selected(self, values):
-        selected_rows = values["-TABLE-"]
-        if selected_rows:
+        selected_data = self.table.get_selected_row_data(self.window)
+        if selected_data:
             self.show_info_popup(
-                f"Remove Selected button clicked! Selected rows: {selected_rows}"
+                f"Remove Selected button clicked! Selected friend: {selected_data[0]} ({selected_data[1]})"
             )
         else:
             self.show_warning_popup("No row selected!")
 
     def _handle_transfer_ticket(self, values):
-        selected_rows = values["-TABLE-"]
-        if selected_rows:
+        selected_data = self.table.get_selected_row_data(self.window)
+        if selected_data:
             self.show_info_popup(
-                f"Transfer Ticket button clicked! Selected rows: {selected_rows}"
+                f"Transfer Ticket button clicked! Selected friend: {selected_data[0]} ({selected_data[1]})"
             )
         else:
             self.show_warning_popup("No row selected!")
 
-    def show(self):
-        self._load_friendships()
-        return super().show()
-
-    def _load_friendships(self):
+    def _load_friendships_callback(self, page: int, items_per_page: int):
         try:
             input_dto = ListFriendshipsInputDto(
-                page=1,
-                size=50,
+                page=page,
+                size=items_per_page,
                 participant_client_id=self.current_user_id,
                 status="ACCEPTED",
             )
@@ -112,10 +114,12 @@ class FriendshipManagerGUI(BaseGUI):
             )
 
             table_data = self._convert_friendships_to_table_data(friendships)
-            self.table.update_data(table_data)
+
+            return {"data": table_data, "total": total}
 
         except Exception as e:
-            self.show_warning_popup(f"Erro ao carregar amizades: {str(e)}")
+            print(f"Erro ao carregar amizades: {str(e)}")
+            return {"data": [], "total": 0}
 
     def _convert_friendships_to_table_data(self, friendships):
         table_data = []
@@ -137,6 +141,9 @@ class FriendshipManagerGUI(BaseGUI):
             table_data.append([friend_name, friend_email, friends_since])
 
         return table_data
+
+    def show(self):
+        return super().show()
 
 
 if __name__ == "__main__":
