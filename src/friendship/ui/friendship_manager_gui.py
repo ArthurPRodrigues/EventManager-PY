@@ -108,7 +108,7 @@ class FriendshipManagerGUI(BaseGUI):
         selected_data = self.table.get_selected_row_data(self.window)
         if selected_data:
             self.show_info_popup(
-                f"Transfer Ticket button clicked! Selected friend: {selected_data[0]} ({selected_data[1]})"
+                f"Transfer Ticket button clicked! Selected friend: {selected_data[1]} ({selected_data[2]})"
             )
         else:
             self.show_warning_popup("No row selected!")
