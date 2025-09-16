@@ -28,7 +28,7 @@ class TableComponent:
         self.total_items_key = f"{key}_TOTAL"
 
         self._load_data()
-    
+
     def create_layout(self):
         visible_columns = None
         if self.has_hidden_id_column:
