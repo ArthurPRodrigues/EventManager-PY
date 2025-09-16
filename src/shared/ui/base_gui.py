@@ -68,3 +68,56 @@ class BaseGUI(ABC):
     def show_error_popup(self, message: str, title: str = "Error"):
         """Common helper method for error popups"""
         sg.popup(message, title=title)
+
+    def show_input_dialog(
+        self,
+        dialog_title: str,
+        instruction_label: str,
+        input_placeholder: str = "",
+        confirm_button: str = "Confirm",
+        cancel_button: str = "Cancel",
+    ) -> tuple[bool, str]:
+        """
+        Shows a standardized input dialog with title, instruction, input field and buttons
+        Returns: (was_confirmed, input_value)
+        """
+        layout = [
+            [sg.Text(instruction_label, font=("Arial", 12), justification="center")],
+            [
+                sg.Input(
+                    default_text=input_placeholder,
+                    key="-INPUT-",
+                    size=(40, 1),
+                    focus=True,
+                )
+            ],
+            [
+                sg.Button(confirm_button, key="-CONFIRM-", size=(12, 1)),
+                sg.Button(cancel_button, key="-CANCEL-", size=(12, 1)),
+            ],
+        ]
+
+        dialog_window = sg.Window(
+            dialog_title,
+            layout,
+            modal=True,
+            finalize=True,
+            element_justification="center",
+        )
+
+        result = False
+        input_value = ""
+
+        while True:
+            event, values = dialog_window.read()
+
+            if event in (sg.WIN_CLOSED, "-CANCEL-"):
+                result = False
+                break
+            elif event == "-CONFIRM-":
+                result = True
+                input_value = values["-INPUT-"].strip()
+                break
+
+        dialog_window.close()
+        return result, input_value

@@ -4,6 +4,9 @@ from friendship.application.delete_friendship_use_case import DeleteFriendshipIn
 from friendship.application.list_friendships_with_user_email_and_name_use_case import (
     ListFriendshipsInputDto,
 )
+from friendship.application.send_friendship_invite_use_case import (
+    SendFriendshipInviteInputDto,
+)
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
 
@@ -14,6 +17,7 @@ class FriendshipManagerGUI(BaseGUI):
 
         # TODO: Mock user ID, later integrate with auth system
         self.current_user_id = 1
+        self.current_user_email = "joao@email.com"
 
         self.header = HeaderComponent(
             title="Friendship Manager",
@@ -81,8 +85,30 @@ class FriendshipManagerGUI(BaseGUI):
     def _handle_pending_invites(self, values):
         self.show_info_popup("Pending Invites button clicked!")
 
-    def _handle_add_friend(self, values):
-        self.show_info_popup("Add Friend button clicked!")
+    def _handle_add_friend(self, _):
+        confirmed, friend_email = self.show_input_dialog(
+            dialog_title="Add friend",
+            instruction_label="Enter Friend Email",
+            input_placeholder="",
+            confirm_button="Add Friend",
+            cancel_button="Cancel",
+        )
+
+        if confirmed:
+            if not friend_email:
+                self.show_warning_popup("Please enter a valid email address!")
+                return
+
+            try:
+                input_dto = SendFriendshipInviteInputDto(
+                    requester_client_email=self.current_user_email,
+                    requested_client_email=friend_email,
+                )
+                self.use_cases.send_friendship_invite_use_case.execute(input_dto)
+                self.show_info_popup(f"Friendship invite sent to: {friend_email}")
+                self.table.refresh(self.window)
+            except Exception as e:
+                self.show_error_popup(f"Error sending friendship invite: {str(e)}")
 
     def _handle_remove_selected(self, _):
         selected_data = self.table.get_selected_row_data(self.window)
