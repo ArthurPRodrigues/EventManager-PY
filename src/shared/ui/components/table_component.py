@@ -10,11 +10,13 @@ class TableComponent:
         data_callback: Callable[[int, int], Dict[str, Any]],
         key: str = "-TABLE-",
         items_per_page: int = 10,
+        has_hidden_id_column: bool = False,
     ):
         self.headers = headers
         self.data_callback = data_callback
         self.key = key
         self.items_per_page = items_per_page
+        self.has_hidden_id_column = has_hidden_id_column
         self.current_page = 1
         self.total_items = 0
         self.total_pages = 1
@@ -26,8 +28,12 @@ class TableComponent:
         self.total_items_key = f"{key}_TOTAL"
 
         self._load_data()
-
+    
     def create_layout(self):
+        visible_columns = None
+        if self.has_hidden_id_column:
+            visible_columns = [False] + [True] * (len(self.headers) - 1)
+
         table_layout = [
             sg.Table(
                 values=self.data,
@@ -44,6 +50,7 @@ class TableComponent:
                 expand_x=True,
                 expand_y=True,
                 enable_click_events=True,
+                visible_column_map=visible_columns,
             )
         ]
 

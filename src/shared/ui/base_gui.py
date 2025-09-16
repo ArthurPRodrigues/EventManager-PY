@@ -59,3 +59,12 @@ class BaseGUI(ABC):
     def show_warning_popup(self, message: str, title: str = "Warning"):
         """Common helper method for warning popups"""
         sg.popup(message, title=title)
+
+    def show_confirmation_popup(self, message: str, title: str = "Confirmation"):
+        """Common helper method for confirmation popups"""
+        result = sg.popup_yes_no(message, title=title)
+        return result == "Yes"
+
+    def show_error_popup(self, message: str, title: str = "Error"):
+        """Common helper method for error popups"""
+        sg.popup(message, title=title)

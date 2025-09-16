@@ -1,5 +1,6 @@
 import FreeSimpleGUI as sg
 
+from friendship.application.delete_friendship_use_case import DeleteFriendshipInputDto
 from friendship.application.list_friendships_with_user_email_and_name_use_case import (
     ListFriendshipsInputDto,
 )
@@ -24,10 +25,11 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.table = TableComponent(
-            headers=["Name", "E-mail", "Friends Since"],
+            headers=["ID", "Name", "E-mail", "Friends Since"],
             data_callback=self._load_friendships_callback,
             key="-TABLE-",
             items_per_page=10,
+            has_hidden_id_column=True,
         )
 
         self.action_buttons = ActionButtonsComponent(
@@ -85,9 +87,20 @@ class FriendshipManagerGUI(BaseGUI):
     def _handle_remove_selected(self, values):
         selected_data = self.table.get_selected_row_data(self.window)
         if selected_data:
-            self.show_info_popup(
-                f"Remove Selected button clicked! Selected friend: {selected_data[0]} ({selected_data[1]})"
-            )
+            friendship_id = selected_data[0]
+            friend_name = selected_data[1]
+            if self.show_confirmation_popup(
+                f"Are you sure you want to remove: {friend_name} from your friends?"
+            ):
+                try:
+                    input_dto = DeleteFriendshipInputDto(
+                        friendship_id=friendship_id,
+                    )
+                    self.use_cases.delete_friendship_use_case.execute(input_dto)
+                    self.show_info_popup(f"Friend {friend_name} removed successfully!")
+                    self.table.refresh(self.window)
+                except Exception as e:
+                    self.show_error_popup(f"Error removing friend: {e}")
         else:
             self.show_warning_popup("No row selected!")
 
@@ -138,7 +151,7 @@ class FriendshipManagerGUI(BaseGUI):
                 else "N/A"
             )
 
-            table_data.append([friend_name, friend_email, friends_since])
+            table_data.append([friendship.id, friend_name, friend_email, friends_since])
 
         return table_data
 
