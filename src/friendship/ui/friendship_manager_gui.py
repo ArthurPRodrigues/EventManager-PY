@@ -84,7 +84,7 @@ class FriendshipManagerGUI(BaseGUI):
     def _handle_add_friend(self, values):
         self.show_info_popup("Add Friend button clicked!")
 
-    def _handle_remove_selected(self, values):
+    def _handle_remove_selected(self, _):
         selected_data = self.table.get_selected_row_data(self.window)
         if selected_data:
             friendship_id = selected_data[0]
