@@ -13,8 +13,10 @@ from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableC
 
 
 class FriendshipManagerGUI(BaseGUI):
-    def __init__(self, use_cases=None):
-        super().__init__(title="Friendship Manager", use_cases=use_cases)
+    def __init__(self, use_cases=None, navigator=None):
+        super().__init__(
+            title="Friendship Manager", use_cases=use_cases, navigator=navigator
+        )
 
         # TODO: Mock user ID, later integrate with auth system
         self.current_user_id = 1
@@ -84,12 +86,7 @@ class FriendshipManagerGUI(BaseGUI):
             pass
 
     def _handle_pending_invites(self, _):
-        try:
-            pending_invites_gui = FriendshipPendingInvitesGUI(use_cases=self.use_cases)
-            pending_invites_gui.show()
-            self.table.refresh(self.window)
-        except Exception as e:
-            self.show_error_popup(f"Error opening pending invites: {str(e)}")
+        self.navigator.push_screen(FriendshipPendingInvitesGUI)
 
     def _handle_add_friend(self, _):
         confirmed, friend_email = self.show_input_dialog(

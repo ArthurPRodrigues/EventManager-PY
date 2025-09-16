@@ -12,8 +12,10 @@ from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableC
 
 
 class FriendshipPendingInvitesGUI(BaseGUI):
-    def __init__(self, use_cases=None):
-        super().__init__(title="Friendship Manager", use_cases=use_cases)
+    def __init__(self, use_cases=None, navigator=None):
+        super().__init__(
+            title="Pending Invites", use_cases=use_cases, navigator=navigator
+        )
 
         # TODO: Mock user ID, later integrate with auth system
         self.current_user_id = 1

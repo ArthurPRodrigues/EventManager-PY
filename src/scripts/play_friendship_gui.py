@@ -17,6 +17,7 @@ from friendship.application.send_friendship_invite_use_case import (
 )
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.composition_root import build_application
+from shared.ui.navigation_manager import NavigationManager
 from user.application.create_user_use_case import CreateUserInputDto
 from user.domain.user_role import UserRole
 
@@ -550,11 +551,11 @@ def main():
         setup_mock_data(app)
 
         print("-" * 70)
-        print("🖥️  Opening Friendship Manager GUI...")
+        print("🖥️  Opening Friendship Manager GUI with NavigationManager...")
 
-        # Create and show the GUI with use cases injected
-        gui = FriendshipManagerGUI(use_cases=app)
-        gui.show()
+        # Create NavigationManager and start with FriendshipManagerGUI
+        navigator = NavigationManager(use_cases=app)
+        navigator.push_screen(FriendshipManagerGUI)
 
         print("✅ GUI closed successfully!")
 

@@ -4,11 +4,14 @@ import FreeSimpleGUI as sg
 
 
 class BaseGUI(ABC):
-    def __init__(self, title: str, size: tuple = (800, 600), use_cases=None):
+    def __init__(
+        self, title: str, size: tuple = (800, 600), use_cases=None, navigator=None
+    ):
         self.window = None
         self.title = title
         self.size = size
         self.use_cases = use_cases
+        self.navigator = navigator
         self.event_map = {}
         sg.theme("Default1")
 
@@ -38,8 +41,9 @@ class BaseGUI(ABC):
             if event == sg.WIN_CLOSED:
                 break
             elif event == "-BACK-":
-                self.show_info_popup("Voltando...")
-                break
+                # Return False to indicate user wants to go back
+                self.window.close()
+                return False
             else:
                 # Delegates specific events to the child screen
                 self.handle_events(event, values)
