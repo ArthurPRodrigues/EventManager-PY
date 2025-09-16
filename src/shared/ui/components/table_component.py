@@ -51,6 +51,7 @@ class TableComponent:
                 expand_y=True,
                 enable_click_events=True,
                 visible_column_map=visible_columns,
+                select_mode=sg.TABLE_SELECT_MODE_BROWSE,
             )
         ]
 
