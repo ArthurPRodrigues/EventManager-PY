@@ -166,8 +166,3 @@ class FriendshipPendingInvitesGUI(BaseGUI):
 
     def show(self):
         return super().show()
-
-
-if __name__ == "__main__":
-    app = FriendshipPendingInvitesGUI(use_cases=None)
-    app.show()

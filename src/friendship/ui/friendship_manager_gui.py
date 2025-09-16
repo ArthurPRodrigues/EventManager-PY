@@ -186,8 +186,3 @@ class FriendshipManagerGUI(BaseGUI):
 
     def show(self):
         return super().show()
-
-
-if __name__ == "__main__":
-    app = FriendshipManagerGUI(use_cases=None)
-    app.show()
