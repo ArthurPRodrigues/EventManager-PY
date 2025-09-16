@@ -7,6 +7,7 @@ from friendship.application.list_friendships_with_user_email_and_name_use_case i
 from friendship.application.send_friendship_invite_use_case import (
     SendFriendshipInviteInputDto,
 )
+from friendship.ui.friendship_pending_invites_gui import FriendshipPendingInvitesGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
 
@@ -82,8 +83,13 @@ class FriendshipManagerGUI(BaseGUI):
         elif event == "-TABLE-":
             pass
 
-    def _handle_pending_invites(self, values):
-        self.show_info_popup("Pending Invites button clicked!")
+    def _handle_pending_invites(self, _):
+        try:
+            pending_invites_gui = FriendshipPendingInvitesGUI(use_cases=self.use_cases)
+            pending_invites_gui.show()
+            self.table.refresh(self.window)
+        except Exception as e:
+            self.show_error_popup(f"Error opening pending invites: {str(e)}")
 
     def _handle_add_friend(self, _):
         confirmed, friend_email = self.show_input_dialog(
