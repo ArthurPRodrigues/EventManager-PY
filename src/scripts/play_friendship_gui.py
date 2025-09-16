@@ -531,6 +531,88 @@ def setup_mock_data(app):
             except Exception as e:
                 print(f"  ⚠️  Erro ao criar/aceitar amizade: {e}")
 
+        # Criar convites pendentes (NÃO aceitos) - para testar convites recebidos
+        pending_invites_received = [
+            {
+                "requester": "tatiana@email.com",
+                "requested": "joao@email.com",
+            },  # Tatiana → João (pendente)
+            {
+                "requester": "gustavo@email.com",
+                "requested": "joao@email.com",
+            },  # Gustavo → João (pendente)
+            {
+                "requester": "karina@email.com",
+                "requested": "joao@email.com",
+            },  # Karina → João (pendente)
+            {
+                "requester": "leonardo@email.com",
+                "requested": "joao@email.com",
+            },  # Leonardo → João (pendente)
+            {
+                "requester": "daniela@email.com",
+                "requested": "joao@email.com",
+            },  # Daniela → João (pendente)
+            {
+                "requester": "alexandre@email.com",
+                "requested": "joao@email.com",
+            },  # Alexandre → João (pendente)
+        ]
+
+        print(
+            "\n⏳ Criando convites pendentes RECEBIDOS pelo usuário atual (devem aparecer na lista de convites pendentes):"
+        )
+        for friendship_data in pending_invites_received:
+            try:
+                # Enviar convite mas NÃO aceitar
+                invite_dto = SendFriendshipInviteInputDto(
+                    requester_client_email=friendship_data["requester"],
+                    requested_client_email=friendship_data["requested"],
+                )
+                friendship = app.send_friendship_invite_use_case.execute(invite_dto)
+                print(
+                    f"  📤 Convite pendente: {friendship_data['requester']} → {friendship_data['requested']} (ID: {friendship.id})"
+                )
+
+            except Exception as e:
+                print(f"  ⚠️  Erro ao criar convite pendente: {e}")
+
+        # Criar convites pendentes ENVIADOS pelo usuário atual
+        pending_invites_sent = [
+            {
+                "requester": "joao@email.com",
+                "requested": "elaine@email.com",
+            },  # João → Elaine (pendente)
+            {
+                "requester": "joao@email.com",
+                "requested": "marcelo@email.com",
+            },  # João → Marcelo (pendente)
+            {
+                "requester": "joao@email.com",
+                "requested": "simone@email.com",
+            },  # João → Simone (pendente)
+            {
+                "requester": "joao@email.com",
+                "requested": "renato@email.com",
+            },  # João → Renato (pendente)
+        ]
+
+        print("\n📤 Criando convites pendentes ENVIADOS pelo usuário atual:")
+        for friendship_data in pending_invites_sent:
+            try:
+                # Enviar convite mas NÃO aceitar
+                invite_dto = SendFriendshipInviteInputDto(
+                    requester_client_email=friendship_data["requester"],
+                    requested_client_email=friendship_data["requested"],
+                )
+                friendship = app.send_friendship_invite_use_case.execute(invite_dto)
+                print(
+                    f"  📤 Convite pendente enviado: {friendship_data['requester']} → {friendship_data['requested']} (ID: {friendship.id})"
+                )
+
+            except Exception as e:
+                print(f"  ⚠️  Erro ao criar convite pendente enviado: {e}")
+
         print("\n📊 Dados mock criados com sucesso!")
 
     except Exception as e:

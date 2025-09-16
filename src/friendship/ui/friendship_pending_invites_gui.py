@@ -101,8 +101,8 @@ class FriendshipPendingInvitesGUI(BaseGUI):
         table_data = []
 
         for friendship in friendships:
-            friend_name = friendship.requested_name
-            friend_email = friendship.requested_email
+            friend_name = friendship.requester_name
+            friend_email = friendship.requester_email
 
             friends_since = (
                 friendship.accepted_at.strftime("%Y-%m-%d %H:%M:%S")
