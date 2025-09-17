@@ -67,21 +67,3 @@ class SqliteUsersRepository:
                 role=UserRole(role),
                 id=user_id,
             )
-
-    def get_by_email(self, email: str) -> Optional[User]:
-        with self._db.connect() as conn:
-            cur = conn.execute(
-                'SELECT id, name, email, hashed_password, role FROM user WHERE email = ?',
-                (email.strip().lower(),),
-            )
-            row = cur.fetchone()
-            if not row:
-                return None
-            user_id, name, email, hashed_password, role = row
-            return User(
-                name = name,
-                email = email,
-                hashed_password = hashed_password,
-                role = UserRole(role),
-                id = user_id,
-            )
