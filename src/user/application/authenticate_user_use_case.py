@@ -13,7 +13,6 @@ class AuthenticateUserInputDto:
     password: str
     role: UserRole
 
-
 class AuthenticateUserUseCase:
     def __init__(self, users_repository: SqliteUsersRepository) -> None:
         self._users_repository = users_repository

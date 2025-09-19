@@ -6,8 +6,7 @@ from user.ui.authenticate_gui import AuthenticateGUI
 
 
 def run() -> None:
-    build_application()
-    app = build_application
+    app = build_application()
     navigator = NavigationManager(app)
     navigator.push_screen(AuthenticateGUI)
 
