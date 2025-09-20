@@ -4,9 +4,10 @@ from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
-from user.domain.user import User
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
+from user.domain.user import User
 from user.domain.user_role import UserRole
+
 # from user.ui.create_user_gui import CreateUseGUI
 
 
@@ -59,9 +60,7 @@ class AuthenticateGUI(BaseGUI):
             input_dto = AuthenticateUserInputDto(
                 email=email, password=password, role=UserRole(role)
             )
-            print(input_dto)
-            user = self.use_cases.authenticate_user_use_case(input_dto)
-            print(user)
+            user = self.use_cases.authenticate_user_use_case.execute(input_dto)
             self._set_auth_context(user)
             self.show_info_popup(
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
