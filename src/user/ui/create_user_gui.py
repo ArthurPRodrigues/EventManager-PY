@@ -1,10 +1,8 @@
 import FreeSimpleGUI as sg
 
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
-from shared.ui.components.base_gui import BaseGUI
+from src.shared.ui.base_gui import BaseGUI
 from user.application.create_user_use_case import CreateUserInputDto
-from user.application.errors import EmailByRoleAlreadyExistsError
-from user.domain.errors import InvalidEmailError, InvalidNameError, InvalidPasswordError
 from user.domain.user_role import UserRole
 
 
@@ -100,16 +98,8 @@ class CreateUserGUI(BaseGUI):
 
             self.navigator.pop_screen()
 
-        except EmailByRoleAlreadyExistsError:
-            self.show_error_popup("A user with this email and role already exists.")
-        except InvalidNameError:
-            self.show_error_popup("Invalid name.")
-        except InvalidEmailError:
-            self.show_error_popup("Invalid email.")
-        except InvalidPasswordError:
-            self.show_error_popup("Invalid password.")
         except Exception as e:
-            self.show_error_popup(f"Unknown error occurred: {e}")
+            self.show_error_popup(f"Error creating user: {str(e)}")
 
     def show(self):
         return super().show()
