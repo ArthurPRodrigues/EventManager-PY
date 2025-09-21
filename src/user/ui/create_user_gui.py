@@ -1,7 +1,7 @@
 import FreeSimpleGUI as sg
 
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
-from src.shared.ui.base_gui import BaseGUI
+from src.shared.ui import BaseGUI
 from user.application.create_user_use_case import CreateUserInputDto
 from user.domain.user_role import UserRole
 
