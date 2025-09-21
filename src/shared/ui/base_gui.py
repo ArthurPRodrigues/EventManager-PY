@@ -5,21 +5,15 @@ import FreeSimpleGUI as sg
 
 class BaseGUI(ABC):
     def __init__(
-        self,
-        title: str,
-        size: tuple = (800, 600),
-        use_cases=None,
-        navigator=None,
-        auth_context=None,
+        self, title: str, size: tuple = (800, 600), use_cases=None, navigator=None
     ):
         self.window = None
         self.title = title
         self.size = size
         self.use_cases = use_cases
         self.navigator = navigator
-        self.auth_context = auth_context
         self.event_map = {}
-        sg.theme("Reds")
+        sg.theme("Default1")
 
     @abstractmethod
     def create_layout(self):

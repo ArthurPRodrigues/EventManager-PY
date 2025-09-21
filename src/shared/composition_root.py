@@ -33,6 +33,7 @@ class CompositionRoot:
     create_user_use_case: CreateUserUseCase
 
 
+# TODO: Maybe adjust later to include frontend
 def build_application(db_path: Optional[str] = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
@@ -52,7 +53,6 @@ def build_application(db_path: Optional[str] = None) -> CompositionRoot:
     )
     create_user_use_case = CreateUserUseCase(user_repo)
 
-    # TODO: Maybe adjust later to return only use cases
     return CompositionRoot(
         db=db,
         friendship_repo=friendship_repo,
