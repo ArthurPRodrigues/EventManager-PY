@@ -3,24 +3,44 @@ class AppError(Exception):
 
 
 class RequesterNotFoundError(AppError):
-    pass
+    def __init__(self, requester_email: str) -> None:
+        message = f'Requester with client email "{requester_email}" does not exist.'
+        super().__init__(message)
 
 
 class RequestedNotFoundError(AppError):
-    pass
+    def __init__(self, requested_email: str) -> None:
+        message = (
+            f'Requested user with client email "{requested_email}" does not exist.'
+        )
+        super().__init__(message)
+
+
+class FriendshipPendingError(AppError):
+    def __init__(self, requester_email: str, requested_email: str) -> None:
+        message = f'Friendship invitation between "{requested_email}" and "{requester_email}" is already pending.'
+        super().__init__(message)
 
 
 class FriendshipAlreadyExistsError(AppError):
-    pass
+    def __init__(self, requester_email: str, requested_email: str) -> None:
+        message = f'Friendship between "{requester_email}" and "{requested_email}" already exists.'
+        super().__init__(message)
 
 
 class FriendshipNotFoundError(AppError):
-    pass
+    def __init__(self, friendship_id: int) -> None:
+        message = f'Friendship with ID "{friendship_id}" does not exist.'
+        super().__init__(message)
 
 
 class InvalidPageError(AppError):
-    pass
+    def __init__(self, page: int) -> None:
+        message = f"Invalid page number: {page}."
+        super().__init__(message)
 
 
 class InvalidPageSizeError(AppError):
-    pass
+    def __init__(self, size: int) -> None:
+        message = f"Invalid page size: {size}."
+        super().__init__(message)

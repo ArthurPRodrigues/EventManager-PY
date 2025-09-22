@@ -3,9 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from friendship.application.errors import FriendshipNotFoundError
-from friendship.domain.errors import FriendshipAlreadyAcceptedError
 from friendship.domain.friendship import Friendship
-from friendship.domain.friendship_status import FriendshipStatus
 from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
@@ -23,13 +21,7 @@ class AcceptFriendshipInviteUseCase:
     def execute(self, input_dto: AcceptFriendshipInviteInputDto) -> Friendship:
         friendship = self._friendship_repository.get_by_id(input_dto.friendship_id)
         if not friendship:
-            raise FriendshipNotFoundError(
-                f"Friendship with ID {input_dto.friendship_id} does not exist."
-            )
-        if friendship.status == FriendshipStatus.ACCEPTED:
-            raise FriendshipAlreadyAcceptedError(
-                f"Friendship with ID {input_dto.friendship_id} is already accepted."
-            )
+            raise FriendshipNotFoundError(input_dto.friendship_id)
 
         accepted_friendship = friendship.accept()
         self._friendship_repository.edit(accepted_friendship)

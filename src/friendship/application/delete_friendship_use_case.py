@@ -21,9 +21,7 @@ class DeleteFriendshipUseCase:
     def execute(self, input_dto: DeleteFriendshipInputDto) -> Friendship:
         friendship = self._friendship_repository.get_by_id(input_dto.friendship_id)
         if not friendship:
-            raise FriendshipNotFoundError(
-                f"Friendship with ID {input_dto.friendship_id} does not exist."
-            )
+            raise FriendshipNotFoundError(input_dto.friendship_id)
 
         self._friendship_repository.delete(friendship.id)
         return friendship
