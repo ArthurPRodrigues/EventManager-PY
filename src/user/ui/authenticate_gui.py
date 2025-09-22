@@ -92,6 +92,3 @@ class AuthenticateGUI(BaseGUI):
         self.auth_context = AuthContext(
             id=user.id, name=user.name, email=user.email, role=user.role
         )
-
-    def show(self):
-        return super().show()
