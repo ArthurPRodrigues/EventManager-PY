@@ -15,6 +15,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
             title="Pending Invites",
+            size=(700, 400),
             use_cases=use_cases,
             navigator=navigator,
             auth_context=auth_context,
