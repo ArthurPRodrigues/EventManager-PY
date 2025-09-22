@@ -55,6 +55,10 @@ class AuthenticateGUI(BaseGUI):
         password = values.get("-PASSWORD-")
         role = values.get("-ROLE-")
 
+        if not email or not password or not role:
+            self.show_warning_popup("Please fill all fields.")
+            return
+
         try:
             input_dto = AuthenticateUserInputDto(
                 email=email, password=password, role=UserRole(role)
