@@ -44,6 +44,7 @@ echo Installing development dependencies...
 if exist .venv\Scripts\pre-commit.exe (
     echo Installing pre-commit hooks...
     .venv\Scripts\pre-commit.exe install
+    .venv\Scripts\pre-commit.exe install --hook-type commit-msg
 ) else (
     echo Warning: pre-commit not found, skipping hook installation.
 )
