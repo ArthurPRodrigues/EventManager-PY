@@ -28,6 +28,7 @@ install: $(VENV_DIR)
 install-dev: install
 	$(VENV_PIP) install -e ".[dev]"
 	$(VENV_PRECOMMIT) install
+	$(VENV_PRECOMMIT) install --hook-type commit-msg
 
 run:
 	PYTHONPATH=src $(VENV_PY) -m main
