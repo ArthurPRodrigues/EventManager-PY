@@ -11,7 +11,7 @@ class CreateUserGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None):
         super().__init__(
             title="Register User",
-            size=(400, 220),
+            size=(400, 240),
             use_cases=use_cases,
             navigator=navigator,
         )
@@ -59,6 +59,9 @@ class CreateUserGUI(BaseGUI):
                     key="-AGE_CONFIRM-",
                     enable_events=False,
                 )
+            ],
+            [
+                sg.Text("Fields marked with * are required", text_color="red"),
             ],
             *self.action_buttons.create_layout(),
         ]
