@@ -2,6 +2,7 @@ import FreeSimpleGUI as sg
 
 from shared.ui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
+from shared.ui.components.header_component import HeaderComponent
 from user.application.create_user_use_case import CreateUserInputDto
 from user.domain.user_role import UserRole
 
@@ -10,12 +11,14 @@ class CreateUserGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None):
         super().__init__(
             title="Register User",
-            size=(400, 300),
+            size=(400, 220),
             use_cases=use_cases,
             navigator=navigator,
         )
 
         self.roles = [role.value for role in UserRole]
+
+        self.header = HeaderComponent(title="Register User")
 
         self.action_buttons = ActionButtonsComponent([
             {"text": "Create User", "key": "-CREATE-", "size": (12, 1)},
@@ -27,18 +30,16 @@ class CreateUserGUI(BaseGUI):
 
     def create_layout(self):
         layout = [
-            [sg.Button("Back", key="-BACK-"), sg.Push()],
-            [
-                sg.Text(
-                    "Register",
-                    font=("Helvetica", 20),
-                    justification="center",
-                    expand_x=True,
-                )
-            ],
+            *self.header.create_layout(),
             [sg.HorizontalSeparator()],
-            [sg.Text("Name*", size=(8, 1)), sg.Input(key="-NAME-")],
-            [sg.Text("Email*", size=(8, 1)), sg.Input(key="-EMAIL-")],
+            [
+                sg.Text("Name*", size=(8, 1)),
+                sg.Input(key="-NAME-"),
+            ],
+            [
+                sg.Text("Email*", size=(8, 1)),
+                sg.Input(key="-EMAIL-"),
+            ],
             [
                 sg.Text("Password*", size=(8, 1)),
                 sg.Input(key="-PASSWORD-", password_char="*"),
@@ -46,7 +47,10 @@ class CreateUserGUI(BaseGUI):
             [
                 sg.Text("Role*", size=(8, 1)),
                 sg.Combo(
-                    self.roles, default_value=self.roles[0], key="-ROLE-", readonly=True
+                    self.roles,
+                    default_value=self.roles[0],
+                    key="-ROLE-",
+                    readonly=True,
                 ),
             ],
             [
