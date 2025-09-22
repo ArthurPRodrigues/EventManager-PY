@@ -1,10 +1,10 @@
-from typing import Any, Dict, List
+from typing import Any
 
 import FreeSimpleGUI as sg
 
 
 class ActionButtonsComponent:
-    def __init__(self, buttons: List[Dict[str, Any]]):
+    def __init__(self, buttons: list[dict[str, Any]]):
         self.buttons = buttons
 
     def create_layout(self):

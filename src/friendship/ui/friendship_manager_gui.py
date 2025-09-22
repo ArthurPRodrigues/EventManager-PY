@@ -38,21 +38,19 @@ class FriendshipManagerGUI(BaseGUI):
             has_hidden_id_column=True,
         )
 
-        self.action_buttons = ActionButtonsComponent(
-            [
-                {"text": "Add Friend", "key": "-ADD_FRIEND-", "size": (12, 1)},
-                {
-                    "text": "Remove Selected",
-                    "key": "-REMOVE_SELECTED-",
-                    "size": (15, 1),
-                },
-                {
-                    "text": "Transfer Ticket to Selected",
-                    "key": "-TRANSFER_TICKET-",
-                    "size": (25, 1),
-                },
-            ]
-        )
+        self.action_buttons = ActionButtonsComponent([
+            {"text": "Add Friend", "key": "-ADD_FRIEND-", "size": (12, 1)},
+            {
+                "text": "Remove Selected",
+                "key": "-REMOVE_SELECTED-",
+                "size": (15, 1),
+            },
+            {
+                "text": "Transfer Ticket to Selected",
+                "key": "-TRANSFER_TICKET-",
+                "size": (25, 1),
+            },
+        ])
 
         self.event_map = {
             "-PENDING-": self._handle_pending_invites,
@@ -112,7 +110,7 @@ class FriendshipManagerGUI(BaseGUI):
                 self.show_info_popup(f"Friendship invite sent to: {friend_email}")
                 self.table.refresh(self.window)
             except Exception as e:
-                self.show_error_popup(f"Error sending friendship invite: {str(e)}")
+                self.show_error_popup(f"Error sending friendship invite: {e!s}")
 
     def _handle_remove_selected(self, _):
         selected_data = self.table.get_selected_row_data(self.window)
@@ -161,7 +159,7 @@ class FriendshipManagerGUI(BaseGUI):
             return {"data": table_data, "total": total}
 
         except Exception as e:
-            print(f"Erro ao carregar amizades: {str(e)}")
+            print(f"Erro ao carregar amizades: {e!s}")
             return {"data": [], "total": 0}
 
     def _convert_friendships_to_table_data(self, friendships):

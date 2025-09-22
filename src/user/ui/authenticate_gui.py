@@ -18,16 +18,14 @@ class AuthenticateGUI(BaseGUI):
 
         self.roles = [role.value for role in UserRole]
 
-        self.action_buttons = ActionButtonsComponent(
-            [
-                {"text": "Login", "key": "-LOGIN-", "size": (12, 1)},
-                {
-                    "text": "Create User",
-                    "key": "-CREATE_USER-",
-                    "size": (12, 1),
-                },
-            ]
-        )
+        self.action_buttons = ActionButtonsComponent([
+            {"text": "Login", "key": "-LOGIN-", "size": (12, 1)},
+            {
+                "text": "Create User",
+                "key": "-CREATE_USER-",
+                "size": (12, 1),
+            },
+        ])
 
         self.event_map = {
             "-LOGIN-": self._handle_user_login,

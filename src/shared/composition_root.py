@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
@@ -36,7 +35,7 @@ class CompositionRoot:
 
 
 # TODO: Maybe adjust later to include frontend
-def build_application(db_path: Optional[str] = None) -> CompositionRoot:
+def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
 

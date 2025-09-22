@@ -21,7 +21,7 @@ class Friendship:
     id: int | None = None
 
     @staticmethod
-    def create(requester_client_id: int, requested_client_id: int) -> "Friendship":
+    def create(requester_client_id: int, requested_client_id: int) -> Friendship:
         if not isinstance(requester_client_id, int) or requester_client_id <= 0:
             raise InvalidRequesterClientIdError(requester_client_id)
         if not isinstance(requested_client_id, int) or requested_client_id <= 0:
@@ -33,7 +33,7 @@ class Friendship:
             requested_client_id=requested_client_id,
         )
 
-    def accept(self) -> "Friendship":
+    def accept(self) -> Friendship:
         if self.status == FriendshipStatus.ACCEPTED:
             raise FriendshipAlreadyAcceptedError()
         return replace(

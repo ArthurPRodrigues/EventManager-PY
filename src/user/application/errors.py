@@ -13,9 +13,13 @@ class EmailByRoleAlreadyExistsError(AppError):
         )
         super().__init__(message)
 
+
 class UserNotFoundError(AppError):
-    def __init__(self, message: str = "Authentication failed, user was not found.") -> None:
+    def __init__(
+        self, message: str = "Authentication failed, user was not found."
+    ) -> None:
         super().__init__(message)
+
 
 class WrongPasswordError(AppError):
     def __init__(self, message: str = "Wrong password, try again.") -> None:

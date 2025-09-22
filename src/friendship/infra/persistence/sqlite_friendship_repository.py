@@ -70,7 +70,7 @@ class SqliteFriendshipRepository:
         accepted_at: datetime | None = None,
     ) -> tuple[list[tuple], int]:
         query = """
-        SELECT 
+        SELECT
             f.id, f.status, f.accepted_at,
             f.requester_client_id, u1.name as requester_name, u1.email as requester_email,
             f.requested_client_id, u2.name as requested_name, u2.email as requested_email
@@ -148,19 +148,17 @@ class SqliteFriendshipRepository:
                     str(accepted_at_raw).replace("Z", "+00:00")
                 )
 
-            converted_rows.append(
-                (
-                    friendship_id,
-                    friendship_status,
-                    parsed_accepted_at,
-                    requester_id,
-                    requester_name,
-                    requester_email,
-                    requested_id,
-                    requested_name,
-                    requested_email,
-                )
-            )
+            converted_rows.append((
+                friendship_id,
+                friendship_status,
+                parsed_accepted_at,
+                requester_id,
+                requester_name,
+                requester_email,
+                requested_id,
+                requested_name,
+                requested_email,
+            ))
 
         return converted_rows, total_count
 

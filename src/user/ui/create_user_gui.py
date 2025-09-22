@@ -17,11 +17,9 @@ class CreateUserGUI(BaseGUI):
 
         self.roles = [role.value for role in UserRole]
 
-        self.action_buttons = ActionButtonsComponent(
-            [
-                {"text": "Create User", "key": "-CREATE-", "size": (12, 1)},
-            ]
-        )
+        self.action_buttons = ActionButtonsComponent([
+            {"text": "Create User", "key": "-CREATE-", "size": (12, 1)},
+        ])
 
         self.event_map = {
             "-CREATE-": self._handle_create_user,
@@ -99,4 +97,4 @@ class CreateUserGUI(BaseGUI):
             self.navigator.pop_screen()
 
         except Exception as e:
-            self.show_error_popup(f"Error creating user: {str(e)}")
+            self.show_error_popup(f"Error creating user: {e!s}")

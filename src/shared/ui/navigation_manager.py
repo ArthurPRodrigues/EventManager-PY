@@ -1,13 +1,13 @@
-from typing import Any, Dict, List, Type
+from typing import Any
 
 
 class NavigationManager:
     def __init__(self, use_cases=None):
         self.use_cases = use_cases
-        self.screen_stack: List[Dict[str, Any]] = []
+        self.screen_stack: list[dict[str, Any]] = []
         self.current_screen = None
 
-    def push_screen(self, screen_class: Type, **kwargs) -> bool:
+    def push_screen(self, screen_class: type, **kwargs) -> bool:
         """
         Push a new screen onto the stack and show it.
         Returns True if user completed the screen normally, False if user went back.
@@ -74,7 +74,7 @@ class NavigationManager:
 
         return True
 
-    def replace_screen(self, screen_class: Type, **kwargs) -> bool:
+    def replace_screen(self, screen_class: type, **kwargs) -> bool:
         """
         Replace current screen with a new one (doesn't add to stack).
         """

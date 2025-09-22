@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import os
 import sqlite3
-from typing import Optional
 
 
 class SQLiteDatabase:
-    def __init__(self, path: Optional[str] = None) -> None:
+    def __init__(self, path: str | None = None) -> None:
         self._path = path or os.path.join("data", "app.db")
         os.makedirs(os.path.dirname(self._path), exist_ok=True)
 

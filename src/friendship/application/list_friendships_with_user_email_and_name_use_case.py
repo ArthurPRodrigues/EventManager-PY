@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
 
 from friendship.application.errors import InvalidPageError, InvalidPageSizeError
 from friendship.domain.friendship_status import FriendshipStatus
@@ -21,20 +20,20 @@ class FriendshipView:
     requested_email: str
     requested_name: str
     status: str
-    accepted_at: Optional[datetime]
+    accepted_at: datetime | None
 
 
 @dataclass(frozen=True)
 class ListFriendshipsInputDto:
     page: int = 1
     size: int = 10
-    requester_client_id: Optional[int] = None
-    requested_client_id: Optional[int] = None
-    participant_client_id: Optional[int] = (
+    requester_client_id: int | None = None
+    requested_client_id: int | None = None
+    participant_client_id: int | None = (
         None  # participant_client_id can be either requester or requested
     )
-    status: Optional[str] = None
-    accepted_at: Optional[datetime] = None
+    status: str | None = None
+    accepted_at: datetime | None = None
 
 
 class ListFriendshipsWithUserEmailAndNameUseCase:
@@ -43,7 +42,7 @@ class ListFriendshipsWithUserEmailAndNameUseCase:
 
     def execute(
         self, input_dto: ListFriendshipsInputDto
-    ) -> tuple[List[FriendshipView], int]:
+    ) -> tuple[list[FriendshipView], int]:
         if input_dto.page < 1:
             raise InvalidPageError(input_dto.page)
         if input_dto.size < 1:
@@ -63,7 +62,7 @@ class ListFriendshipsWithUserEmailAndNameUseCase:
             accepted_at=input_dto.accepted_at,
         )
 
-        views: List[FriendshipView] = []
+        views: list[FriendshipView] = []
         for row in rows:
             (
                 friendship_id,

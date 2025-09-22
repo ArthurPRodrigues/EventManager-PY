@@ -32,20 +32,18 @@ class FriendshipPendingInvitesGUI(BaseGUI):
             has_hidden_id_column=True,
         )
 
-        self.action_buttons = ActionButtonsComponent(
-            [
-                {
-                    "text": "Accept Selected",
-                    "key": "-ACCEPT_SELECTED-",
-                    "size": (12, 1),
-                },
-                {
-                    "text": "Decline Selected",
-                    "key": "-DECLINE_SELECTED-",
-                    "size": (12, 1),
-                },
-            ]
-        )
+        self.action_buttons = ActionButtonsComponent([
+            {
+                "text": "Accept Selected",
+                "key": "-ACCEPT_SELECTED-",
+                "size": (12, 1),
+            },
+            {
+                "text": "Decline Selected",
+                "key": "-DECLINE_SELECTED-",
+                "size": (12, 1),
+            },
+        ])
 
         self.event_map = {
             "-ACCEPT_SELECTED-": self._handle_accept_selected,
@@ -93,7 +91,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
             return {"data": table_data, "total": total}
 
         except Exception as e:
-            print(f"Erro ao carregar amizades: {str(e)}")
+            print(f"Erro ao carregar amizades: {e!s}")
             return {"data": [], "total": 0}
 
     def _convert_friendships_to_table_data(self, friendships):
@@ -132,9 +130,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                     )
                     self.table.refresh(self.window)
                 except Exception as e:
-                    self.show_error_popup(
-                        f"Error accepting friendship invite: {str(e)}"
-                    )
+                    self.show_error_popup(f"Error accepting friendship invite: {e!s}")
         else:
             self.show_warning_popup("No row selected!")
 
@@ -157,8 +153,6 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                     )
                     self.table.refresh(self.window)
                 except Exception as e:
-                    self.show_error_popup(
-                        f"Error declining friendship invite: {str(e)}"
-                    )
+                    self.show_error_popup(f"Error declining friendship invite: {e!s}")
         else:
             self.show_warning_popup("No row selected!")

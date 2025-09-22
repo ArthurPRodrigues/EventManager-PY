@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, List
+from collections.abc import Callable
+from typing import Any
 
 import FreeSimpleGUI as sg
 
@@ -6,8 +7,8 @@ import FreeSimpleGUI as sg
 class TableComponent:
     def __init__(
         self,
-        headers: List[str],
-        data_callback: Callable[[int, int], Dict[str, Any]],
+        headers: list[str],
+        data_callback: Callable[[int, int], dict[str, Any]],
         key: str = "-TABLE-",
         items_per_page: int = 10,
         has_hidden_id_column: bool = False,
@@ -134,7 +135,7 @@ class TableComponent:
         self._load_data()
         self._update_ui(window)
 
-    def get_selected_row_data(self, window: sg.Window) -> List[Any]:
+    def get_selected_row_data(self, window: sg.Window) -> list[Any]:
         try:
             selected_rows = window[self.key].get()
             if selected_rows and len(selected_rows) > 0:

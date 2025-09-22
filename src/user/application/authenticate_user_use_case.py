@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from user.application.errors import UserNotFoundError, WrongPasswordError
-from user.domain.user_role import UserRole
 from user.domain.user import User
+from user.domain.user_role import UserRole
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
@@ -13,6 +13,7 @@ class AuthenticateUserInputDto:
     email: str
     password: str
     role: UserRole
+
 
 class AuthenticateUserUseCase:
     def __init__(self, users_repository: SqliteUsersRepository) -> None:
