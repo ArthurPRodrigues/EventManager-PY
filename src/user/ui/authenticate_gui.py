@@ -13,18 +13,14 @@ from user.ui.create_user_gui import CreateUserGUI
 class AuthenticateGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None):
         super().__init__(
-            title="Login", size=(400, 120), use_cases=use_cases, navigator=navigator
+            title="Login", size=(400, 140), use_cases=use_cases, navigator=navigator
         )
 
         self.roles = [role.value for role in UserRole]
 
         self.action_buttons = ActionButtonsComponent([
             {"text": "Login", "key": "-LOGIN-", "size": (12, 1)},
-            {
-                "text": "Create User",
-                "key": "-CREATE_USER-",
-                "size": (12, 1),
-            },
+            {"text": "Create User", "key": "-CREATE_USER-", "size": (12, 1)},
         ])
 
         self.event_map = {
@@ -42,7 +38,10 @@ class AuthenticateGUI(BaseGUI):
             [
                 sg.Text("Role", size=(8, 1)),
                 sg.Combo(
-                    self.roles, default_value=self.roles[0], key="-ROLE-", readonly=True
+                    self.roles,
+                    default_value=self.roles[0],
+                    key="-ROLE-",
+                    readonly=True,
                 ),
             ],
             *self.action_buttons.create_layout(),
