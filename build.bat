@@ -55,7 +55,7 @@ goto end
 
 :run
 if not exist .venv (
-    echo Error: Virtual environment not found. Run 'script.bat install' first.
+    echo Error: Virtual environment not found. Run 'build.bat install' first.
     goto end
 )
 
@@ -67,7 +67,7 @@ goto end
 :unknown
 echo Error: Unknown command '%1'
 echo.
-echo Use 'script.bat help' to see available commands.
+echo Use 'build.bat help' to see available commands.
 goto end
 
 :end
