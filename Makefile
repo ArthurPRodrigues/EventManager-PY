@@ -4,6 +4,7 @@ PYTHON ?= python3
 VENV_DIR := .venv
 VENV_PY := $(VENV_DIR)/bin/python
 VENV_PIP := $(VENV_DIR)/bin/pip
+VENV_PRECOMMIT := $(VENV_DIR)/bin/pre-commit # <-- 1. ADICIONE ESTA LINHA
 
 .PHONY: default help run clean play
 
@@ -26,6 +27,7 @@ install: $(VENV_DIR)
 
 install-dev: install
 	$(VENV_PIP) install -e ".[dev]"
+	$(VENV_PRECOMMIT) install
 
 run:
 	PYTHONPATH=src $(VENV_PY) -m main

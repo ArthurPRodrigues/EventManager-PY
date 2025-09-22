@@ -1,0 +1,14 @@
+# .pre-commit-config.yaml
+#
+# Configuração para os ganchos de pré-commit.
+# Ele usará as regras do seu pyproject.toml automaticamente.
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.1
+    hooks:
+      # 1. Roda o formatador (ruff format)
+      - id: ruff-format
+      # 2. Roda o linter com correção automática (ruff check --fix)
+      - id: ruff
+        args: [--fix]
