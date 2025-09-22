@@ -49,9 +49,7 @@ class SendFriendshipInviteUseCase:
         if not requested:
             raise RequestedNotFoundError(requested_email)
 
-        if self._friendship_repository.does_friendship_exist(
-            requester.id, requested.id
-        ):
+        if self._friendship_repository.friendship_exists(requester.id, requested.id):
             if self._friendship_repository.is_friendship_pending(
                 requested.id, requester.id
             ):
