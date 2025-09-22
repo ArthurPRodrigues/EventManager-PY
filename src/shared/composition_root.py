@@ -17,6 +17,7 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
 from shared.infra.persistence.sqlite import SQLiteDatabase
+from user.application.authenticate_user_use_case import AuthenticateUserUseCase
 from user.application.create_user_use_case import CreateUserUseCase
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
@@ -31,6 +32,7 @@ class CompositionRoot:
     list_friendships_use_case: ListFriendshipsWithUserEmailAndNameUseCase
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
+    authenticate_user_use_case: AuthenticateUserUseCase
 
 
 # TODO: Maybe adjust later to include frontend
@@ -52,6 +54,7 @@ def build_application(db_path: Optional[str] = None) -> CompositionRoot:
         friendship_repo
     )
     create_user_use_case = CreateUserUseCase(user_repo)
+    authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
 
     return CompositionRoot(
         db=db,
@@ -62,4 +65,5 @@ def build_application(db_path: Optional[str] = None) -> CompositionRoot:
         list_friendships_use_case=list_friendships_use_case,
         user_repo=user_repo,
         create_user_use_case=create_user_use_case,
+        authenticate_user_use_case=authenticate_user_use_case,
     )

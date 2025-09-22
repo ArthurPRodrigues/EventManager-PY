@@ -21,7 +21,7 @@ class BaseGUI(ABC):
         self.navigator = navigator
         self.auth_context = auth_context
         self.event_map = {}
-        sg.theme("Default1")
+        sg.theme("Reds")
 
     @abstractmethod
     def create_layout(self):
