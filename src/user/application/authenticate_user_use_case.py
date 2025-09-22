@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from user.domain.errors import (
-    InvalidPasswordError,
-    InvalidUserError,
-)
+from user.application.errors import UserNotFoundError
+from user.domain.errors import InvalidPasswordError
 from user.domain.user_role import UserRole
+from user.domain.user import User
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
@@ -24,7 +23,7 @@ class AuthenticateUserUseCase:
         email = input_dto.email.strip().lower()
         user = self._users_repository.get_by_email_and_role(email, input_dto.role)
         if not user:
-            raise InvalidUserError()
+            raise UserNotFoundError()
         elif user and not user.check_password(input_dto.password):
             raise InvalidPasswordError()
         return user

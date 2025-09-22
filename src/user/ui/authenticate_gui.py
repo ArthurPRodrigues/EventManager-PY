@@ -8,7 +8,7 @@ from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
 
-# from user.ui.create_user_gui import CreateUseGUI
+#from user.ui.create_user_gui import CreateUseGUI
 
 
 class AuthenticateGUI(BaseGUI):
@@ -66,7 +66,12 @@ class AuthenticateGUI(BaseGUI):
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
+            if self.auth_context.role.value == 'CLIENT':
+                self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
+            else:
+                self.show_info_popup(
+                    f"Interfaces for ORGANIZER and STAFF are not implemented yet."
+                )
 
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
