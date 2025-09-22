@@ -162,6 +162,3 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                     )
         else:
             self.show_warning_popup("No row selected!")
-
-    def show(self):
-        return super().show()

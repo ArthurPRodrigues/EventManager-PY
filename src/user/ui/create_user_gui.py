@@ -100,6 +100,3 @@ class CreateUserGUI(BaseGUI):
 
         except Exception as e:
             self.show_error_popup(f"Error creating user: {str(e)}")
-
-    def show(self):
-        return super().show()

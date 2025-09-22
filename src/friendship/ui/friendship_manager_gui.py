@@ -184,6 +184,3 @@ class FriendshipManagerGUI(BaseGUI):
             table_data.append([friendship.id, friend_name, friend_email, friends_since])
 
         return table_data
-
-    def show(self):
-        return super().show()
