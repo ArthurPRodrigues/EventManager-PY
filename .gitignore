@@ -15,3 +15,6 @@ venv/
 # Python egg-info (created by pip install -e .)
 *.egg-info/
 
+# Ruff cache
+.ruff_cache/
+
