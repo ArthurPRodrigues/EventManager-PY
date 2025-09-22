@@ -12,5 +12,6 @@ logs/
 .venv/
 venv/
 
-# Editor
-.vscode/
+# Python egg-info (created by pip install -e .)
+*.egg-info/
+

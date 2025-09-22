@@ -11,7 +11,8 @@ default: help
 
 help:
 	@echo "Targets:"
-	@echo "  install     - Create venv and install dependencies"
+	@echo "  install     - Create venv and install production dependencies"
+	@echo "  install-dev - Create venv and install all dependencies (prod + dev)"
 	@echo "  run         - Start the application"
 	@echo "  clean       - Remove caches and build artifacts"
 	@echo "  play <name> - Run playground script (e.g., make play friendship)"
@@ -21,7 +22,10 @@ $(VENV_DIR):
 
 install: $(VENV_DIR)
 	$(VENV_PIP) install --upgrade pip
-	$(VENV_PIP) install -r requirements.txt
+	$(VENV_PIP) install -e .
+
+install-dev: install
+	$(VENV_PIP) install -e ".[dev]"
 
 run:
 	PYTHONPATH=src $(VENV_PY) -m main
