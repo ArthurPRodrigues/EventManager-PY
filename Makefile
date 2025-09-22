@@ -24,7 +24,7 @@ install: $(VENV_DIR)
 	$(VENV_PIP) install -r requirements.txt
 
 run:
-	PYTHONPATH=src $(PYTHON) -m main
+	PYTHONPATH=src $(VENV_PY) -m main
 
 clean:
 	rm -rf __pycache__ src/**/__pycache__

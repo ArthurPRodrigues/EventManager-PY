@@ -3,7 +3,14 @@ class AppError(Exception):
 
 
 class EmailByRoleAlreadyExistsError(AppError):
-    def __init__(self, message: str = "User with this email and role already exists.") -> None:
+    def __init__(
+        self,
+        user_email,
+        user_role,
+    ) -> None:
+        message = (
+            f"User with email '{user_email}' and role '{user_role}' already exists."
+        )
         super().__init__(message)
 
 class UserNotFoundError(AppError):

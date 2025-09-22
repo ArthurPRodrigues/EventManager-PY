@@ -23,9 +23,9 @@ class Friendship:
     @staticmethod
     def create(requester_client_id: int, requested_client_id: int) -> "Friendship":
         if not isinstance(requester_client_id, int) or requester_client_id <= 0:
-            raise InvalidRequesterClientIdError()
+            raise InvalidRequesterClientIdError(requester_client_id)
         if not isinstance(requested_client_id, int) or requested_client_id <= 0:
-            raise InvalidRequestedClientIdError()
+            raise InvalidRequestedClientIdError(requested_client_id)
         if requester_client_id == requested_client_id:
             raise CannotFriendYourselfError()
         return Friendship(

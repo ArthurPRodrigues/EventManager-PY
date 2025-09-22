@@ -30,7 +30,9 @@ class ListFriendshipsInputDto:
     size: int = 10
     requester_client_id: Optional[int] = None
     requested_client_id: Optional[int] = None
-    participant_client_id: Optional[int] = None  # participant_client_id can be either requester or requested
+    participant_client_id: Optional[int] = (
+        None  # participant_client_id can be either requester or requested
+    )
     status: Optional[str] = None
     accepted_at: Optional[datetime] = None
 
@@ -43,9 +45,9 @@ class ListFriendshipsWithUserEmailAndNameUseCase:
         self, input_dto: ListFriendshipsInputDto
     ) -> tuple[List[FriendshipView], int]:
         if input_dto.page < 1:
-            raise InvalidPageError("Page must be greater than 0")
+            raise InvalidPageError(input_dto.page)
         if input_dto.size < 1:
-            raise InvalidPageSizeError("Size must be greater than 0")
+            raise InvalidPageSizeError(input_dto.size)
 
         status_enum: FriendshipStatus | None = None
         if input_dto.status:

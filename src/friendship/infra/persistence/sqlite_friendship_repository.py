@@ -184,6 +184,28 @@ class SqliteFriendshipRepository:
             )
             return cursor.fetchone() is not None
 
+    def is_friendship_pending(
+        self, requester_client_id: int, requested_client_id: int
+    ) -> bool:
+        with self._db.connect() as conn:
+            cursor = conn.execute(
+                """
+                SELECT 1
+                FROM friendships
+                WHERE ((requester_client_id = ? AND requested_client_id = ?)
+                   OR (requester_client_id = ? AND requested_client_id = ?))
+                  AND status = ?
+                """,
+                (
+                    requester_client_id,
+                    requested_client_id,
+                    requested_client_id,
+                    requester_client_id,
+                    FriendshipStatus.PENDING.value,
+                ),
+            )
+            return cursor.fetchone() is not None
+
     def edit(self, friendship: Friendship) -> None:
         accepted_at_str = None
         if friendship.accepted_at:

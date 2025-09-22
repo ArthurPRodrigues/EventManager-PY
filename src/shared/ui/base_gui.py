@@ -2,10 +2,17 @@ from abc import ABC, abstractmethod
 
 import FreeSimpleGUI as sg
 
+from shared.infra.error_logger import log_error
+
 
 class BaseGUI(ABC):
     def __init__(
-        self, title: str, size: tuple = (800, 600), use_cases=None, navigator=None, auth_context=None,
+        self,
+        title: str,
+        size: tuple = (800, 600),
+        use_cases=None,
+        navigator=None,
+        auth_context=None,
     ):
         self.window = None
         self.title = title
@@ -71,7 +78,8 @@ class BaseGUI(ABC):
         return result == "Yes"
 
     def show_error_popup(self, message: str, title: str = "Error"):
-        """Common helper method for error popups"""
+        """Common helper method for error popups with logging"""
+        log_error(message, self.auth_context)
         sg.popup(message, title=title)
 
     def show_input_dialog(

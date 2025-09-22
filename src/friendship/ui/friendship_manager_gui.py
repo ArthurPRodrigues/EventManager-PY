@@ -13,14 +13,13 @@ from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableC
 
 
 class FriendshipManagerGUI(BaseGUI):
-    def __init__(self, use_cases=None, navigator=None):
+    def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
-            title="Friendship Manager", use_cases=use_cases, navigator=navigator
+            title="Friendship Manager",
+            use_cases=use_cases,
+            navigator=navigator,
+            auth_context=auth_context,
         )
-
-        # TODO: Mock user ID, later integrate with auth system
-        self.current_user_id = 1
-        self.current_user_email = "joao@email.com"
 
         self.header = HeaderComponent(
             title="Friendship Manager",
@@ -86,7 +85,9 @@ class FriendshipManagerGUI(BaseGUI):
             pass
 
     def _handle_pending_invites(self, _):
-        self.navigator.push_screen(FriendshipPendingInvitesGUI)
+        self.navigator.push_screen(
+            FriendshipPendingInvitesGUI, auth_context=self.auth_context
+        )
 
     def _handle_add_friend(self, _):
         confirmed, friend_email = self.show_input_dialog(
@@ -104,7 +105,7 @@ class FriendshipManagerGUI(BaseGUI):
 
             try:
                 input_dto = SendFriendshipInviteInputDto(
-                    requester_client_email=self.current_user_email,
+                    requester_client_email=self.auth_context.email,
                     requested_client_email=friend_email,
                 )
                 self.use_cases.send_friendship_invite_use_case.execute(input_dto)
@@ -147,7 +148,7 @@ class FriendshipManagerGUI(BaseGUI):
             input_dto = ListFriendshipsInputDto(
                 page=page,
                 size=items_per_page,
-                participant_client_id=self.current_user_id,
+                participant_client_id=self.auth_context.id,
                 status="ACCEPTED",
             )
 
@@ -167,7 +168,7 @@ class FriendshipManagerGUI(BaseGUI):
         table_data = []
 
         for friendship in friendships:
-            if friendship.requester_client_id == self.current_user_id:
+            if friendship.requester_client_id == self.auth_context.id:
                 friend_name = friendship.requested_name
                 friend_email = friendship.requested_email
             else:
@@ -183,6 +184,3 @@ class FriendshipManagerGUI(BaseGUI):
             table_data.append([friendship.id, friend_name, friend_email, friends_since])
 
         return table_data
-
-    def show(self):
-        return super().show()

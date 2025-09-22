@@ -12,14 +12,13 @@ from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableC
 
 
 class FriendshipPendingInvitesGUI(BaseGUI):
-    def __init__(self, use_cases=None, navigator=None):
+    def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
-            title="Pending Invites", use_cases=use_cases, navigator=navigator
+            title="Pending Invites",
+            use_cases=use_cases,
+            navigator=navigator,
+            auth_context=auth_context,
         )
-
-        # TODO: Mock user ID, later integrate with auth system
-        self.current_user_id = 1
-        self.current_user_email = "joao@email.com"
 
         self.header = HeaderComponent(
             title="Pending Invites",
@@ -81,7 +80,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
             input_dto = ListFriendshipsInputDto(
                 page=page,
                 size=items_per_page,
-                requested_client_id=self.current_user_id,
+                requested_client_id=self.auth_context.id,
                 status="PENDING",
             )
 
@@ -163,6 +162,3 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                     )
         else:
             self.show_warning_popup("No row selected!")
-
-    def show(self):
-        return super().show()
