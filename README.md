@@ -30,7 +30,7 @@ Repository for the project of the course INE5608 - Systems Analysis and Design.
 
 2. **Install dependencies**
    ```cmd
-   script.bat install-dev
+   build.bat install-dev
    ```
    This installs both production and development dependencies.
 
@@ -42,8 +42,8 @@ make install          # production only
 make install-dev      # production + dev
 
 # Windows
-script.bat install    # production only
-script.bat install-dev # production + dev
+build.bat install    # production only
+build.bat install-dev # production + dev
 ```
 
 ## Overview
