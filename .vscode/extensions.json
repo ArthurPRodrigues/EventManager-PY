@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "vscode-icons-team.vscode-icons",
+    "alexcavzz.vscode-sqlite",
+    "charliermarsh.ruff",
+    "naumovs.color-highlight",
+    "oderwat.indent-rainbow"
+  ],
+  "unwantedRecommendations": [
+    "ms-python.pylint",
+    "ms-python.black-formatter",
+    "ms-python.flake8",
+    "ms-python.isort",
+    "ms-python.autopep8"
+  ]
+}
