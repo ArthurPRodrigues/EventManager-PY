@@ -7,7 +7,7 @@ from shared.ui.components import ActionButtonsComponent
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
-from user.ui.create_user_gui import CreateUseGUI
+from user.ui.create_user_gui import CreateUserGUI
 
 
 class AuthenticateGUI(BaseGUI):
@@ -31,15 +31,22 @@ class AuthenticateGUI(BaseGUI):
 
         self.event_map = {
             "-LOGIN-": self._handle_user_login,
-            "-CREATE_USER-": self._handle_create_user
+            "-CREATE_USER-": self._handle_create_user,
         }
 
     def create_layout(self):
         layout = [
-            [sg.Text("Email", size=(8,1)), sg.Input(key="-EMAIL-")],
-            [sg.Text("Password", size=(8,1)), sg.Input(key="-PASSWORD-", password_char="*")],
-            [sg.Text("Role", size=(8,1)),
-             sg.Combo(self.roles, default_value=self.roles[0], key="-ROLE-", readonly=True)],
+            [sg.Text("Email", size=(8, 1)), sg.Input(key="-EMAIL-")],
+            [
+                sg.Text("Password", size=(8, 1)),
+                sg.Input(key="-PASSWORD-", password_char="*"),
+            ],
+            [
+                sg.Text("Role", size=(8, 1)),
+                sg.Combo(
+                    self.roles, default_value=self.roles[0], key="-ROLE-", readonly=True
+                ),
+            ],
             *self.action_buttons.create_layout(),
         ]
 
@@ -69,22 +76,24 @@ class AuthenticateGUI(BaseGUI):
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            if self.auth_context.role.value == 'CLIENT':
-                self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
+            if self.auth_context.role.value == "CLIENT":
+                self.navigator.push_screen(
+                    FriendshipManagerGUI, auth_context=self.auth_context
+                )
             else:
                 self.show_info_popup(
-                    f"Interfaces for ORGANIZER and STAFF are not implemented yet."
+                    "Interfaces for ORGANIZER and STAFF are not implemented yet."
                 )
 
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
 
     def _handle_create_user(self, values):
-        self.navigator.push_screen(CreateUseGUI)
+        self.navigator.push_screen(CreateUserGUI)
 
     def _set_auth_context(self, user: User):
         self.auth_context = AuthContext(
-            id = user.id, name = user.name, email = user.email, role = user.role
+            id=user.id, name=user.name, email=user.email, role=user.role
         )
 
     def show(self):
