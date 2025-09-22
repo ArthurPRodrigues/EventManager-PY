@@ -6,12 +6,14 @@ class DomainError(Exception):
 
 
 class InvalidRequesterClientIdError(DomainError):
-    def __init__(self, message: str = "Invalid requester client ID.") -> None:
+    def __init__(self, requester_client_id: int) -> None:
+        message: str = f"Invalid requester client ID: {requester_client_id}."
         super().__init__(message)
 
 
 class InvalidRequestedClientIdError(DomainError):
-    def __init__(self, message: str = "Invalid requested client ID.") -> None:
+    def __init__(self, requested_client_id: int) -> None:
+        message: str = f"Invalid requested client ID: {requested_client_id}."
         super().__init__(message)
 
 
@@ -23,5 +25,6 @@ class CannotFriendYourselfError(DomainError):
 
 
 class FriendshipAlreadyAcceptedError(DomainError):
-    def __init__(self, message: str = "Friendship request already accepted.") -> None:
+    def __init__(self, friendship_id: int) -> None:
+        message: str = f"Friendship with ID {friendship_id} is already accepted."
         super().__init__(message)
