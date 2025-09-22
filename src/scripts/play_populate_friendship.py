@@ -34,7 +34,7 @@ def limpar_banco_dados():
         except Exception as e:
             print(f"  ⚠️  Erro ao remover banco de dados: {e}")
     else:
-        print(f"  ℹ️  Banco de dados não encontrado: {db_path}")
+        print(f"  ℹ️  Banco de dados não encontrado: {db_path}")  # noqa: RUF001
 
 
 def criar_usuarios_mock(app):
