@@ -7,8 +7,7 @@ from shared.ui.components import ActionButtonsComponent
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
-
-#from user.ui.create_user_gui import CreateUseGUI
+from user.ui.create_user_gui import CreateUseGUI
 
 
 class AuthenticateGUI(BaseGUI):
