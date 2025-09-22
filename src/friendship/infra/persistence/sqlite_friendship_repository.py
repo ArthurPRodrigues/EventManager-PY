@@ -164,7 +164,7 @@ class SqliteFriendshipRepository:
 
         return converted_rows, total_count
 
-    def friendship_exists(
+    def does_friendship_exist(
         self, requester_client_id: int, requested_client_id: int
     ) -> bool:
         with self._db.connect() as conn:
@@ -184,7 +184,7 @@ class SqliteFriendshipRepository:
             )
             return cursor.fetchone() is not None
 
-    def friendship_is_pending(
+    def is_friendship_pending(
         self, requester_client_id: int, requested_client_id: int
     ) -> bool:
         with self._db.connect() as conn:
