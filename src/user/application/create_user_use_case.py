@@ -24,7 +24,7 @@ class CreateUserUseCase:
     def execute(self, input_dto: CreateUserInputDto) -> User:
         email_norm = input_dto.email.strip().lower()
         if self._users_repository.get_by_email_and_role(email_norm, input_dto.role):
-            raise EmailByRoleAlreadyExistsError()
+            raise EmailByRoleAlreadyExistsError(email_norm, input_dto.role)
         user = User.register(
             name=input_dto.name,
             email=input_dto.email,
