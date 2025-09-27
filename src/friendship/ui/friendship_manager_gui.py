@@ -23,7 +23,6 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.header = HeaderComponent(
-            title="Friendship Manager",
             extra_button={
                 "text": "Pending Invites",
                 "key": "-PENDING-",

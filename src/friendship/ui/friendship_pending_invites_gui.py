@@ -21,9 +21,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
             auth_context=auth_context,
         )
 
-        self.header = HeaderComponent(
-            title="Pending Invites",
-        )
+        self.header = HeaderComponent()
 
         self.table = TableComponent(
             headers=["ID", "Name", "E-mail"],

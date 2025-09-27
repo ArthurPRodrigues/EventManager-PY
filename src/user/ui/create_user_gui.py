@@ -18,7 +18,7 @@ class CreateUserGUI(BaseGUI):
 
         self.roles = [role.value for role in UserRole]
 
-        self.header = HeaderComponent(title="Register User")
+        self.header = HeaderComponent()
 
         self.action_buttons = ActionButtonsComponent([
             {"text": "Create User", "key": "-CREATE-", "size": (12, 1)},
