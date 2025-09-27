@@ -41,7 +41,7 @@ class CreateUserGUI(BaseGUI):
                 sg.Input(key="-EMAIL-"),
             ],
             [
-                sg.Text("Password*", size=(8, 1)),
+                sg.Text("Password*", size=(12, 1)),
                 sg.Input(key="-PASSWORD-", password_char="*"),
             ],
             [
