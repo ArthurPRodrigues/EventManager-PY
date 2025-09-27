@@ -7,25 +7,47 @@ class HeaderComponent:
     def __init__(
         self,
         back_button: bool = True,
-        extra_button: dict[str, Any] | None = None,
+        extra_buttons: list[dict[str, Any]] | None = None,
     ):
         self.back_button = back_button
-        self.extra_button = extra_button
+        self.buttons = []
+        if self.back_button:
+            self.buttons.append({"text": "Back", "key": "-BACK-", "size": (8, 1)})
+
+        if extra_buttons:
+            self.buttons.extend(extra_buttons)
 
     def create_layout(self):
-        elements = []
+        if not self.buttons:
+            return [[]]
 
+        return [self._build_button_row()]
+
+    def _build_button_row(self) -> list[sg.Element]:
         if self.back_button:
-            elements.append(sg.Button("Back", key="-BACK-", size=(8, 1)))
-            elements.append(sg.Push())
+            row = [self._create_button(self.buttons[0]), sg.Push()]
+            for btn_config in self.buttons[1:]:
+                row.append(self._create_button(btn_config))
+            return row
+        else:
+            return self._build_button_space_between(self.buttons)
 
-        if self.extra_button:
-            elements.append(
-                sg.Button(
-                    self.extra_button["text"],
-                    key=self.extra_button["key"],
-                    size=self.extra_button.get("size", (12, 1)),
-                )
-            )
+    def _build_button_space_between(
+        self, buttons: list[dict[str, Any]] | None = None
+    ) -> list[sg.Element]:
+        if buttons is None:
+            buttons = self.buttons
+        row = []
+        for btn_config in buttons:
+            row.append(self._create_button(btn_config))
+            row.append(sg.Push())
+        if row:
+            row.pop()
+        return row
 
-        return [elements]
+    def _create_button(self, btn_config: dict[str, Any]) -> sg.Button:
+        return sg.Button(
+            btn_config["text"],
+            key=btn_config["key"],
+            size=btn_config.get("size"),
+        )

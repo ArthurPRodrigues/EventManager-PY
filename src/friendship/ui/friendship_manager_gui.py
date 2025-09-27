@@ -23,11 +23,13 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.header = HeaderComponent(
-            extra_button={
-                "text": "Pending Invites",
-                "key": "-PENDING-",
-                "size": (12, 1),
-            },
+            extra_buttons=[
+                {
+                    "text": "Pending Invites",
+                    "key": "-PENDING-",
+                    "size": (12, 1),
+                }
+            ]
         )
 
         self.table = TableComponent(
