@@ -3,6 +3,8 @@ from typing import Any
 
 import FreeSimpleGUI as sg
 
+from shared.ui.styles import COLORS
+
 
 class TableComponent:
     def __init__(
@@ -44,9 +46,9 @@ class TableComponent:
                 display_row_numbers=False,
                 justification="left",
                 num_rows=self.items_per_page,
-                alternating_row_color="lightgray",
+                alternating_row_color=COLORS["primary_lighter"],
                 key=self.key,
-                selected_row_colors="red on yellow",
+                selected_row_colors=f"{COLORS['white']} on {COLORS['secondary_darker']}",
                 enable_events=True,
                 expand_x=True,
                 expand_y=True,

@@ -3,6 +3,23 @@ from abc import ABC, abstractmethod
 import FreeSimpleGUI as sg
 
 from shared.infra.error_logger import log_error
+from shared.ui.styles import COLORS
+
+sg.theme_add_new(
+    "FESTUMTheme",
+    {
+        "BACKGROUND": COLORS["primary"],
+        "TEXT": COLORS["white"],
+        "INPUT": COLORS["light"],
+        "TEXT_INPUT": COLORS["black"],
+        "SCROLL": COLORS["primary"],
+        "BUTTON": (COLORS["white"], COLORS["primary_lighter"]),
+        "PROGRESS": (COLORS["secondary"], COLORS["primary"]),
+        "BORDER": 0,
+        "SLIDER_DEPTH": 0,
+        "PROGRESS_DEPTH": 0,
+    },
+)
 
 
 class BaseGUI(ABC):
@@ -21,7 +38,7 @@ class BaseGUI(ABC):
         self.navigator = navigator
         self.auth_context = auth_context
         self.event_map = {}
-        sg.theme("Default1")
+        sg.theme("FESTUMTheme")
 
     @abstractmethod
     def create_layout(self):
