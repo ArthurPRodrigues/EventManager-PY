@@ -207,7 +207,47 @@ class BaseGUI(ABC):
     def show_error_popup(self, message: str, title: str = "Error"):
         """Common helper method for error popups with logging"""
         log_error(message, self.auth_context)
-        sg.popup(message, title=title)
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "circle-x.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
+            [
+                sg.Button(
+                    "OK",
+                    key="-YES-",
+                    font=FONTS["PRIMARY_BUTTON"],
+                    button_color=(COLORS["white"], COLORS["error"]),
+                    size=BUTTON_SIZES["SMALL"],
+                ),
+            ],
+        ]
+
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+        event, _ = window.read()
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event
 
     def show_input_dialog(
         self,
