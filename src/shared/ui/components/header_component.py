@@ -31,7 +31,7 @@ class HeaderComponent:
 
         return [
             self._build_button_row(),
-            [sg.HSep(color=COLORS["light"], pad=((0, 0), (5, 0)))],
+            [sg.HSep(color=COLORS["primary_lighter"], pad=((0, 0), (5, 0)))],
         ]
 
     def _build_button_row(self) -> list[sg.Element]:
