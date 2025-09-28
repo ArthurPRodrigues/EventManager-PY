@@ -4,7 +4,7 @@ from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
-from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
+from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
@@ -27,14 +27,12 @@ class AuthenticateGUI(BaseGUI):
                 "text": "Login",
                 "font": FONTS["PRIMARY_BUTTON"],
                 "key": "-LOGIN-",
-                "size": BUTTON_SIZES["SMALL"],
                 "button_color": (COLORS["dark"], COLORS["secondary"]),
             },
             {
                 "text": "Create User",
                 "font": FONTS["SECONDARY_BUTTON"],
                 "key": "-CREATE_USER-",
-                "size": BUTTON_SIZES["SMALL"],
                 "button_color": (COLORS["white"], COLORS["primary"]),
             },
         ])

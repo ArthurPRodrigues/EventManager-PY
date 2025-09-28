@@ -2,6 +2,8 @@ from typing import Any
 
 import FreeSimpleGUI as sg
 
+from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS
+
 
 class HeaderComponent:
     def __init__(
@@ -12,7 +14,13 @@ class HeaderComponent:
         self.back_button = back_button
         self.buttons = []
         if self.back_button:
-            self.buttons.append({"text": "Back", "key": "-BACK-", "size": (8, 1)})
+            self.buttons.append({
+                "text": "Back",
+                "font": FONTS["BUTTON"],
+                "key": "-BACK-",
+                "size": BUTTON_SIZES["EXTRA_SMALL"],
+                "button_color": (COLORS["white"], COLORS["error"]),
+            })
 
         if extra_buttons:
             self.buttons.extend(extra_buttons)
@@ -21,7 +29,7 @@ class HeaderComponent:
         if not self.buttons:
             return [[]]
 
-        return [self._build_button_row()]
+        return [self._build_button_row(), [sg.HSep()]]
 
     def _build_button_row(self) -> list[sg.Element]:
         if self.back_button:
@@ -45,9 +53,13 @@ class HeaderComponent:
             row.pop()
         return row
 
+    # TODO: Define fallback values for optional button config keys
     def _create_button(self, btn_config: dict[str, Any]) -> sg.Button:
         return sg.Button(
             btn_config["text"],
+            font=btn_config.get("font", FONTS["BUTTON"]),
             key=btn_config["key"],
             size=btn_config.get("size"),
+            button_color=btn_config.get("button_color"),
+            pad=btn_config.get("pad", (5, 5)),
         )
