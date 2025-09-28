@@ -1,3 +1,5 @@
+import os
+
 import FreeSimpleGUI as sg
 
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
@@ -104,7 +106,7 @@ class AuthenticateGUI(BaseGUI):
         layout = [
             [
                 sg.Image(
-                    filename="/home/fabifabufabo/ufsc_git/EventManager-PY/assets/png/festum_logo_325x320.png",
+                    filename=os.path.join("assets", "png", "festum_logo_325x320.png"),
                     subsample=2,
                     pad=(5),
                 )
@@ -117,7 +119,7 @@ class AuthenticateGUI(BaseGUI):
                     pad=(1, 0),
                 ),
                 sg.Image(
-                    filename="/home/fabifabufabo/ufsc_git/EventManager-PY/assets/png/grin_32x32.png",
+                    filename=os.path.join("assets", "png", "grin_32x32.png"),
                     pad=(1, 0),
                 ),
             ],

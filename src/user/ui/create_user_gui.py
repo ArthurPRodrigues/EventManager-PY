@@ -1,3 +1,5 @@
+import os
+
 import FreeSimpleGUI as sg
 
 from shared.ui import BaseGUI
@@ -119,7 +121,7 @@ class CreateUserGUI(BaseGUI):
                     pad=((0, 5), (20, 0)),
                 ),
                 sg.Image(
-                    filename="/home/fabifabufabo/ufsc_git/EventManager-PY/assets/png/tada_32x32.png",
+                    filename=os.path.join("assets", "png", "tada_32x32.png"),
                 ),
             ],
             [
