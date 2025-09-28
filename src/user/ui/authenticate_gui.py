@@ -4,6 +4,7 @@ from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
+from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
@@ -13,14 +14,29 @@ from user.ui.create_user_gui import CreateUserGUI
 class AuthenticateGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None):
         super().__init__(
-            title="Login", size=(400, 140), use_cases=use_cases, navigator=navigator
+            title="Login",
+            size=WINDOW_SIZES["SQUARE_PANEL"],
+            use_cases=use_cases,
+            navigator=navigator,
         )
 
         self.roles = [role.value for role in UserRole]
 
         self.action_buttons = ActionButtonsComponent([
-            {"text": "Login", "key": "-LOGIN-", "size": (12, 1)},
-            {"text": "Create User", "key": "-CREATE_USER-", "size": (12, 1)},
+            {
+                "text": "Login",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "key": "-LOGIN-",
+                "size": BUTTON_SIZES["SMALL"],
+                "button_color": (COLORS["dark"], COLORS["secondary"]),
+            },
+            {
+                "text": "Create User",
+                "font": FONTS["SECONDARY_BUTTON"],
+                "key": "-CREATE_USER-",
+                "size": BUTTON_SIZES["SMALL"],
+                "button_color": (COLORS["white"], COLORS["primary"]),
+            },
         ])
 
         self.event_map = {
@@ -29,19 +45,105 @@ class AuthenticateGUI(BaseGUI):
         }
 
     def create_layout(self):
-        layout = [
-            [sg.Text("Email", size=(8, 1)), sg.Input(key="-EMAIL-")],
+        labels = [
             [
-                sg.Text("Password", size=(8, 1)),
-                sg.Input(key="-PASSWORD-", password_char="*"),
+                sg.Text(
+                    "Email",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
             ],
             [
-                sg.Text("Role", size=(8, 1)),
+                sg.Text(
+                    "Password",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
+                sg.Text(
+                    "Role",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
+            ],
+        ]
+
+        inputs = [
+            [
+                sg.Input(
+                    key="-EMAIL-",
+                    tooltip="Enter your email (e.g., user@email.com)",
+                    pad=(0, 10),
+                    font=FONTS["INPUT"],
+                )
+            ],
+            [
+                sg.Input(
+                    key="-PASSWORD-",
+                    password_char="*",
+                    tooltip="Enter your password",
+                    pad=(0, 10),
+                    font=FONTS["INPUT"],
+                )
+            ],
+            [
                 sg.Combo(
                     self.roles,
                     default_value=self.roles[0],
                     key="-ROLE-",
                     readonly=True,
+                    tooltip="Select your role in the system",
+                    pad=(0, 10),
+                    font=FONTS["INPUT"],
+                )
+            ],
+        ]
+
+        layout = [
+            [
+                sg.Image(
+                    filename="/home/fabifabufabo/ufsc_git/EventManager-PY/assets/png/festum_logo_325x320.png",
+                    subsample=2,
+                    pad=(5),
+                )
+            ],
+            [
+                sg.Text(
+                    "WELCOME AGAIN!",
+                    font=FONTS["TITLE_MAIN"],
+                    justification="center",
+                    pad=(1, 0),
+                ),
+                sg.Image(
+                    filename="/home/fabifabufabo/ufsc_git/EventManager-PY/assets/png/grin_32x32.png",
+                    pad=(1, 0),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Insert your details to continue",
+                    font=FONTS["SUBTITLE"],
+                    justification="center",
+                    pad=(20, 20),
+                    text_color=COLORS["secondary"],
+                )
+            ],
+            [
+                sg.Column(
+                    labels,
+                    element_justification="right",
+                    vertical_alignment="top",
+                    pad=((30, 0), (0, 0)),
+                ),
+                sg.Column(
+                    inputs,
+                    element_justification="left",
+                    vertical_alignment="top",
+                    pad=((0, 30), (0, 0)),
                 ),
             ],
             *self.action_buttons.create_layout(),

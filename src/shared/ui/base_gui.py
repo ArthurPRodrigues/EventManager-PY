@@ -12,12 +12,12 @@ sg.theme_add_new(
         "TEXT": COLORS["white"],
         "INPUT": COLORS["light"],
         "TEXT_INPUT": COLORS["black"],
-        "SCROLL": COLORS["primary"],
         "BUTTON": (COLORS["white"], COLORS["primary_lighter"]),
+        "SCROLL": COLORS["primary"],
         "PROGRESS": (COLORS["secondary"], COLORS["primary"]),
-        "BORDER": 0,
         "SLIDER_DEPTH": 0,
         "PROGRESS_DEPTH": 0,
+        "BORDER": 0,
     },
 )
 
