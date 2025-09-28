@@ -37,3 +37,24 @@ class SqliteTicketsRepository:
             created_at=parsed_created_at,
             id=id_,
         )
+
+    def update(self, ticket: Ticket) -> None:
+        created_at_str = ticket.created_at.isoformat()
+
+        with self._db.connect() as conn:
+            conn.execute(
+                """
+                UPDATE tickets
+                SET event_id = ?, client_id = ?, code = ?, status = ?, created_at = ?
+                WHERE id = ?
+                """,
+                (
+                    ticket.event_id,
+                    ticket.client_id,
+                    ticket.code,
+                    ticket.status.value,
+                    created_at_str,
+                    ticket.id,
+                ),
+            )
+            conn.commit()
