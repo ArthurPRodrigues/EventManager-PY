@@ -8,7 +8,7 @@ from friendship.application.send_friendship_invite_use_case import (
 from friendship.ui.friendship_pending_invites_gui import FriendshipPendingInvitesGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
-from shared.ui.styles import BUTTON_SIZES, WINDOW_SIZES
+from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
 
 
 class FriendshipManagerGUI(BaseGUI):
@@ -27,6 +27,7 @@ class FriendshipManagerGUI(BaseGUI):
                     "text": "Pending Invites",
                     "key": "-PENDING-",
                     "size": BUTTON_SIZES["MEDIUM"],
+                    "button_color": (COLORS["dark"], COLORS["secondary"]),
                 }
             ]
         )
@@ -40,11 +41,16 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.action_buttons = ActionButtonsComponent([
-            {"text": "Add Friend", "key": "-ADD_FRIEND-"},
+            {
+                "text": "Add Friend",
+                "key": "-ADD_FRIEND-",
+                "button_color": (COLORS["white"], COLORS["success"]),
+            },
             {
                 "text": "Remove Selected",
                 "key": "-REMOVE_SELECTED-",
                 "size": BUTTON_SIZES["MEDIUM"],
+                "button_color": (COLORS["white"], COLORS["warning"]),
             },
             {
                 "text": "Transfer Ticket to Selected",
