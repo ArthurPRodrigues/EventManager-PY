@@ -54,7 +54,12 @@ class BaseGUI(ABC):
         """Common method to show the screen"""
         layout = self.create_layout()
         self.window = sg.Window(
-            self.title, layout, size=self.size, resizable=True, finalize=True
+            self.title,
+            layout,
+            size=self.size,
+            resizable=False,
+            finalize=True,
+            element_justification="center",
         )
         return self.run()
 
@@ -131,6 +136,7 @@ class BaseGUI(ABC):
             dialog_title,
             layout,
             modal=True,
+            resizable=False,
             finalize=True,
             element_justification="center",
         )
