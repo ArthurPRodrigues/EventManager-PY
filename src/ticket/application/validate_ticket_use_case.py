@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ticket.domain.ticket import Ticket
+from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from user.domain.user_role import UserRole
 
 from .errors import (
@@ -19,11 +20,10 @@ class ValidateTicketInputDto:
     code: str
 
 
-# TODO: Implement repositories later
 class ValidateTicketUseCase:
     def __init__(
         self,
-        tickets_repository: SqliteTicketRepository,  # noqa: F821
+        tickets_repository: SqliteTicketsRepository,
         events_repository: SqliteEventRepository,  # noqa: F821
     ) -> None:
         self._tickets_repository = tickets_repository
