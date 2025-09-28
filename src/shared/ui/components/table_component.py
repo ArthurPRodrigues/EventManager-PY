@@ -55,6 +55,7 @@ class TableComponent:
                 enable_click_events=True,
                 visible_column_map=visible_columns,
                 select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+                font=("Fira Code", 10),
             )
         ]
 
