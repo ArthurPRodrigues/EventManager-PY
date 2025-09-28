@@ -25,13 +25,17 @@ FONTS = {
     "CHECKBOX": ("Montserrat", 12),
     "MONOSPACED": ("Fira Code", 10),
     "FOOTNOTE": ("Montserrat", 9, "italic"),
+    "TABLE_HEADER": ("Fira Code", 12, "bold"),
+    "PAGINATION_BUTTON": ("Montserrat", 9, "bold"),
+    "PAGINATION_INFO": ("Montserrat", 9),
 }
 
 BUTTON_SIZES = {
-    "EXTRA_SMALL": (8, 1),
+    "EXTRA_SMALL": (6, 1),
     "SMALL": (10, 1),
-    "MEDIUM": (15, 1),
-    "LARGE": (20, 1),
+    "MEDIUM": (14, 1),
+    "LARGE": (18, 1),
+    "EXTRA_LARGE": (22, 1),
 }
 
 LABEL_SIZES = {

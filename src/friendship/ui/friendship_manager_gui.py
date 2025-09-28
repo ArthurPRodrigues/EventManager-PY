@@ -1,5 +1,3 @@
-import FreeSimpleGUI as sg
-
 from friendship.application.delete_friendship_use_case import DeleteFriendshipInputDto
 from friendship.application.list_friendships_with_user_email_and_name_use_case import (
     ListFriendshipsInputDto,
@@ -10,13 +8,14 @@ from friendship.application.send_friendship_invite_use_case import (
 from friendship.ui.friendship_pending_invites_gui import FriendshipPendingInvitesGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
+from shared.ui.styles import BUTTON_SIZES, WINDOW_SIZES
 
 
 class FriendshipManagerGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
             title="Friendship Manager",
-            size=(700, 400),
+            size=WINDOW_SIZES["HORIZONTAL_DEFAULT"],
             use_cases=use_cases,
             navigator=navigator,
             auth_context=auth_context,
@@ -27,13 +26,13 @@ class FriendshipManagerGUI(BaseGUI):
                 {
                     "text": "Pending Invites",
                     "key": "-PENDING-",
-                    "size": (12, 1),
+                    "size": BUTTON_SIZES["MEDIUM"],
                 }
             ]
         )
 
         self.table = TableComponent(
-            headers=["ID", "Name", "E-mail", "Friends Since"],
+            headers=["ID", "NAME", "E-MAIL", "FRIENDS SINCE"],
             data_callback=self._load_friendships_callback,
             key="-TABLE-",
             items_per_page=10,
@@ -41,16 +40,16 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.action_buttons = ActionButtonsComponent([
-            {"text": "Add Friend", "key": "-ADD_FRIEND-", "size": (12, 1)},
+            {"text": "Add Friend", "key": "-ADD_FRIEND-"},
             {
                 "text": "Remove Selected",
                 "key": "-REMOVE_SELECTED-",
-                "size": (15, 1),
+                "size": BUTTON_SIZES["MEDIUM"],
             },
             {
                 "text": "Transfer Ticket to Selected",
                 "key": "-TRANSFER_TICKET-",
-                "size": (25, 1),
+                "size": BUTTON_SIZES["EXTRA_LARGE"],
             },
         ])
 
@@ -64,12 +63,8 @@ class FriendshipManagerGUI(BaseGUI):
     def create_layout(self):
         layout = [
             *self.header.create_layout(),
-            [sg.HorizontalSeparator()],
-            [sg.Text("")],
             *self.table.create_layout(),
-            [sg.Text("")],
             *self.action_buttons.create_layout(),
-            [sg.Text("")],
         ]
 
         return layout
