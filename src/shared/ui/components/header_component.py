@@ -29,7 +29,10 @@ class HeaderComponent:
         if not self.buttons:
             return [[]]
 
-        return [self._build_button_row(), [sg.HSep()]]
+        return [
+            self._build_button_row(),
+            [sg.HSep(color=COLORS["light"], pad=((0, 0), (5, 0)))],
+        ]
 
     def _build_button_row(self) -> list[sg.Element]:
         if self.back_button:
@@ -59,7 +62,7 @@ class HeaderComponent:
             btn_config["text"],
             font=btn_config.get("font", FONTS["BUTTON"]),
             key=btn_config["key"],
-            size=btn_config.get("size"),
+            size=btn_config.get("size", BUTTON_SIZES["SMALL"]),
             button_color=btn_config.get("button_color"),
             pad=btn_config.get("pad", (5, 5)),
         )
