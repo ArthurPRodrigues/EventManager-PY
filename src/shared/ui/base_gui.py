@@ -117,14 +117,14 @@ class BaseGUI(ABC):
             [
                 sg.Image(
                     filename=os.path.join("assets", "png", "badge-check.png"),
-                    pad=((20, 0), (0, 20)),
+                    pad=((20, 0), (10, 20)),
                 ),
                 sg.Text(
                     message,
                     font=FONTS["POPUP_LABEL"],
                     justification="center",
                     auto_size_text=True,
-                    pad=((10, 20), (0, 20)),
+                    pad=((10, 20), (10, 20)),
                 ),
             ],
             [
