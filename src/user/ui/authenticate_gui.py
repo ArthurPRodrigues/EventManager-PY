@@ -125,7 +125,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Insert your details to continue",
+                    "Please log in to continue",
                     font=FONTS["SUBTITLE"],
                     justification="center",
                     pad=(20, 20),
