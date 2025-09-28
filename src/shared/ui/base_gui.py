@@ -1,9 +1,11 @@
+import os
 from abc import ABC, abstractmethod
 
 import FreeSimpleGUI as sg
 
 from shared.infra.error_logger import log_error
-from shared.ui.styles import COLORS
+from shared.ui.components.action_buttons_component import ActionButtonsComponent
+from shared.ui.styles import COLORS, FONTS
 
 sg.theme_add_new(
     "FESTUMTheme",
@@ -18,6 +20,22 @@ sg.theme_add_new(
         "SLIDER_DEPTH": 0,
         "PROGRESS_DEPTH": 0,
         "BORDER": 0,
+    },
+)
+
+sg.theme_add_new(
+    "ConfirmationPopupTheme",
+    {
+        "BACKGROUND": COLORS["light"],
+        "TEXT": COLORS["black"],
+        "INPUT": COLORS["white"],
+        "TEXT_INPUT": COLORS["black"],
+        "BUTTON": (COLORS["white"], COLORS["primary_lighter"]),
+        "SCROLL": COLORS["primary"],  # Same as FESTUMTheme
+        "PROGRESS": (COLORS["secondary"], COLORS["primary"]),  # Same as FESTUMTheme
+        "SLIDER_DEPTH": 0,  # Same as FESTUMTheme
+        "PROGRESS_DEPTH": 0,  # Same as FESTUMTheme
+        "BORDER": 0,  # Same as FESTUMTheme
     },
 )
 
@@ -96,8 +114,52 @@ class BaseGUI(ABC):
 
     def show_confirmation_popup(self, message: str, title: str = "Confirmation"):
         """Common helper method for confirmation popups"""
-        result = sg.popup_yes_no(message, title=title)
-        return result == "Yes"
+        current_theme = sg.theme()
+        sg.theme("ConfirmationPopupTheme")
+
+        action_buttons = ActionButtonsComponent([
+            {
+                "text": "Yes",
+                "key": "-YES-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "button_color": (COLORS["white"], COLORS["primary_lighter"]),
+            },
+            {
+                "text": "No",
+                "key": "-NO-",
+                "font": FONTS["SECONDARY_BUTTON"],
+                "button_color": (COLORS["dark"], COLORS["light"]),
+            },
+        ])
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "circle-question-mark.png"),
+                    pad=((20, 0), (0, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (0, 20)),
+                ),
+            ],
+            *action_buttons.create_layout(),
+        ]
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+        event, _ = window.read()
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event == "-YES-"
 
     def show_error_popup(self, message: str, title: str = "Error"):
         """Common helper method for error popups with logging"""
