@@ -15,7 +15,7 @@ class HeaderComponent:
         self.buttons = []
         if self.back_button:
             self.buttons.append({
-                "text": "Back",
+                "text": "< Back",
                 "font": FONTS["BUTTON"],
                 "key": "-BACK-",
                 "size": BUTTON_SIZES["EXTRA_SMALL"],
