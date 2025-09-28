@@ -18,13 +18,13 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
 from shared.infra.persistence.sqlite import SQLiteDatabase
-from ticket.application.validate_ticket_use_case import ValidateTicketUseCase
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
 from user.application.create_user_use_case import CreateUserUseCase
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
+# TODO: Uncomment ticket use case lines when event repository is implemented
 @dataclass
 class CompositionRoot:
     db: SQLiteDatabase
@@ -39,6 +39,7 @@ class CompositionRoot:
     validate_ticket_use_case: ValidateTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
+    # validate_ticket_use_case: ValidateTicketUseCase
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
@@ -50,6 +51,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     user_repo = SqliteUsersRepository(db)
     tickets_repo = SqliteTicketsRepository(db)
     event_repo = SqliteEventRepository(db)
+    tickets_repo = SqliteTicketsRepository(db)  # noqa: F841
 
     # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(
@@ -64,6 +66,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
     validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
     list_event_use_case = ListEventUseCase(event_repo)
+    # validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
 
     return CompositionRoot(
         db=db,
@@ -78,4 +81,5 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         event_repo=event_repo,
         friendship_repo=friendship_repo,
         user_repo=user_repo,
+        # validate_ticket_use_case=validate_ticket_use_case,
     )
