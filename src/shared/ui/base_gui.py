@@ -5,7 +5,7 @@ import FreeSimpleGUI as sg
 
 from shared.infra.error_logger import log_error
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
-from shared.ui.styles import COLORS, FONTS
+from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS
 
 sg.theme_add_new(
     "FESTUMTheme",
@@ -24,7 +24,7 @@ sg.theme_add_new(
 )
 
 sg.theme_add_new(
-    "ConfirmationPopupTheme",
+    "PopupTheme",
     {
         "BACKGROUND": COLORS["light"],
         "TEXT": COLORS["black"],
@@ -108,6 +108,49 @@ class BaseGUI(ABC):
         """Common helper method for info popups"""
         sg.popup(message, title=title)
 
+    def show_success_popup(self, message: str, title: str = "Success"):
+        """Common helper method for success popups"""
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "badge-check.png"),
+                    pad=((20, 0), (0, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (0, 20)),
+                ),
+            ],
+            [
+                sg.Button(
+                    "OK",
+                    key="-YES-",
+                    font=FONTS["PRIMARY_BUTTON"],
+                    button_color=(COLORS["white"], COLORS["success"]),
+                    size=BUTTON_SIZES["SMALL"],
+                ),
+            ],
+        ]
+
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+        event, _ = window.read()
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event
+
     def show_warning_popup(self, message: str, title: str = "Warning"):
         """Common helper method for warning popups"""
         sg.popup(message, title=title)
@@ -115,7 +158,7 @@ class BaseGUI(ABC):
     def show_confirmation_popup(self, message: str, title: str = "Confirmation"):
         """Common helper method for confirmation popups"""
         current_theme = sg.theme()
-        sg.theme("ConfirmationPopupTheme")
+        sg.theme("PopupTheme")
 
         action_buttons = ActionButtonsComponent([
             {
