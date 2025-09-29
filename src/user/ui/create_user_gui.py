@@ -33,11 +33,11 @@ class CreateUserGUI(BaseGUI):
             *self.header.create_layout(),
             [sg.HorizontalSeparator()],
             [
-                sg.Text("Name*", size=(8, 1)),
+                sg.Text("Name*", size=(12, 1)),
                 sg.Input(key="-NAME-"),
             ],
             [
-                sg.Text("Email*", size=(8, 1)),
+                sg.Text("Email*", size=(12, 1)),
                 sg.Input(key="-EMAIL-"),
             ],
             [
