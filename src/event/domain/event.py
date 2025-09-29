@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from .errors import (
@@ -19,7 +19,7 @@ class Event:
     location: str
     start_date: datetime
     end_date: datetime
-    created_at: datetime
+    created_at: datetime = field(default_factory=datetime.utcnow)
     tickets_available: int
     organizer_id: int
 
