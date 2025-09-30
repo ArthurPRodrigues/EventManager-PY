@@ -8,7 +8,7 @@ from events.domain.errors import (
     InvalidNameError,
     InvalidOrganizerIDError,
     InvalidStartDateError,
-    InvalidTicketsAvaliableError,
+    InvalidTicketsAvailableError,
 )
 
 
@@ -30,7 +30,7 @@ class Events:
         location: str,
         name: str,
         start_date: datetime,
-        tickets_avaliable: int,
+        tickets_available: int,
         organizer_id: int,
     ) -> "Events":
         if not created_at or not isinstance(created_at, datetime):
@@ -43,8 +43,8 @@ class Events:
             raise InvalidNameError(name)
         if not start_date or not isinstance(start_date, datetime):
             raise InvalidStartDateError(start_date)
-        if not tickets_avaliable or not isinstance(tickets_avaliable, int):
-            raise InvalidTicketsAvaliableError(tickets_avaliable)
+        if not tickets_available or not isinstance(tickets_available, int):
+            raise InvalidTicketsAvailableError(tickets_available)
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIDError(organizer_id)
 
@@ -54,6 +54,6 @@ class Events:
             location=location,
             name=name,
             start_date=start_date,
-            tickets_avaliable=tickets_avaliable,
+            tickets_available=tickets_available,
             organizer_id=organizer_id,
         )
