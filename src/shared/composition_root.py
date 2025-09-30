@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from events.application.list_event_use_case import ListEventsUseCase
+# from events.application.list_event_use_case import ListEventsUseCase
 from events.infra.persistence.SqliteEventsRepository import SqliteEventsRepository
+from events.application.create_event_use_case import CreateEventUseCase
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
 )
@@ -34,7 +35,8 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    list_event_use_case: ListEventsUseCase
+    # list_event_use_case: ListEventsUseCase
+    create_event_use_case: CreateEventUseCase
     event_repo: SqliteEventsRepository
 
 
@@ -59,7 +61,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     )
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
-    list_event_use_case = ListEventsUseCase(event_repo)
+    # list_event_use_case = ListEventsUseCase(event_repo)
+    create_event_use_case = CreateEventUseCase(event_repo, user_repo)
 
     return CompositionRoot(
         db=db,
@@ -69,7 +72,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         list_friendships_use_case=list_friendships_use_case,
         create_user_use_case=create_user_use_case,
         authenticate_user_use_case=authenticate_user_use_case,
-        list_event_use_case=list_event_use_case,
+        # list_event_use_case=list_event_use_case,
+        create_event_use_case=create_event_use_case,
         event_repo=event_repo,
         friendship_repo=friendship_repo,
         user_repo=user_repo,
