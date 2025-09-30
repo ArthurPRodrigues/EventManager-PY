@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 from event.application.list_event_use_case import ListEventUseCase
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
+from events.application.list_event_use_case import ListEventsUseCase
+from events.infra.persistence.SqliteEventsRepository import SqliteEventsRepository
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
 )
@@ -37,12 +39,8 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    validate_ticket_use_case: ValidateTicketUseCase
-    list_event_use_case: ListEventUseCase
-    event_repo: SqliteEventRepository
-    # validate_ticket_use_case: ValidateTicketUseCase
-    # smtp_email_service: SmtpEmailService
-    # html_template_engine: HtmlTemplateEngine
+    list_event_use_case: ListEventsUseCase
+    event_repo: SqliteEventsRepository
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
@@ -61,6 +59,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
+    event_repo = SqliteEventsRepository(db)
     tickets_repo = SqliteTicketsRepository(db)
     event_repo = SqliteEventRepository(db)
     tickets_repo = SqliteTicketsRepository(db)  # noqa: F841
@@ -76,6 +75,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     )
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
+    list_event_use_case = ListEventsUseCase(event_repo)
     validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
     list_event_use_case = ListEventUseCase(event_repo)
     # validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
@@ -93,7 +93,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         event_repo=event_repo,
         friendship_repo=friendship_repo,
         user_repo=user_repo,
-        # validate_ticket_use_case=validate_ticket_use_case,
-        # smtp_email_service=smtp_email_service,
-        # html_template_engine=html_template_engine,
+        list_event_use_case=list_event_use_case,
+        event_repo=event_repo,
+        friendship_repo=friendship_repo,
+        user_repo=user_repo,
     )
