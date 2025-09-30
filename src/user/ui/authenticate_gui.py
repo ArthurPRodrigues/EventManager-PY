@@ -1,6 +1,6 @@
 import FreeSimpleGUI as sg
 
-from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
+from events.ui.list_events_gui import ListEventsGui
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
@@ -73,14 +73,15 @@ class AuthenticateGUI(BaseGUI):
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            if self.auth_context.role.value == "CLIENT":
+            if (
+                self.auth_context.role.value == "CLIENT"
+                or self.auth_context.role.value == "ORGANIZER"
+            ):
                 self.navigator.push_screen(
-                    FriendshipManagerGUI, auth_context=self.auth_context
+                    ListEventsGui, auth_context=self.auth_context
                 )
             else:
-                self.show_info_popup(
-                    "Interfaces for ORGANIZER and STAFF are not implemented yet."
-                )
+                self.show_info_popup("Interface for STAFF are not implemented yet.")
 
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
