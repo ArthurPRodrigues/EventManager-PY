@@ -233,13 +233,16 @@ class BaseGUI(ABC):
             ],
             *action_buttons.create_layout(),
         ]
+
         window = sg.Window(
             title,
             layout,
             modal=True,
             element_justification="center",
         )
+
         event, _ = window.read()
+
         window.close()
 
         sg.theme(current_theme)
@@ -295,7 +298,7 @@ class BaseGUI(ABC):
         self,
         dialog_title: str,
         instruction_label: str,
-        input_placeholder: str = "",
+        input_tooltip: str = "",
         confirm_button: str = "Confirm",
         cancel_button: str = "Cancel",
     ) -> tuple[bool, str]:
@@ -303,27 +306,58 @@ class BaseGUI(ABC):
         Shows a standardized input dialog with title, instruction, input field and buttons
         Returns: (was_confirmed, input_value)
         """
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        action_buttons = ActionButtonsComponent([
+            {
+                "text": confirm_button,
+                "key": "-CONFIRM-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "button_color": (COLORS["white"], COLORS["primary_lighter"]),
+            },
+            {
+                "text": cancel_button,
+                "key": "-CANCEL-",
+                "font": FONTS["SECONDARY_BUTTON"],
+                "button_color": (COLORS["dark"], COLORS["light"]),
+            },
+        ])
+
         layout = [
-            [sg.Text(instruction_label, font=("Arial", 12), justification="center")],
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "square-pen.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    instruction_label,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
             [
                 sg.Input(
-                    default_text=input_placeholder,
                     key="-INPUT-",
-                    size=(40, 1),
+                    tooltip=input_tooltip,
+                    pad=(30, 10),
                     focus=True,
+                    font=FONTS["LARGE_INPUT"],
+                    background_color=COLORS["white"],
+                    size=(25, 1),
+                    justification="center",
                 )
             ],
-            [
-                sg.Button(confirm_button, key="-CONFIRM-", size=(12, 1)),
-                sg.Button(cancel_button, key="-CANCEL-", size=(12, 1)),
-            ],
+            *action_buttons.create_layout(),
         ]
 
-        dialog_window = sg.Window(
+        window = sg.Window(
             dialog_title,
             layout,
             modal=True,
-            resizable=False,
             finalize=True,
             element_justification="center",
         )
@@ -332,7 +366,7 @@ class BaseGUI(ABC):
         input_value = ""
 
         while True:
-            event, values = dialog_window.read()
+            event, values = window.read()
 
             if event in (sg.WIN_CLOSED, "-CANCEL-"):
                 result = False
@@ -342,5 +376,8 @@ class BaseGUI(ABC):
                 input_value = values["-INPUT-"].strip()
                 break
 
-        dialog_window.close()
+        window.close()
+
+        sg.theme(current_theme)
+
         return result, input_value

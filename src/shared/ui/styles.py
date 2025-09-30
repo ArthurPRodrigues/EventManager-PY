@@ -19,6 +19,7 @@ FONTS = {
     "LABEL": ("Montserrat", 11),
     "POPUP_LABEL": ("Montserrat", 12),
     "INPUT": ("Montserrat", 11),
+    "LARGE_INPUT": ("Montserrat", 14),
     "BUTTON": ("Montserrat", 12),
     "PRIMARY_BUTTON": ("Montserrat", 12, "bold"),
     "SECONDARY_BUTTON": ("Montserrat", 12, "underline"),

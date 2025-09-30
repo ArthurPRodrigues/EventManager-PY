@@ -94,7 +94,7 @@ class FriendshipManagerGUI(BaseGUI):
         confirmed, friend_email = self.show_input_dialog(
             dialog_title="Add friend",
             instruction_label="Enter Friend Email",
-            input_placeholder="",
+            input_tooltip="Enter the email address of the friend you want to add (e.g., friend@example.com)",
             confirm_button="Add Friend",
             cancel_button="Cancel",
         )
