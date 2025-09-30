@@ -8,6 +8,7 @@ from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
 from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
+from ticket.ui.validate_ticket_gui import ValidateTicketGUI
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
@@ -185,7 +186,7 @@ class AuthenticateGUI(BaseGUI):
                     ListEventOrganizerGui, auth_context=self.auth_context
                 )
             else:
-                self.show_info_popup("Interface for STAFF are not implemented yet.")
+                self.show_info_popup("Interface for STAFF is not implemented yet.")
 
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
