@@ -1,6 +1,7 @@
 import os
 
 import FreeSimpleGUI as sg
+from events.ui.list_events_gui import ListEventsGui
 
 from event.ui.list_event_client_gui import ListEventClientGui
 from event.ui.list_event_organizer_gui import ListEventOrganizerGui
@@ -8,7 +9,6 @@ from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
 from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
-from ticket.ui.validate_ticket_gui import ValidateTicketGUI
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
@@ -177,7 +177,10 @@ class AuthenticateGUI(BaseGUI):
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            if self.auth_context.role.value == "CLIENT":
+            if (
+                self.auth_context.role.value == "CLIENT"
+                or self.auth_context.role.value == "ORGANIZER"
+            ):
                 self.navigator.push_screen(
                     ListEventClientGui, auth_context=self.auth_context
                 )
