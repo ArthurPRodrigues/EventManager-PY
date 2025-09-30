@@ -41,4 +41,19 @@ class SQLiteDatabase:
                     )
                 """
             )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    created_at datetime NOT NULL,
+                    end_date datetime NOT NULL,
+                    location TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    start_date datetime NOT NULL,
+                    tickets_available INTEGER NOT NULL,
+                    organizer_id INTEGER NOT NULL,
+                    FOREIGN KEY(organizer_id) REFERENCES users(id) ON DELETE CASCADE
+                    )
+                """
+            )
             conn.commit()
