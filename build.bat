@@ -29,18 +29,32 @@ goto help
 
 :help
 echo Targets:
-echo   install     - Create venv and install production dependencies
-echo   install-dev - Create venv and install all dependencies (prod + dev)
+echo   install     - Create venv, install fonts, and install production dependencies
+echo   install-dev - Create venv, install fonts, and install all dependencies (prod + dev)
 echo   run         - Start the application
 echo   clean       - Remove caches and build artifacts
 echo   play ^<name^> - Run playground script (e.g., build.bat play friendship)
 goto end
+
+:install_fonts
+echo Installing fonts...
+set FONTS_DIR=%LOCALAPPDATA%\Microsoft\Windows\Fonts
+if not exist "%FONTS_DIR%" mkdir "%FONTS_DIR%"
+if exist assets\fonts (
+    echo Copying fonts to user fonts directory...
+    xcopy /Y /Q assets\fonts\* "%FONTS_DIR%\" 2>nul
+    echo Fonts installed successfully!
+) else (
+    echo Warning: assets\fonts directory not found, skipping font installation.
+)
+goto :eof
 
 :install
 if not exist %VENV_DIR% (
     echo Creating virtual environment...
     %PYTHON% -m venv %VENV_DIR%
 )
+call :install_fonts
 echo Upgrading pip...
 %VENV_PIP% install --upgrade pip
 echo Installing production dependencies...
@@ -53,6 +67,7 @@ if not exist %VENV_DIR% (
     echo Creating virtual environment...
     %PYTHON% -m venv %VENV_DIR%
 )
+call :install_fonts
 echo Upgrading pip...
 %VENV_PIP% install --upgrade pip
 echo Installing production dependencies...
