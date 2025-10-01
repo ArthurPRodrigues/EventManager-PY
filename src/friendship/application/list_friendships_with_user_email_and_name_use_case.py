@@ -10,6 +10,7 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
 )
 
 
+# TODO: change name to <something>_dto
 @dataclass(frozen=True)
 class FriendshipView:
     id: int
