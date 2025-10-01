@@ -41,9 +41,15 @@ echo Installing fonts...
 set FONTS_DIR=%LOCALAPPDATA%\Microsoft\Windows\Fonts
 if not exist "%FONTS_DIR%" mkdir "%FONTS_DIR%"
 if exist assets\fonts (
-    echo Copying fonts to user fonts directory...
-    xcopy /Y /Q assets\fonts\* "%FONTS_DIR%\" 2>nul
-    echo Fonts installed successfully!
+    dir /b assets\fonts\*.ttf assets\fonts\*.otf 2>nul | findstr . >nul
+    if %ERRORLEVEL% EQU 0 (
+        echo Copying fonts to user fonts directory...
+        xcopy /Y /I /Q assets\fonts\*.ttf "%FONTS_DIR%\" 2>nul
+        xcopy /Y /I /Q assets\fonts\*.otf "%FONTS_DIR%\" 2>nul
+        echo Fonts installed successfully!
+    ) else (
+        echo Warning: No font files found in assets\fonts, skipping font installation.
+    )
 ) else (
     echo Warning: assets\fonts directory not found, skipping font installation.
 )
