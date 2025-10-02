@@ -16,12 +16,12 @@ from events.domain.errors import (
 class Events:
     created_at: datetime
     end_date: datetime
-    id: int
     location: str
     name: str
     start_date: datetime
     tickets_available: int
     organizer_id: int
+    id: int | None = None
 
     @staticmethod
     def register(

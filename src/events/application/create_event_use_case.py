@@ -31,7 +31,8 @@ class CreateEventUseCase:
             end_date = input_dto.end_date,
             location = input_dto.location,
             tickets_available = input_dto.tickets_available,
-            organizer_id = organizer_id
+            organizer_id = organizer_id,
+            created_at= datetime.now()
         )
 
         created_event = self._events_repository.add(event)

@@ -78,6 +78,7 @@ class SqliteEventsRepository:
                 """, (
                     event.name,
                     event.created_at.isoformat(),
+                    event.end_date.isoformat(),
                     event.location,
                     event.start_date.isoformat(),
                     event.tickets_available,

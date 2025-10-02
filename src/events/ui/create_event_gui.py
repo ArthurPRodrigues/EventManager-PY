@@ -1,4 +1,5 @@
 import os
+import datetime
 
 import FreeSimpleGUI as sg
 
@@ -192,10 +193,10 @@ class CreateEventGUI(BaseGUI):
         try:
             input_dto = CreateEventInputDto(
                 name=name, 
-                start_date=start_date, 
-                end_date=end_date, 
+                start_date=datetime.datetime.strptime(start_date, '%d/%m/%y'), 
+                end_date=datetime.datetime.strptime(end_date, '%d/%m/%y'), 
                 location=location, 
-                tickets_available=tickets_available,
+                tickets_available=int(tickets_available),
                 organizer_id=self.auth_context.id
             )
 
