@@ -85,7 +85,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
             table_data = self._convert_friendships_to_table_data(friendships)
 
             return {"data": table_data, "total": total}
-
+        # TODO: show popup error instead of print
         except Exception as e:
             print(f"Erro ao carregar amizades: {e!s}")
             return {"data": [], "total": 0}
