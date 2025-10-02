@@ -7,6 +7,7 @@ from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
 from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
+from ticket.ui.validate_ticket_gui import ValidateTicketGUI
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
@@ -179,11 +180,14 @@ class AuthenticateGUI(BaseGUI):
                 self.navigator.push_screen(
                     FriendshipManagerGUI, auth_context=self.auth_context
                 )
-            else:
-                self.show_info_popup(
-                    "Interfaces for ORGANIZER and STAFF are not implemented yet."
+
+            elif self.auth_context.role.value == "STAFF":
+                self.navigator.push_screen(
+                    ValidateTicketGUI, auth_context=self.auth_context
                 )
 
+            else:
+                self.show_info_popup("Interfaces for ORGANIZER is not implemented yet.")
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
 
