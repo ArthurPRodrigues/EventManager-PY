@@ -85,7 +85,7 @@ class SqliteEventsRepository:
                     event.organizer_id,
                 )
             )
-            event_id = cursor.lastrowid()
+            event_id = cursor.lastrowid
             conn.commit()
             return self.get_by_id(event_id)
         
@@ -111,6 +111,7 @@ class SqliteEventsRepository:
             location = location,
             tickets_available = tickets_available,
             organizer_id = organizer_id,
+            created_at = datetime.now(),
         )
 
         return Events(
@@ -120,7 +121,8 @@ class SqliteEventsRepository:
             location=ev.location,
             tickets_available= ev.tickets_available,
             organizer_id= ev.organizer_id,
-            id=id_
+            id=id_,
+            created_at=ev.created_at,
         )
     
     def update(self, event: Events) -> None:
@@ -144,7 +146,7 @@ class SqliteEventsRepository:
             conn.commit()
 
     def delete(self, id: int) -> None:
-        with self._db.connect as conn:
+        with self._db.connect() as conn:
             conn.execute(
                 """
                 DELETE FROM events

@@ -25,7 +25,7 @@ class CreateEventUseCase:
     def execute(self, input_dto: CreateEventInputDto) -> Events:
         organizer_id = input_dto.organizer_id
 
-        event = Events.register(
+        event = Events.create(
             name = input_dto.name,
             start_date = input_dto.start_date,
             end_date = input_dto.end_date,

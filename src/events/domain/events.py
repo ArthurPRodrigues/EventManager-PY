@@ -11,6 +11,8 @@ from events.domain.errors import (
     InvalidTicketsAvailableError,
 )
 
+from events.application.errors import PastDateError
+
 
 @dataclass(frozen=True)
 class Events:
@@ -24,7 +26,7 @@ class Events:
     id: int | None = None
 
     @staticmethod
-    def register(
+    def create(
         created_at: datetime,
         end_date: datetime,
         location: str,
@@ -47,6 +49,9 @@ class Events:
             raise InvalidTicketsAvailableError(tickets_available)
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIDError(organizer_id)
+        
+        if start_date < created_at or end_date < created_at:
+            raise PastDateError(start_date if start_date < created_at else end_date)
 
         return Events(
             created_at=created_at,
