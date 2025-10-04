@@ -1,6 +1,6 @@
 import FreeSimpleGUI as sg
 
-from events.ui.list_events_gui import ListEventGui
+from events.ui.list_event_gui import ListEventGui
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
