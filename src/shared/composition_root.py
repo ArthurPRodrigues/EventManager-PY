@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from events.application.list_event_use_case import ListEventsUseCase
-from events.infra.persistence.SqliteEventsRepository import SqliteEventsRepository
+from events.application.list_event_use_case import ListEventUseCase
+from events.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
 )
@@ -34,11 +34,10 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    list_event_use_case: ListEventsUseCase
-    event_repo: SqliteEventsRepository
+    list_event_use_case: ListEventUseCase
+    event_repo: SqliteEventRepository
 
 
-# TODO: Maybe adjust later to include frontend
 def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
@@ -46,7 +45,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
-    event_repo = SqliteEventsRepository(db)
+    event_repo = SqliteEventRepository(db)
 
     # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(
@@ -59,7 +58,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     )
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
-    list_event_use_case = ListEventsUseCase(event_repo)
+    list_event_use_case = ListEventUseCase(event_repo)
 
     return CompositionRoot(
         db=db,
