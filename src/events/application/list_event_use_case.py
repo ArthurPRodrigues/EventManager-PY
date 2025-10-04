@@ -10,12 +10,6 @@ from events.infra.persistence.sqlite_event_repository import SqliteEventReposito
 class ListEventInputDto:
     page: int = 1
     page_size: int = 10
-    created_at: str | None = None
-    end_date: str | None = None
-    location: str | None = None
-    name: str | None = None
-    start_date: str | None = None
-    tickets_available: int | None = None
     organizer_id: int | None = None
 
 
@@ -50,12 +44,6 @@ class ListEventUseCase:
         rows, total = self._events_repository.list(
             page=input_dto.page,
             page_size=input_dto.page_size,
-            created_at=input_dto.created_at,
-            end_date=input_dto.end_date,
-            location=input_dto.location,
-            name=input_dto.name,
-            start_date=input_dto.start_date,
-            tickets_available=input_dto.tickets_available,
             organizer_id=input_dto.organizer_id,
         )
 
