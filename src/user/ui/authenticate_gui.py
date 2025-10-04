@@ -1,6 +1,6 @@
 import FreeSimpleGUI as sg
 
-from events.ui.list_events_gui import ListEventsGui
+from events.ui.list_events_gui import ListEventGui
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
@@ -30,13 +30,13 @@ class AuthenticateGUI(BaseGUI):
 
     def create_layout(self):
         layout = [
-            [sg.Text("Email", size=(8, 1)), sg.Input(key="-EMAIL-")],
+            [sg.Text("Email", size=(12, 1)), sg.Input(key="-EMAIL-")],
             [
-                sg.Text("Password", size=(8, 1)),
+                sg.Text("Password", size=(12, 1)),
                 sg.Input(key="-PASSWORD-", password_char="*"),
             ],
             [
-                sg.Text("Role", size=(8, 1)),
+                sg.Text("Role", size=(12, 1)),
                 sg.Combo(
                     self.roles,
                     default_value=self.roles[0],
@@ -77,9 +77,7 @@ class AuthenticateGUI(BaseGUI):
                 self.auth_context.role.value == "CLIENT"
                 or self.auth_context.role.value == "ORGANIZER"
             ):
-                self.navigator.push_screen(
-                    ListEventsGui, auth_context=self.auth_context
-                )
+                self.navigator.push_screen(ListEventGui, auth_context=self.auth_context)
             else:
                 self.show_info_popup("Interface for STAFF are not implemented yet.")
 
