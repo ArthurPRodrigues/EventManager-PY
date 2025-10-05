@@ -1,8 +1,7 @@
 from datetime import datetime
 
-from ticket.domain.ticket_status import TicketStatus
-
 from ticket.domain.errors import InvalidCodeError
+from ticket.domain.ticket_status import TicketStatus
 
 
 class Ticket:
@@ -13,7 +12,7 @@ class Ticket:
         status: TicketStatus,
         event_id: int,
         client_id: int,
-        id: int,
+        id: int | None = None,
     ):
         self.code = code
         self.created_at = created_at
