@@ -51,3 +51,9 @@ class InvalidStaffsIdError(DomainError):
     def __init__(self, staffs_id) -> None:
         message = f'Invalid staffs_id: "{staffs_id}".'
         super().__init__(message)
+
+
+class StaffAlreadyAcceptedError(DomainError):
+    def __init__(self, staff_id) -> None:
+        message = f'Staff with id "{staff_id}" has already been accepted.'
+        super().__init__(message)
