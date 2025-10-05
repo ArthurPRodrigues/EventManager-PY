@@ -39,6 +39,19 @@ class FriendshipManagerGUI(BaseGUI):
             key="-TABLE-",
             items_per_page=10,
             has_hidden_id_column=True,
+            filters=[
+                {
+                    "text": "Accepted Friendship",
+                    "circle_color": COLORS["dark"],
+                    "default": True,
+                    "filter_value": "ACCEPTED",
+                },
+                {
+                    "text": "Pending Friendship",
+                    "circle_color": COLORS["dark"],
+                    "filter_value": "PENDING",
+                },
+            ],
         )
 
         self.action_buttons = ActionButtonsComponent([
@@ -145,13 +158,15 @@ class FriendshipManagerGUI(BaseGUI):
         else:
             self.show_warning_popup("No row selected!")
 
-    def _load_friendships_callback(self, page: int, items_per_page: int):
+    def _load_friendships_callback(
+        self, page: int, items_per_page: int, status: str = "ACCEPTED"
+    ):
         try:
             input_dto = ListFriendshipsInputDto(
                 page=page,
                 size=items_per_page,
                 participant_client_id=self.auth_context.id,
-                status=FriendshipStatus.ACCEPTED,
+                status=FriendshipStatus(status),
             )
 
             paginated_friendships = self.use_cases.list_friendships_use_case.execute(
