@@ -8,7 +8,6 @@ from event.domain.errors import (
     InvalidEndDateError,
     InvalidLocationError,
     InvalidNameError,
-    InvalidOrganizerIdError,
     InvalidStartDateError,
     InvalidTicketsAvailableError,
     StaffAlreadyAddedError,
@@ -24,7 +23,7 @@ class Event:
     end_date: datetime
     tickets_available: int
     organizer_id: int
-    staffs_id: list
+    staffs_id: list[str] = None
     id: int | None = None
 
     @staticmethod
@@ -35,7 +34,6 @@ class Event:
         start_date: datetime,
         end_date: datetime,
         tickets_available: int,
-        organizer_id: int,
     ) -> Event:
         if not name or not isinstance(name, str) or not name.strip():
             raise InvalidNameError(name)
@@ -47,10 +45,8 @@ class Event:
             raise InvalidStartDateError(start_date)
         if not end_date or not isinstance(end_date, datetime):
             raise InvalidEndDateError(end_date)
-        if not tickets_available or not isinstance(tickets_available, int):
+        if not isinstance(tickets_available, int) or tickets_available < 0:
             raise InvalidTicketsAvailableError(tickets_available)
-        if not organizer_id or not isinstance(organizer_id, int):
-            raise InvalidOrganizerIdError(organizer_id)
 
         return Event(
             name=name,
@@ -59,7 +55,6 @@ class Event:
             start_date=start_date,
             end_date=end_date,
             tickets_available=tickets_available,
-            organizer_id=organizer_id,
         )
 
     def add_staff(self, staff_id: str) -> Event:
