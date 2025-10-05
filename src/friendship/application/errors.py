@@ -32,15 +32,3 @@ class FriendshipNotFoundError(AppError):
     def __init__(self, friendship_id: int) -> None:
         message = f'Friendship with ID "{friendship_id}" does not exist.'
         super().__init__(message)
-
-
-class InvalidPageError(AppError):
-    def __init__(self, page: int) -> None:
-        message = f"Invalid page number: {page}."
-        super().__init__(message)
-
-
-class InvalidPageSizeError(AppError):
-    def __init__(self, size: int) -> None:
-        message = f"Invalid page size: {size}."
-        super().__init__(message)

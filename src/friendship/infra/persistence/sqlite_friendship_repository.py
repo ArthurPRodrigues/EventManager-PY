@@ -3,6 +3,10 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import datetime
 
+from friendship.application.dtos import (
+    FriendshipSummary,
+    PaginatedFriendshipsDto,
+)
 from friendship.domain.friendship import Friendship
 from friendship.domain.friendship_status import FriendshipStatus
 from shared.infra.persistence.sqlite import SQLiteDatabase
@@ -70,7 +74,7 @@ class SqliteFriendshipRepository:
         participant_client_id: int | None = None,
         status: FriendshipStatus | None = None,
         accepted_at: datetime | None = None,
-    ) -> tuple[list[tuple], int]:
+    ) -> PaginatedFriendshipsDto:
         query = """
         SELECT
             f.id, f.status, f.accepted_at,
@@ -112,10 +116,12 @@ class SqliteFriendshipRepository:
                 count_params.append(requested_client_id)
 
         if status is not None:
+            status_enum_value = status.value
+
             query += " AND f.status = ?"
             count_query += " AND f.status = ?"
-            params.append(status.value)
-            count_params.append(status.value)
+            params.append(status_enum_value)
+            count_params.append(status_enum_value)
 
         if accepted_at is not None:
             query += " AND f.accepted_at = ?"
@@ -130,19 +136,18 @@ class SqliteFriendshipRepository:
             rows = conn.execute(query, params).fetchall()
             total_count = conn.execute(count_query, count_params).fetchone()[0]
 
-        converted_rows: list[tuple] = []
+        converted_rows: list[FriendshipSummary] = []
         for row in rows:
+            friendship_id, friendship_status, accepted_at_raw, *user_data = row
+
             (
-                friendship_id,
-                friendship_status,
-                accepted_at_raw,
                 requester_id,
                 requester_name,
                 requester_email,
                 requested_id,
                 requested_name,
                 requested_email,
-            ) = row
+            ) = user_data
 
             parsed_accepted_at = None
             if accepted_at_raw:
@@ -150,19 +155,26 @@ class SqliteFriendshipRepository:
                     str(accepted_at_raw).replace("Z", "+00:00")
                 )
 
-            converted_rows.append((
-                friendship_id,
-                friendship_status,
-                parsed_accepted_at,
-                requester_id,
-                requester_name,
-                requester_email,
-                requested_id,
-                requested_name,
-                requested_email,
-            ))
+            parsed_status = FriendshipStatus(friendship_status)
 
-        return converted_rows, total_count
+            converted_rows.append(
+                FriendshipSummary(
+                    id=friendship_id,
+                    requester_client_id=requester_id,
+                    requester_name=requester_name,
+                    requester_email=requester_email,
+                    requested_client_id=requested_id,
+                    requested_name=requested_name,
+                    requested_email=requested_email,
+                    status=parsed_status,
+                    accepted_at=parsed_accepted_at,
+                )
+            )
+
+        return PaginatedFriendshipsDto(
+            friendship_summaries=converted_rows,
+            total_friendships_count=total_count,
+        )
 
     def friendship_exists(
         self, requester_client_id: int, requested_client_id: int
