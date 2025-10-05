@@ -45,3 +45,9 @@ class InvalidOrganizerIdError(DomainError):
     def __init__(self, organizer_id) -> None:
         message = f'Invalid organizer_id: "{organizer_id}".'
         super().__init__(message)
+
+
+class InvalidStaffsIdError(DomainError):
+    def __init__(self, staffs_id) -> None:
+        message = f'Invalid staffs_id: "{staffs_id}".'
+        super().__init__(message)
