@@ -79,13 +79,18 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                 status=FriendshipStatus.PENDING,
             )
 
-            friendships, total = self.use_cases.list_friendships_use_case.execute(
+            paginated_friendships = self.use_cases.list_friendships_use_case.execute(
                 input_dto
             )
 
-            table_data = self._convert_friendships_to_table_data(friendships)
+            friendship_summaries, total_friendships_count = (
+                paginated_friendships.friendship_summaries,
+                paginated_friendships.total_friendships_count,
+            )
 
-            return {"data": table_data, "total": total}
+            table_data = self._convert_friendships_to_table_data(friendship_summaries)
+
+            return {"data": table_data, "total": total_friendships_count}
         # TODO: show popup error instead of print
         except Exception as e:
             print(f"Erro ao carregar amizades: {e!s}")

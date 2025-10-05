@@ -154,12 +154,18 @@ class FriendshipManagerGUI(BaseGUI):
                 status=FriendshipStatus.ACCEPTED,
             )
 
-            friendships, total = self.use_cases.list_friendships_use_case.execute(
+            paginated_friendships = self.use_cases.list_friendships_use_case.execute(
                 input_dto
             )
 
-            table_data = self._convert_friendships_to_table_data(friendships)
-            return {"data": table_data, "total": total}
+            friendship_summaries, total_friendships_count = (
+                paginated_friendships.friendship_summaries,
+                paginated_friendships.total_friendships_count,
+            )
+
+            table_data = self._convert_friendships_to_table_data(friendship_summaries)
+
+            return {"data": table_data, "total": total_friendships_count}
 
         # TODO: calls show_error_popup in except block
         except Exception as e:
