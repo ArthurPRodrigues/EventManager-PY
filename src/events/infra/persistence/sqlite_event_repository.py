@@ -43,3 +43,9 @@ class SqliteEventRepository:
         query = "SELECT id, name, location, start_date, end_date, tickets_available, organizer_id, created_at FROM events WHERE id = ?"
         with self._db.connect() as conn:
             return conn.execute(query, (event_id,)).fetchone()
+
+    def decrement_tickets_available(self, event_id: int) -> None:
+        query = "UPDATE events SET tickets_available = tickets_available - 1 WHERE id = ? AND tickets_available > 0"
+        with self._db.connect() as conn:
+            conn.execute(query, (event_id,))
+            conn.commit()
