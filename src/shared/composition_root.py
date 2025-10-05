@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from events.application.list_event_use_case import ListEventUseCase
-from events.infra.persistence.sqlite_event_repository import SqliteEventRepository
+from event.application.list_event_use_case import ListEventUseCase
+from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
 )
