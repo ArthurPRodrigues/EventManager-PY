@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 
 from event.domain.errors import (
@@ -9,9 +9,9 @@ from event.domain.errors import (
     InvalidLocationError,
     InvalidNameError,
     InvalidOrganizerIdError,
-    InvalidStaffsIdError,
     InvalidStartDateError,
     InvalidTicketsAvailableError,
+    StaffAlreadyAddedError,
 )
 
 
@@ -36,7 +36,6 @@ class Event:
         end_date: datetime,
         tickets_available: int,
         organizer_id: int,
-        staffs_id: list,
     ) -> Event:
         if not name or not isinstance(name, str) or not name.strip():
             raise InvalidNameError(name)
@@ -52,8 +51,6 @@ class Event:
             raise InvalidTicketsAvailableError(tickets_available)
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIdError(organizer_id)
-        if not staffs_id or not isinstance(staffs_id, list):
-            raise InvalidStaffsIdError(staffs_id)
 
         return Event(
             name=name,
@@ -63,5 +60,9 @@ class Event:
             end_date=end_date,
             tickets_available=tickets_available,
             organizer_id=organizer_id,
-            staffs_id=staffs_id,
         )
+
+    def add_staff(self, staff_id: str) -> Event:
+        if staff_id in self.staffs_id:
+            raise StaffAlreadyAddedError(staff_id)
+        return replace(self, staffs_id=[*self.staffs_id, staff_id])
