@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from friendship.application.errors import InvalidPageError, InvalidPageSizeError
 from friendship.domain.friendship_status import FriendshipStatus
 from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
@@ -44,11 +43,6 @@ class ListFriendshipsWithUserEmailAndNameUseCase:
     def execute(
         self, input_dto: ListFriendshipsInputDto
     ) -> tuple[list[FriendshipView], int]:
-        if input_dto.page < 1:
-            raise InvalidPageError(input_dto.page)
-        if input_dto.size < 1:
-            raise InvalidPageSizeError(input_dto.size)
-
         status_enum: FriendshipStatus | None = None
         if input_dto.status:
             status_enum = FriendshipStatus(input_dto.status)
