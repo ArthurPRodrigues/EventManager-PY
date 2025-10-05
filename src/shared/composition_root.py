@@ -77,7 +77,6 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
     event_repo = SqliteEventRepository(db)
-    tickets_repo = SqliteTicketsRepository(db)
 
     # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(
@@ -91,6 +90,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
     list_event_use_case = ListEventUseCase(event_repo)
+    redeem_ticket_use_case = RedeemTicketUseCase(ticket_repo, event_repo, user_repo)
     validate_ticket_use_case = ValidateTicketUseCase(
         tickets_repository=tickets_repo,
         events_repository=event_repo,
