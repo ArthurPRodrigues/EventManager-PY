@@ -138,17 +138,16 @@ class SqliteFriendshipRepository:
 
         converted_rows: list[FriendshipSummary] = []
         for row in rows:
+            friendship_id, friendship_status, accepted_at_raw, *user_data = row
+
             (
-                friendship_id,
-                friendship_status,
-                accepted_at_raw,
                 requester_id,
                 requester_name,
                 requester_email,
                 requested_id,
                 requested_name,
                 requested_email,
-            ) = row
+            ) = user_data
 
             parsed_accepted_at = None
             if accepted_at_raw:
