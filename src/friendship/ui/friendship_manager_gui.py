@@ -167,9 +167,8 @@ class FriendshipManagerGUI(BaseGUI):
 
             return {"data": table_data, "total": total_friendships_count}
 
-        # TODO: calls show_error_popup in except block
         except Exception as e:
-            print(f"Erro ao carregar amizades: {e!s}")
+            self.show_error_popup(f"Error loading friendships: {e}")
             return {"data": [], "total": 0}
 
     def _convert_friendships_to_table_data(self, friendships):
