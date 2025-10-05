@@ -3,18 +3,22 @@ from typing import Any
 
 import FreeSimpleGUI as sg
 
+from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, LABEL_SIZES
+
 
 class TableComponent:
     def __init__(
         self,
         headers: list[str],
         data_callback: Callable[[int, int], dict[str, Any]],
+        pad: Any | None = (10, 20),
         key: str = "-TABLE-",
         items_per_page: int = 10,
         has_hidden_id_column: bool = False,
     ):
         self.headers = headers
         self.data_callback = data_callback
+        self.pad = pad
         self.key = key
         self.items_per_page = items_per_page
         self.has_hidden_id_column = has_hidden_id_column
@@ -35,55 +39,74 @@ class TableComponent:
         if self.has_hidden_id_column:
             visible_columns = [False] + [True] * (len(self.headers) - 1)
 
-        table_layout = [
-            sg.Table(
-                values=self.data,
-                headings=self.headers,
-                max_col_width=35,
-                auto_size_columns=True,
-                display_row_numbers=False,
-                justification="left",
-                num_rows=self.items_per_page,
-                alternating_row_color="lightgray",
-                key=self.key,
-                selected_row_colors="red on yellow",
-                enable_events=True,
-                expand_x=True,
-                expand_y=True,
-                enable_click_events=True,
-                visible_column_map=visible_columns,
-                select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-            )
-        ]
-
         pagination_layout = [
-            sg.Push(),
-            sg.Text(f"Total: {self.total_items}", key=self.total_items_key),
+            [
+                sg.Button(
+                    "< Previous",
+                    key=self.prev_key,
+                    disabled=(self.current_page <= 1),
+                    size=BUTTON_SIZES["SMALL"],
+                    font=FONTS["PAGINATION_BUTTON"],
+                ),
+                sg.Text(
+                    f"Page {self.current_page}/{self.total_pages}",
+                    key=self.page_info_key,
+                    size=LABEL_SIZES["DEFAULT"],
+                    justification="center",
+                    font=FONTS["PAGINATION_INFO"],
+                ),
+                sg.Button(
+                    "Next >",
+                    key=self.next_key,
+                    disabled=(self.current_page >= self.total_pages),
+                    size=BUTTON_SIZES["SMALL"],
+                    font=FONTS["PAGINATION_BUTTON"],
+                ),
+                sg.Push(),
+                sg.Text(
+                    f"Total: {self.total_items}",
+                    key=self.total_items_key,
+                    size=LABEL_SIZES["DEFAULT"],
+                    justification="right",
+                    font=FONTS["PAGINATION_INFO"],
+                ),
+            ]
         ]
 
-        pagination_controls = [
-            sg.Button(
-                "Previous",
-                key=self.prev_key,
-                disabled=(self.current_page <= 1),
-                size=(8, 1),
-            ),
-            sg.Text(
-                f"Page {self.current_page}/{self.total_pages}",
-                key=self.page_info_key,
-                size=(12, 1),
-                justification="center",
-            ),
-            sg.Button(
-                "Next",
-                key=self.next_key,
-                disabled=(self.current_page >= self.total_pages),
-                size=(8, 1),
-            ),
-            sg.Push(),
+        table_layout = [
+            [
+                sg.Table(
+                    values=self.data,
+                    headings=self.headers,
+                    pad=((0, 0), (0, 20)),
+                    max_col_width=35,
+                    auto_size_columns=True,
+                    justification="center",
+                    num_rows=self.items_per_page,
+                    alternating_row_color=COLORS["primary_lighter"],
+                    key=self.key,
+                    selected_row_colors=f"{COLORS['white']} on {COLORS['secondary_darker']}",
+                    enable_events=True,
+                    expand_x=True,
+                    enable_click_events=True,
+                    visible_column_map=visible_columns,
+                    select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+                    font=FONTS["MONOSPACED"],
+                    header_font=FONTS["TABLE_HEADER"],
+                    header_border_width=0,
+                    header_relief="flat",
+                    hide_vertical_scroll=True,
+                    border_width=0,
+                )
+            ],
+            *pagination_layout,
         ]
 
-        return [table_layout, pagination_layout, pagination_controls]
+        layout = [
+            [sg.Column([*table_layout], expand_x=True, pad=self.pad)],
+        ]
+
+        return layout
 
     def _load_data(self):
         try:

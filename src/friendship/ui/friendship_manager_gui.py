@@ -1,5 +1,3 @@
-import FreeSimpleGUI as sg
-
 from friendship.application.delete_friendship_use_case import DeleteFriendshipInputDto
 from friendship.application.list_friendships_with_user_email_and_name_use_case import (
     ListFriendshipsInputDto,
@@ -7,31 +5,36 @@ from friendship.application.list_friendships_with_user_email_and_name_use_case i
 from friendship.application.send_friendship_invite_use_case import (
     SendFriendshipInviteInputDto,
 )
+from friendship.domain.friendship_status import FriendshipStatus
 from friendship.ui.friendship_pending_invites_gui import FriendshipPendingInvitesGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
+from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
 
 
 class FriendshipManagerGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
             title="Friendship Manager",
-            size=(700, 400),
+            size=WINDOW_SIZES["HORIZONTAL_DEFAULT"],
             use_cases=use_cases,
             navigator=navigator,
             auth_context=auth_context,
         )
 
         self.header = HeaderComponent(
-            extra_button={
-                "text": "Pending Invites",
-                "key": "-PENDING-",
-                "size": (12, 1),
-            },
+            extra_buttons=[
+                {
+                    "text": "Pending Invites",
+                    "key": "-PENDING-",
+                    "size": BUTTON_SIZES["MEDIUM"],
+                    "button_color": (COLORS["dark"], COLORS["secondary"]),
+                }
+            ]
         )
 
         self.table = TableComponent(
-            headers=["ID", "Name", "E-mail", "Friends Since"],
+            headers=["ID", "NAME", "E-MAIL", "FRIENDS SINCE"],
             data_callback=self._load_friendships_callback,
             key="-TABLE-",
             items_per_page=10,
@@ -39,16 +42,21 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         self.action_buttons = ActionButtonsComponent([
-            {"text": "Add Friend", "key": "-ADD_FRIEND-", "size": (12, 1)},
+            {
+                "text": "Add Friend",
+                "key": "-ADD_FRIEND-",
+                "button_color": (COLORS["white"], COLORS["success"]),
+            },
             {
                 "text": "Remove Selected",
                 "key": "-REMOVE_SELECTED-",
-                "size": (15, 1),
+                "size": BUTTON_SIZES["MEDIUM"],
+                "button_color": (COLORS["white"], COLORS["warning"]),
             },
             {
                 "text": "Transfer Ticket to Selected",
                 "key": "-TRANSFER_TICKET-",
-                "size": (25, 1),
+                "size": BUTTON_SIZES["EXTRA_LARGE"],
             },
         ])
 
@@ -62,12 +70,8 @@ class FriendshipManagerGUI(BaseGUI):
     def create_layout(self):
         layout = [
             *self.header.create_layout(),
-            [sg.HorizontalSeparator()],
-            [sg.Text("")],
             *self.table.create_layout(),
-            [sg.Text("")],
             *self.action_buttons.create_layout(),
-            [sg.Text("")],
         ]
 
         return layout
@@ -91,7 +95,7 @@ class FriendshipManagerGUI(BaseGUI):
         confirmed, friend_email = self.show_input_dialog(
             dialog_title="Add friend",
             instruction_label="Enter Friend Email",
-            input_placeholder="",
+            input_tooltip="Enter the email address of the friend you want to add (e.g., friend@example.com)",
             confirm_button="Add Friend",
             cancel_button="Cancel",
         )
@@ -147,19 +151,24 @@ class FriendshipManagerGUI(BaseGUI):
                 page=page,
                 size=items_per_page,
                 participant_client_id=self.auth_context.id,
-                status="ACCEPTED",
+                status=FriendshipStatus.ACCEPTED,
             )
 
-            friendships, total = self.use_cases.list_friendships_use_case.execute(
+            paginated_friendships = self.use_cases.list_friendships_use_case.execute(
                 input_dto
             )
 
-            table_data = self._convert_friendships_to_table_data(friendships)
+            friendship_summaries, total_friendships_count = (
+                paginated_friendships.friendship_summaries,
+                paginated_friendships.total_friendships_count,
+            )
 
-            return {"data": table_data, "total": total}
+            table_data = self._convert_friendships_to_table_data(friendship_summaries)
+
+            return {"data": table_data, "total": total_friendships_count}
 
         except Exception as e:
-            print(f"Erro ao carregar amizades: {e!s}")
+            self.show_error_popup(f"Error loading friendships: {e}")
             return {"data": [], "total": 0}
 
     def _convert_friendships_to_table_data(self, friendships):

@@ -1,5 +1,3 @@
-import FreeSimpleGUI as sg
-
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteInputDto,
 )
@@ -7,15 +5,17 @@ from friendship.application.delete_friendship_use_case import DeleteFriendshipIn
 from friendship.application.list_friendships_with_user_email_and_name_use_case import (
     ListFriendshipsInputDto,
 )
+from friendship.domain.friendship_status import FriendshipStatus
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
+from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
 
 
 class FriendshipPendingInvitesGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
             title="Pending Invites",
-            size=(700, 400),
+            size=WINDOW_SIZES["HORIZONTAL_DEFAULT"],
             use_cases=use_cases,
             navigator=navigator,
             auth_context=auth_context,
@@ -24,7 +24,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
         self.header = HeaderComponent()
 
         self.table = TableComponent(
-            headers=["ID", "Name", "E-mail"],
+            headers=["ID", "NAME", "E-MAIL"],
             data_callback=self._load_friendships_callback,
             key="-TABLE-",
             items_per_page=10,
@@ -35,12 +35,14 @@ class FriendshipPendingInvitesGUI(BaseGUI):
             {
                 "text": "Accept Selected",
                 "key": "-ACCEPT_SELECTED-",
-                "size": (12, 1),
+                "button_color": (COLORS["white"], COLORS["success"]),
+                "size": BUTTON_SIZES["MEDIUM"],
             },
             {
                 "text": "Decline Selected",
                 "key": "-DECLINE_SELECTED-",
-                "size": (12, 1),
+                "button_color": (COLORS["white"], COLORS["warning"]),
+                "size": BUTTON_SIZES["MEDIUM"],
             },
         ])
 
@@ -52,12 +54,8 @@ class FriendshipPendingInvitesGUI(BaseGUI):
     def create_layout(self):
         layout = [
             *self.header.create_layout(),
-            [sg.HorizontalSeparator()],
-            [sg.Text("")],
             *self.table.create_layout(),
-            [sg.Text("")],
             *self.action_buttons.create_layout(),
-            [sg.Text("")],
         ]
 
         return layout
@@ -78,19 +76,24 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                 page=page,
                 size=items_per_page,
                 requested_client_id=self.auth_context.id,
-                status="PENDING",
+                status=FriendshipStatus.PENDING,
             )
 
-            friendships, total = self.use_cases.list_friendships_use_case.execute(
+            paginated_friendships = self.use_cases.list_friendships_use_case.execute(
                 input_dto
             )
 
-            table_data = self._convert_friendships_to_table_data(friendships)
+            friendship_summaries, total_friendships_count = (
+                paginated_friendships.friendship_summaries,
+                paginated_friendships.total_friendships_count,
+            )
 
-            return {"data": table_data, "total": total}
+            table_data = self._convert_friendships_to_table_data(friendship_summaries)
+
+            return {"data": table_data, "total": total_friendships_count}
 
         except Exception as e:
-            print(f"Erro ao carregar amizades: {e!s}")
+            self.show_error_popup(f"Error loading friendships: {e}")
             return {"data": [], "total": 0}
 
     def _convert_friendships_to_table_data(self, friendships):
