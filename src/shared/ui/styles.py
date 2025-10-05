@@ -23,6 +23,7 @@ FONTS = {
     "BUTTON": ("Montserrat", 12),
     "PRIMARY_BUTTON": ("Montserrat", 12, "bold"),
     "SECONDARY_BUTTON": ("Montserrat", 12, "underline"),
+    "RADIO_BUTTON": ("Montserrat", 12, "bold"),
     "CHECKBOX": ("Montserrat", 12),
     "MONOSPACED": ("Fira Code", 10),
     "FOOTNOTE": ("Montserrat", 9, "italic"),
