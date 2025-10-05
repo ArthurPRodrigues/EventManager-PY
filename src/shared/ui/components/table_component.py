@@ -3,6 +3,7 @@ from typing import Any
 
 import FreeSimpleGUI as sg
 
+from shared.ui.components.filter_component import FilterComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, LABEL_SIZES
 
 
@@ -15,6 +16,7 @@ class TableComponent:
         key: str = "-TABLE-",
         items_per_page: int = 10,
         has_hidden_id_column: bool = False,
+        filters: list[dict[str, Any]] | None = None,
     ):
         self.headers = headers
         self.data_callback = data_callback
@@ -22,6 +24,7 @@ class TableComponent:
         self.key = key
         self.items_per_page = items_per_page
         self.has_hidden_id_column = has_hidden_id_column
+        self.filters = filters
         self.current_page = 1
         self.total_items = 0
         self.total_pages = 1
@@ -33,6 +36,8 @@ class TableComponent:
         self.total_items_key = f"{key}_TOTAL"
 
         self._load_data()
+
+        self.filter_component = FilterComponent(filters=self.filters)
 
     def create_layout(self):
         visible_columns = None
@@ -74,6 +79,7 @@ class TableComponent:
         ]
 
         table_layout = [
+            *self.filter_component.create_layout(),
             [
                 sg.Table(
                     values=self.data,
