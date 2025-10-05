@@ -16,12 +16,21 @@ from .ticket_status import TicketStatus
 
 @dataclass(frozen=True)
 class Ticket:
-    event_id: int
-    client_id: int
-    code: str
-    status: TicketStatus
-    created_at: datetime
-    id: int | None = None
+    def __init__(
+        self,
+        code: str,
+        created_at: datetime,
+        status: TicketStatus,
+        event_id: int,
+        client_id: int,
+        id: int,
+    ):
+        self.code = code
+        self.created_at = created_at
+        self.status = status
+        self.event_id = event_id
+        self.client_id = client_id
+        self.id = id
 
     @staticmethod
     def create(
@@ -44,6 +53,9 @@ class Ticket:
             raise TypeError("created_at must be a datetime instance")
 
         return Ticket(
+            code=code,
+            created_at=created_at,
+            status=status,
             event_id=event_id,
             client_id=client_id,
             code=code,
