@@ -5,6 +5,7 @@ from friendship.application.list_friendships_with_user_email_and_name_use_case i
 from friendship.application.send_friendship_invite_use_case import (
     SendFriendshipInviteInputDto,
 )
+from friendship.domain.friendship_status import FriendshipStatus
 from friendship.ui.friendship_pending_invites_gui import FriendshipPendingInvitesGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
@@ -150,7 +151,7 @@ class FriendshipManagerGUI(BaseGUI):
                 page=page,
                 size=items_per_page,
                 participant_client_id=self.auth_context.id,
-                status="ACCEPTED",
+                status=FriendshipStatus.ACCEPTED,
             )
 
             friendships, total = self.use_cases.list_friendships_use_case.execute(
@@ -158,9 +159,9 @@ class FriendshipManagerGUI(BaseGUI):
             )
 
             table_data = self._convert_friendships_to_table_data(friendships)
-
             return {"data": table_data, "total": total}
 
+        # TODO: calls show_error_popup in except block
         except Exception as e:
             print(f"Erro ao carregar amizades: {e!s}")
             return {"data": [], "total": 0}

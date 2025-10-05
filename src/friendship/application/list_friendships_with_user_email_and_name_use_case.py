@@ -32,7 +32,7 @@ class ListFriendshipsInputDto:
     participant_client_id: int | None = (
         None  # participant_client_id can be either requester or requested
     )
-    status: str | None = None
+    status: FriendshipStatus | None = None
     accepted_at: datetime | None = None
 
 
@@ -43,17 +43,13 @@ class ListFriendshipsWithUserEmailAndNameUseCase:
     def execute(
         self, input_dto: ListFriendshipsInputDto
     ) -> tuple[list[FriendshipView], int]:
-        status_enum: FriendshipStatus | None = None
-        if input_dto.status:
-            status_enum = FriendshipStatus(input_dto.status)
-
         rows, total = self._friendship_repository.list_with_user_email_and_name(
             page=input_dto.page,
             size=input_dto.size,
             requester_client_id=input_dto.requester_client_id,
             requested_client_id=input_dto.requested_client_id,
             participant_client_id=input_dto.participant_client_id,
-            status=status_enum,
+            status=input_dto.status,
             accepted_at=input_dto.accepted_at,
         )
 

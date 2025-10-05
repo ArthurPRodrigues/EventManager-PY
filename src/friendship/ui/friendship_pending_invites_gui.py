@@ -5,6 +5,7 @@ from friendship.application.delete_friendship_use_case import DeleteFriendshipIn
 from friendship.application.list_friendships_with_user_email_and_name_use_case import (
     ListFriendshipsInputDto,
 )
+from friendship.domain.friendship_status import FriendshipStatus
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent, HeaderComponent, TableComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
@@ -75,7 +76,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                 page=page,
                 size=items_per_page,
                 requested_client_id=self.auth_context.id,
-                status="PENDING",
+                status=FriendshipStatus.PENDING,
             )
 
             friendships, total = self.use_cases.list_friendships_use_case.execute(

@@ -112,10 +112,12 @@ class SqliteFriendshipRepository:
                 count_params.append(requested_client_id)
 
         if status is not None:
+            status_enum_value = status.value
+
             query += " AND f.status = ?"
             count_query += " AND f.status = ?"
-            params.append(status.value)
-            count_params.append(status.value)
+            params.append(status_enum_value)
+            count_params.append(status_enum_value)
 
         if accepted_at is not None:
             query += " AND f.accepted_at = ?"
