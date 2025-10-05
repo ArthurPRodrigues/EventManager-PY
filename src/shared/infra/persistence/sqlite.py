@@ -59,13 +59,14 @@ class SQLiteDatabase:
             )
             conn.execute(
                 """
-                CREATE TABLE IF NOT EXISTS tickets (
+                CREATE TABLE IF NOT EXISTS ticket (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    code TEXT NOT NULL,
+                    created_at TIMESTAMP NOT NULL,
+                    status TEXT NOT NULL,
                     event_id INTEGER NOT NULL,
                     client_id INTEGER NOT NULL,
-                    code TEXT NOT NULL UNIQUE,
-                    status TEXT NOT NULL,
-                    created_at TIMESTAMP NOT NULL,
+                    UNIQUE(code),
                     FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
                     FOREIGN KEY(client_id) REFERENCES users(id) ON DELETE CASCADE
                 )
