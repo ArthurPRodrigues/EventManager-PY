@@ -42,3 +42,14 @@ class TicketNotActiveError(DomainError):
     def __init__(self, ticket_id) -> None:
         message = f'Ticket with ID "{ticket_id}" is not active.'
         super().__init__(message)
+
+
+class InvalidTicketCodeError(DomainError):
+    def __init__(self, ticket_code: str = "Invalid ticket code.") -> None:
+        message: str = f"Invalid ticket code: {ticket_code}"
+        super().__init__(message)
+
+
+class TicketAlreadyValidatedError(DomainError):
+    def __init__(self, message: str = "Ticket has already been validated.") -> None:
+        super().__init__(message)
