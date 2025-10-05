@@ -63,8 +63,6 @@ class SqliteFriendshipRepository:
         )
 
     # NOTE (Clean Architecture VIOLATION): JOIN com users para evitar N+1
-    # NOTE WHAT A SHAME @fabifabufabo: Repository needs to return domain objects, not raw tuples.
-    # Other approach is to create a output DTO (e.g. FriendshipWithUserEmailAndNameDto) in Application layer
     def list_with_user_email_and_name(
         self,
         page: int,
