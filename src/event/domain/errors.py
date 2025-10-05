@@ -53,7 +53,7 @@ class InvalidStaffsIdError(DomainError):
         super().__init__(message)
 
 
-class StaffAlreadyAcceptedError(DomainError):
+class StaffAlreadyAddedError(DomainError):
     def __init__(self, staff_id) -> None:
-        message = f'Staff with id "{staff_id}" has already been accepted.'
+        message = f'Staff with id "{staff_id}" has already been added.'
         super().__init__(message)
