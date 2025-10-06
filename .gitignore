@@ -18,3 +18,5 @@ venv/
 # Ruff cache
 .ruff_cache/
 
+# Environment files
+.env
