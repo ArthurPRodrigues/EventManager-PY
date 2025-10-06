@@ -25,6 +25,7 @@ from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
 # TODO: Uncomment ticket use case lines when event repository is implemented
+# TODO: Uncomment html template engine and email service lines when ticket redemption is implemented
 @dataclass
 class CompositionRoot:
     db: SQLiteDatabase
@@ -40,11 +41,22 @@ class CompositionRoot:
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
     # validate_ticket_use_case: ValidateTicketUseCase
+    # smtp_email_service: SmtpEmailService
+    # html_template_engine: HtmlTemplateEngine
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
+
+    # # Services
+    # templates_dir = os.path.join(
+    #     "assets",
+    #     "html_templates",
+    # )
+
+    # html_template_engine = HtmlTemplateEngine(templates_dir)
+    # smtp_email_service = SmtpEmailService()
 
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
@@ -82,4 +94,6 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         friendship_repo=friendship_repo,
         user_repo=user_repo,
         # validate_ticket_use_case=validate_ticket_use_case,
+        # smtp_email_service=smtp_email_service,
+        # html_template_engine=html_template_engine,
     )
