@@ -1,3 +1,5 @@
+import FreeSimpleGUI as sg
+
 from event.application.list_event_use_case import ListEventInputDto
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
@@ -38,6 +40,7 @@ class ListEventOrganizerGui(BaseGUI):
                 },
             ]
         )
+        self.current_filter_mode = "ALL"
         self.table = TableComponent(
             headers=[
                 "ID",
@@ -75,14 +78,24 @@ class ListEventOrganizerGui(BaseGUI):
         }
 
     def handle_events(self, event, values):
+        if event in ("-ORG_F_ALL-", "-ORG_F_WITH-", "-ORG_F_SOLD-"):
+            if values.get("-ORG_F_ALL-"):
+                self.current_filter_mode = "ALL"
+            elif values.get("-ORG_F_WITH-"):
+                self.current_filter_mode = "WITH_TICKETS"
+            elif values.get("-ORG_F_SOLD-"):
+                self.current_filter_mode = "SOLD_OUT"
+            if self.window:
+                self.table.current_page = 1
+                self.table.refresh(self.window)
+            return
+
         if self.table.handle_event(event, self.window):
             return
 
         handler = self.event_map.get(event)
         if handler:
             handler()
-        elif event == "-TABLE-":
-            pass
 
     def handle_validate_ticket(self):
         self.navigator.navigate_to("validate_ticket")
@@ -100,8 +113,19 @@ class ListEventOrganizerGui(BaseGUI):
         self.navigator.navigate_to("edit_selected")
 
     def create_layout(self):
+        filter_row = [
+            sg.Text("Filter:"),
+            sg.Radio(
+                "All", "ORG_FILTER", key="-ORG_F_ALL-", default=True, enable_events=True
+            ),
+            sg.Radio(
+                "With Tickets", "ORG_FILTER", key="-ORG_F_WITH-", enable_events=True
+            ),
+            sg.Radio("Sold Out", "ORG_FILTER", key="-ORG_F_SOLD-", enable_events=True),
+        ]
         layout = [
             *self.header.create_layout(),
+            filter_row,
             *self.table.create_layout(),
             *self.action_buttons.create_layout(),
         ]
@@ -110,7 +134,10 @@ class ListEventOrganizerGui(BaseGUI):
     def _load_events_callback(self, page: int, items_per_page: int):
         try:
             input_dto = ListEventInputDto(
-                page=page, page_size=items_per_page, organizer_id=self.auth_context.id
+                page=page,
+                page_size=items_per_page,
+                organizer_id=self.auth_context.id,
+                filter_mode=self.current_filter_mode,
             )
 
             paginated_events = self.use_cases.list_event_use_case.execute(input_dto)
