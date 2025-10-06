@@ -24,6 +24,7 @@ class ValidateTicketUseCase:
     def __init__(
         self,
         tickets_repository: SqliteTicketsRepository,
+        # TODO: Remove noqa when implementing SqliteEventRepository
         events_repository: SqliteEventRepository,  # noqa: F821
     ) -> None:
         self._tickets_repository = tickets_repository
@@ -33,7 +34,7 @@ class ValidateTicketUseCase:
         user_id, user_role, normalized_code = (
             input_dto.user_id,
             input_dto.user_role,
-            input_dto.code.strip().upper(),
+            input_dto.code,
         )
 
         if user_role == UserRole.CLIENT:

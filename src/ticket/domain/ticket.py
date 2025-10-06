@@ -32,7 +32,7 @@ class Ticket:
         return Ticket(
             event_id=event_id,
             client_id=client_id,
-            code=code.strip(),
+            code=code,
         )
 
     def validate(self) -> Ticket:
