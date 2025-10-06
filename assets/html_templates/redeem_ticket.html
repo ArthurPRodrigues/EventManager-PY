@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Ticket Has Been Redeemed!</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        margin: 0;
+        text-align: center;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: left;
+      }
+      h1 {
+        color: #111;
+      }
+      .ticket-code {
+        background-color: #f0f0f0;
+        border: 2px dashed #cccccc;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        margin: 25px 0;
+        color: #d63384;
+        text-align: center;
+        border-radius: 5px;
+      }
+      .footer {
+        margin-top: 25px;
+        font-size: 12px;
+        color: #888888;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hello, $user_name!</h1>
+      <p>
+        Your ticket for the event has been successfully redeemed. Keep this code
+        safe:
+      </p>
+
+      <div class="ticket-code">$ticket_code</div>
+
+      <p>Present this code at the event entrance.</p>
+      <p class="footer">This is an automatic email, please do not reply.</p>
+    </div>
+  </body>
+</html>
