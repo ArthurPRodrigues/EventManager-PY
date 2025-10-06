@@ -2,7 +2,8 @@ import os
 
 import FreeSimpleGUI as sg
 
-from events.ui.list_event_gui import ListEventGui
+from event.ui.list_event_client_gui import ListEventClientGui
+from event.ui.list_event_organizer_gui import ListEventOrganizerGui
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
@@ -175,11 +176,14 @@ class AuthenticateGUI(BaseGUI):
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            if (
-                self.auth_context.role.value == "CLIENT"
-                or self.auth_context.role.value == "ORGANIZER"
-            ):
-                self.navigator.push_screen(ListEventGui, auth_context=self.auth_context)
+            if self.auth_context.role.value == "CLIENT":
+                self.navigator.push_screen(
+                    ListEventClientGui, auth_context=self.auth_context
+                )
+            elif self.auth_context.role.value == "ORGANIZER":
+                self.navigator.push_screen(
+                    ListEventOrganizerGui, auth_context=self.auth_context
+                )
             else:
                 self.show_info_popup("Interface for STAFF are not implemented yet.")
 
