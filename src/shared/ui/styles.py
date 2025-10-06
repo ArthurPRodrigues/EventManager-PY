@@ -49,6 +49,8 @@ WINDOW_SIZES = {
     "HORIZONTAL_SMALL": (480, 270),
     "HORIZONTAL_COMPACT": (640, 360),
     "HORIZONTAL_DEFAULT": (800, 450),
+    "ARTHUR": (1000, 450),  # legacy temporary size
+    "EVENT_LIST_WIDE": (1100, 600),
     # --- Verticais (Portrait) ---
     "VERTICAL_FORM": (480, 640),  # Proporção 3:4
     # --- Especiais (Quadradas e Clássicas) ---
