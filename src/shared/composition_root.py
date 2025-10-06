@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 from friendship.application.accept_friendship_invite_use_case import (
@@ -15,6 +16,8 @@ from friendship.application.send_friendship_invite_use_case import (
 from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
+from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
+from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
@@ -23,7 +26,6 @@ from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
 # TODO: Uncomment ticket use case lines when event repository is implemented
-# TODO: Uncomment html template engine and email service lines when ticket redemption is implemented
 @dataclass
 class CompositionRoot:
     db: SQLiteDatabase
@@ -36,8 +38,8 @@ class CompositionRoot:
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
     # validate_ticket_use_case: ValidateTicketUseCase
-    # smtp_email_service: SmtpEmailService
-    # html_template_engine: HtmlTemplateEngine
+    smtp_email_service: SmtpEmailService
+    html_template_engine: HtmlTemplateEngine
 
 
 # TODO: Maybe adjust later to include frontend
@@ -45,14 +47,14 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
 
-    # # Services
-    # templates_dir = os.path.join(
-    #     "assets",
-    #     "html_templates",
-    # )
+    # Services
+    templates_dir = os.path.join(
+        "assets",
+        "html_templates",
+    )
 
-    # html_template_engine = HtmlTemplateEngine(templates_dir)
-    # smtp_email_service = SmtpEmailService()
+    html_template_engine = HtmlTemplateEngine(templates_dir)
+    smtp_email_service = SmtpEmailService()
 
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
@@ -83,6 +85,6 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         create_user_use_case=create_user_use_case,
         authenticate_user_use_case=authenticate_user_use_case,
         # validate_ticket_use_case=validate_ticket_use_case,
-        # smtp_email_service=smtp_email_service,
-        # html_template_engine=html_template_engine,
+        smtp_email_service=smtp_email_service,
+        html_template_engine=html_template_engine,
     )
