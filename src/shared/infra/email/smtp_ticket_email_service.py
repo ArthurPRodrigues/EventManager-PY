@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# TODO: warns user if env variables are invalid but doesn't crash the program
 class SmtpEmailService:
     def __init__(self):
         self.smtp_server = os.getenv("EMAIL_SMTP_HOST")
@@ -30,7 +31,7 @@ class SmtpEmailService:
         context = ssl.create_default_context()
 
         try:
-            with smtplib.SMTP(self.smtp_server, self.port) as server:
+            with smtplib.SMTP(self.smtp_server, self.port, timeout=20) as server:
                 server.starttls(context=context)
                 server.login(self.sender_email, self.password)
                 server.send_message(message)
