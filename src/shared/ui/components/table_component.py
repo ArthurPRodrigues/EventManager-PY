@@ -3,6 +3,7 @@ from typing import Any
 
 import FreeSimpleGUI as sg
 
+from shared.ui.components.filter_radio_row_component import FilterRadioRowComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, LABEL_SIZES
 
 
@@ -10,11 +11,12 @@ class TableComponent:
     def __init__(
         self,
         headers: list[str],
-        data_callback: Callable[[int, int], dict[str, Any]],
+        data_callback: Callable[..., dict[str, Any]],
         pad: Any | None = (10, 20),
         key: str = "-TABLE-",
         items_per_page: int = 10,
         has_hidden_id_column: bool = False,
+        filters: list[dict[str, Any]] | None = None,
     ):
         self.headers = headers
         self.data_callback = data_callback
@@ -22,6 +24,7 @@ class TableComponent:
         self.key = key
         self.items_per_page = items_per_page
         self.has_hidden_id_column = has_hidden_id_column
+        self.filters = filters
         self.current_page = 1
         self.total_items = 0
         self.total_pages = 1
@@ -31,6 +34,7 @@ class TableComponent:
         self.next_key = f"{key}_NEXT"
         self.page_info_key = f"{key}_PAGE_INFO"
         self.total_items_key = f"{key}_TOTAL"
+        self.filter_component = FilterRadioRowComponent(self.filters)
 
         self._load_data()
 
@@ -74,6 +78,7 @@ class TableComponent:
         ]
 
         table_layout = [
+            *self.filter_component.create_layout(),
             [
                 sg.Table(
                     values=self.data,
@@ -108,14 +113,31 @@ class TableComponent:
 
         return layout
 
-    def _load_data(self):
+    def _load_data(self, window: sg.Window | None = None):
         try:
-            result = self.data_callback(self.current_page, self.items_per_page)
+            filter_value = None
+
+            if self.filters:
+                is_window_available = window is not None
+
+                if is_window_available:
+                    filter_value = self._get_selected_filter_value(window)
+                else:
+                    filter_value = self._get_default_filter_value()
+
+            if filter_value is not None:
+                result = self.data_callback(
+                    self.current_page, self.items_per_page, filter_value
+                )
+            else:
+                result = self.data_callback(self.current_page, self.items_per_page)
+
             self.data = result.get("data", [])
             self.total_items = result.get("total", 0)
             self.total_pages = max(
                 1, (self.total_items + self.items_per_page - 1) // self.items_per_page
             )
+        # TODO: Discover how to throw and handle errors in the parent component
         except Exception as e:
             print(f"Erro ao carregar dados: {e}")
             self.data = []
@@ -125,15 +147,22 @@ class TableComponent:
     def handle_event(self, event: str, window: sg.Window) -> bool:
         if event == self.prev_key and self.current_page > 1:
             self.current_page -= 1
-            self._load_data()
+            self._load_data(window)
             self._update_ui(window)
             return True
 
         elif event == self.next_key and self.current_page < self.total_pages:
             self.current_page += 1
-            self._load_data()
+            self._load_data(window)
             self._update_ui(window)
             return True
+
+        if self.filters:
+            if event in self.filter_component.filter_keys:
+                self.current_page = 1
+                self._load_data(window)
+                self._update_ui(window)
+                return True
 
         return False
 
@@ -155,8 +184,24 @@ class TableComponent:
         window[self.next_key].update(disabled=(self.current_page >= self.total_pages))
 
     def refresh(self, window: sg.Window):
-        self._load_data()
+        self._load_data(window)
         self._update_ui(window)
+
+    def _get_selected_filter_value(self, window: sg.Window) -> Any:
+        keys = self.filter_component.filter_keys
+        for key in keys:
+            element = window[key]
+            if element.get():
+                return element.metadata
+
+        return None
+
+    def _get_default_filter_value(self) -> Any:
+        for filter_config in self.filters:
+            if filter_config.get("default"):
+                return filter_config.get("filter_value")
+
+        return None
 
     def get_selected_row_data(self, window: sg.Window) -> list[Any]:
         try:
