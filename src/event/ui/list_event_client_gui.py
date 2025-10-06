@@ -1,3 +1,5 @@
+import FreeSimpleGUI as sg
+
 from event.application.list_event_use_case import ListEventInputDto
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.ui.base_gui import BaseGUI
@@ -33,7 +35,7 @@ class ListEventClientGui(BaseGUI):
                 },
             ]
         )
-
+        self.current_filter_mode = "ALL"
         self.table = TableComponent(
             headers=[
                 "ID",
@@ -65,6 +67,18 @@ class ListEventClientGui(BaseGUI):
         }
 
     def handle_events(self, event, values):
+        if event in ("-ORG_F_ALL-", "-ORG_F_WITH-", "-ORG_F_SOLD-"):
+            if values.get("-ORG_F_ALL-"):
+                self.current_filter_mode = "ALL"
+            elif values.get("-ORG_F_WITH-"):
+                self.current_filter_mode = "WITH_TICKETS"
+            elif values.get("-ORG_F_SOLD-"):
+                self.current_filter_mode = "SOLD_OUT"
+            if self.window:
+                self.table.current_page = 1
+                self.table.refresh(self.window)
+            return
+
         if self.table.handle_event(event, self.window):
             return
 
@@ -88,8 +102,19 @@ class ListEventClientGui(BaseGUI):
         pass
 
     def create_layout(self):
+        filter_row = [
+            sg.Text("Filter:"),
+            sg.Radio(
+                "All", "ORG_FILTER", key="-ORG_F_ALL-", default=True, enable_events=True
+            ),
+            sg.Radio(
+                "With Tickets", "ORG_FILTER", key="-ORG_F_WITH-", enable_events=True
+            ),
+            sg.Radio("Sold Out", "ORG_FILTER", key="-ORG_F_SOLD-", enable_events=True),
+        ]
         layout = [
             *self.header.create_layout(),
+            filter_row,
             *self.table.create_layout(),
             *self.action_buttons.create_layout(),
         ]
@@ -100,8 +125,8 @@ class ListEventClientGui(BaseGUI):
             input_dto = ListEventInputDto(
                 page=page,
                 page_size=items_per_page,
+                filter_mode=self.current_filter_mode,
             )
-
             paginated_events = self.use_cases.list_event_use_case.execute(input_dto)
 
             event_list, total_event_count = (
