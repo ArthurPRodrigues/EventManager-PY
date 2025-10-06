@@ -1,11 +1,16 @@
 import os
+import threading
 from abc import ABC, abstractmethod
 
 import FreeSimpleGUI as sg
 
 from shared.infra.error_logger import log_error
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
-from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS
+from shared.ui.styles import (
+    BUTTON_SIZES,
+    COLORS,
+    FONTS,
+)
 
 sg.theme_add_new(
     "FESTUMTheme",
@@ -381,3 +386,99 @@ class BaseGUI(ABC):
         sg.theme(current_theme)
 
         return result, input_value
+
+    def show_animated_wait_popup(
+        self,
+        gif_path: str,
+        message: str,
+        time_between_frames: int = 50,
+        thread_to_wait_for: threading.Thread | None = None,
+    ):
+        """
+        Shows an animated GIF popup window
+        Args:
+            gif_path: Path to the GIF file
+            message: Message to display above the GIF
+            time_between_frames: Time in milliseconds between animation frames
+            thread_to_wait_for: Optional thread to wait for before closing the popup
+        """
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        popup_layout = [
+            [
+                sg.Text(
+                    message,
+                    font=("Montserrat", 14, "bold"),
+                    justification="center",
+                )
+            ],
+            [
+                sg.Image(
+                    filename=gif_path,
+                    enable_events=True,
+                    key="-IMAGE-",
+                    pad=(0, 20),
+                )
+            ],
+            [
+                sg.Text(
+                    "Please wait",
+                    font=("Montserrat", 14),
+                    justification="center",
+                    text_color=COLORS["secondary_darker"],
+                    key="-WAITING_TEXT-",
+                )
+            ],
+        ]
+
+        content = [
+            [sg.VPush()],
+            [
+                sg.Column(
+                    layout=popup_layout,
+                    element_justification="center",
+                    expand_x=True,
+                    expand_y=True,
+                    pad=(10, 20),
+                )
+            ],
+            [sg.VPush()],
+        ]
+
+        layout = content
+
+        window = sg.Window(
+            "",
+            layout,
+            no_titlebar=True,
+            grab_anywhere=True,
+            keep_on_top=True,
+            modal=True,
+            finalize=True,
+            element_justification="center",
+        )
+
+        dot_counter = 0
+
+        while True:
+            event, _ = window.read(timeout=100)
+
+            if event == sg.WIN_CLOSED:
+                break
+
+            if thread_to_wait_for and not thread_to_wait_for.is_alive():
+                break
+
+            window["-IMAGE-"].update_animation_no_buffering(
+                gif_path, time_between_frames=time_between_frames
+            )
+
+            dots = "." * dot_counter
+            window["-WAITING_TEXT-"].update(value=f"Please wait{dots}")
+            dot_counter = (dot_counter + 1) % 4
+
+        window.close()
+
+        sg.theme(current_theme)
