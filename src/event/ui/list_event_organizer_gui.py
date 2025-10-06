@@ -40,6 +40,7 @@ class ListEventOrganizerGui(BaseGUI):
         )
         self.table = TableComponent(
             headers=[
+                "ID",
                 "NAME",
                 "CREATED AT",
                 "START DATE",
@@ -109,8 +110,7 @@ class ListEventOrganizerGui(BaseGUI):
     def _load_events_callback(self, page: int, items_per_page: int):
         try:
             input_dto = ListEventInputDto(
-                page=page,
-                page_size=items_per_page,
+                page=page, page_size=items_per_page, organizer_id=self.auth_context.id
             )
 
             paginated_events = self.use_cases.list_event_use_case.execute(input_dto)
@@ -121,21 +121,22 @@ class ListEventOrganizerGui(BaseGUI):
             )
 
             table_data = self._convert_events_to_table_data(event_list)
-            return {"data": table_data, "total_event_count": total_event_count}
+            return {"data": table_data, "total": total_event_count}
         except Exception as e:
             self.show_error_popup(f"Error loading events: {e}")
-            return {"data": [], "total_event_count": 0}
+            return {"data": [], "total": 0}
 
     def _convert_events_to_table_data(self, events):
         table_data = []
 
         for event in events:
             table_data.append([
+                event.id,
                 event.name,
-                event.location,
                 event.created_at,
                 event.start_date,
                 event.end_date,
+                event.location,
                 event.tickets_available,
             ])
         return table_data
