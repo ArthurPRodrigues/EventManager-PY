@@ -20,7 +20,6 @@ class ListEventInputDto:
     organizer_id: int | None = None
     staffs_id: list[str] | None = None
     id: int | None = None
-    # filter_mode: None | 'ALL' | 'WITH_TICKETS' | 'SOLD_OUT'
     filter_mode: str | None = None
 
 
