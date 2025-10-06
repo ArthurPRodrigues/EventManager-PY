@@ -93,7 +93,7 @@ class ValidateTicketGUI(BaseGUI):
                 input_dto = ValidateTicketInputDto(
                     user_id=self.auth_context.id,
                     user_role=self.auth_context.role,
-                    code=ticket_code,
+                    code=ticket_code.strip().upper(),
                 )
                 self.use_cases.validate_ticket_use_case.execute(input_dto)
                 self.show_info_popup(f"Ticket '{ticket_code}' validated successfully!")
