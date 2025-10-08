@@ -6,7 +6,8 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "FreeSimpleGUI",
-    "python-dotenv"
+    "python-dotenv",
+    "google-generativeai"
 ]
 
 [project.optional-dependencies]

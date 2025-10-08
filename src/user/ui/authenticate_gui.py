@@ -2,6 +2,7 @@ import os
 
 import FreeSimpleGUI as sg
 
+from event.ui.create_event_mock_gui import CreateEventMockGUI
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
@@ -186,8 +187,10 @@ class AuthenticateGUI(BaseGUI):
                     ValidateTicketGUI, auth_context=self.auth_context
                 )
 
-            else:
-                self.show_info_popup("Interfaces for ORGANIZER is not implemented yet.")
+            elif self.auth_context.role.value == "ORGANIZER":
+                self.navigator.push_screen(
+                    CreateEventMockGUI, auth_context=self.auth_context
+                )
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
 
