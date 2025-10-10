@@ -52,20 +52,20 @@ class SQLiteDatabase:
                     start_date TIMESTAMP NOT NULL,
                     tickets_available INTEGER NOT NULL,
                     organizer_id INTEGER NOT NULL,
+                    staffs_id TEXT NOT NULL,
                     FOREIGN KEY(organizer_id) REFERENCES users(id) ON DELETE CASCADE
                     )
                 """
             )
             conn.execute(
                 """
-                CREATE TABLE IF NOT EXISTS ticket (
+                CREATE TABLE IF NOT EXISTS tickets (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    code TEXT NOT NULL,
-                    created_at TIMESTAMP NOT NULL,
-                    status TEXT NOT NULL,
                     event_id INTEGER NOT NULL,
                     client_id INTEGER NOT NULL,
-                    UNIQUE(code),
+                    code TEXT NOT NULL UNIQUE,
+                    status TEXT NOT NULL,
+                    created_at TIMESTAMP NOT NULL,
                     FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
                     FOREIGN KEY(client_id) REFERENCES users(id) ON DELETE CASCADE
                 )

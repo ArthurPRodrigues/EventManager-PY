@@ -1,10 +1,51 @@
+import os
+import threading
 from abc import ABC, abstractmethod
 
 import FreeSimpleGUI as sg
 
 from shared.infra.error_logger import log_error
+from shared.ui.components.action_buttons_component import ActionButtonsComponent
+from shared.ui.styles import (
+    BUTTON_SIZES,
+    COLORS,
+    FONTS,
+)
+
+sg.theme_add_new(
+    "FESTUMTheme",
+    {
+        "BACKGROUND": COLORS["primary"],
+        "TEXT": COLORS["white"],
+        "INPUT": COLORS["light"],
+        "TEXT_INPUT": COLORS["black"],
+        "BUTTON": (COLORS["white"], COLORS["primary_lighter"]),
+        "SCROLL": COLORS["primary"],
+        "PROGRESS": (COLORS["secondary"], COLORS["primary"]),
+        "SLIDER_DEPTH": 0,
+        "PROGRESS_DEPTH": 0,
+        "BORDER": 0,
+    },
+)
+
+sg.theme_add_new(
+    "PopupTheme",
+    {
+        "BACKGROUND": COLORS["light"],
+        "TEXT": COLORS["black"],
+        "INPUT": COLORS["white"],
+        "TEXT_INPUT": COLORS["black"],
+        "BUTTON": (COLORS["white"], COLORS["primary_lighter"]),
+        "SCROLL": COLORS["primary"],  # Same as FESTUMTheme
+        "PROGRESS": (COLORS["secondary"], COLORS["primary"]),  # Same as FESTUMTheme
+        "SLIDER_DEPTH": 0,  # Same as FESTUMTheme
+        "PROGRESS_DEPTH": 0,  # Same as FESTUMTheme
+        "BORDER": 0,  # Same as FESTUMTheme
+    },
+)
 
 
+# TODO: Refactor success/warning/error popups, create a PopupConfig dataclass and implement a popup template method pattern
 class BaseGUI(ABC):
     def __init__(
         self,
@@ -21,7 +62,7 @@ class BaseGUI(ABC):
         self.navigator = navigator
         self.auth_context = auth_context
         self.event_map = {}
-        sg.theme("Default1")
+        sg.theme("FESTUMTheme")
 
     @abstractmethod
     def create_layout(self):
@@ -37,7 +78,12 @@ class BaseGUI(ABC):
         """Common method to show the screen"""
         layout = self.create_layout()
         self.window = sg.Window(
-            self.title, layout, size=self.size, resizable=True, finalize=True
+            self.title,
+            layout,
+            size=self.size,
+            resizable=False,
+            finalize=True,
+            element_justification="center",
         )
         return self.run()
 
@@ -64,29 +110,200 @@ class BaseGUI(ABC):
         if self.window:
             self.window.close()
 
+    # TODO: Deprecate info popup in favor of success/warning popup
     def show_info_popup(self, message: str, title: str = "Info"):
         """Common helper method for info popups"""
         sg.popup(message, title=title)
 
+    def show_success_popup(self, message: str, title: str = "Success"):
+        """Common helper method for success popups"""
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "badge-check.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
+            [
+                sg.Button(
+                    "OK",
+                    key="-YES-",
+                    font=FONTS["PRIMARY_BUTTON"],
+                    button_color=(COLORS["white"], COLORS["success"]),
+                    size=BUTTON_SIZES["SMALL"],
+                ),
+            ],
+        ]
+
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+        event, _ = window.read()
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event
+
     def show_warning_popup(self, message: str, title: str = "Warning"):
         """Common helper method for warning popups"""
-        sg.popup(message, title=title)
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "triangle-alert.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
+            [
+                sg.Button(
+                    "OK",
+                    key="-YES-",
+                    font=FONTS["PRIMARY_BUTTON"],
+                    button_color=(COLORS["white"], COLORS["warning"]),
+                    size=BUTTON_SIZES["SMALL"],
+                ),
+            ],
+        ]
+
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+        event, _ = window.read()
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event
 
     def show_confirmation_popup(self, message: str, title: str = "Confirmation"):
         """Common helper method for confirmation popups"""
-        result = sg.popup_yes_no(message, title=title)
-        return result == "Yes"
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        action_buttons = ActionButtonsComponent([
+            {
+                "text": "Yes",
+                "key": "-YES-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "button_color": (COLORS["white"], COLORS["primary_lighter"]),
+            },
+            {
+                "text": "No",
+                "key": "-NO-",
+                "font": FONTS["SECONDARY_BUTTON"],
+                "button_color": (COLORS["dark"], COLORS["light"]),
+            },
+        ])
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "circle-question-mark.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
+            *action_buttons.create_layout(),
+        ]
+
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+
+        event, _ = window.read()
+
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event == "-YES-"
 
     def show_error_popup(self, message: str, title: str = "Error"):
         """Common helper method for error popups with logging"""
         log_error(message, self.auth_context)
-        sg.popup(message, title=title)
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "circle-x.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    message,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
+            [
+                sg.Button(
+                    "OK",
+                    key="-YES-",
+                    font=FONTS["PRIMARY_BUTTON"],
+                    button_color=(COLORS["white"], COLORS["error"]),
+                    size=BUTTON_SIZES["SMALL"],
+                ),
+            ],
+        ]
+
+        window = sg.Window(
+            title,
+            layout,
+            modal=True,
+            element_justification="center",
+        )
+        event, _ = window.read()
+        window.close()
+
+        sg.theme(current_theme)
+
+        return event
 
     def show_input_dialog(
         self,
         dialog_title: str,
         instruction_label: str,
-        input_placeholder: str = "",
+        input_tooltip: str = "",
         confirm_button: str = "Confirm",
         cancel_button: str = "Cancel",
     ) -> tuple[bool, str]:
@@ -94,23 +311,55 @@ class BaseGUI(ABC):
         Shows a standardized input dialog with title, instruction, input field and buttons
         Returns: (was_confirmed, input_value)
         """
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        action_buttons = ActionButtonsComponent([
+            {
+                "text": confirm_button,
+                "key": "-CONFIRM-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "button_color": (COLORS["white"], COLORS["primary_lighter"]),
+            },
+            {
+                "text": cancel_button,
+                "key": "-CANCEL-",
+                "font": FONTS["SECONDARY_BUTTON"],
+                "button_color": (COLORS["dark"], COLORS["light"]),
+            },
+        ])
+
         layout = [
-            [sg.Text(instruction_label, font=("Arial", 12), justification="center")],
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "square-pen.png"),
+                    pad=((20, 0), (10, 20)),
+                ),
+                sg.Text(
+                    instruction_label,
+                    font=FONTS["POPUP_LABEL"],
+                    justification="center",
+                    auto_size_text=True,
+                    pad=((10, 20), (10, 20)),
+                ),
+            ],
             [
                 sg.Input(
-                    default_text=input_placeholder,
                     key="-INPUT-",
-                    size=(40, 1),
+                    tooltip=input_tooltip,
+                    pad=(30, 10),
                     focus=True,
+                    font=FONTS["LARGE_INPUT"],
+                    background_color=COLORS["white"],
+                    size=(25, 1),
+                    justification="center",
                 )
             ],
-            [
-                sg.Button(confirm_button, key="-CONFIRM-", size=(12, 1)),
-                sg.Button(cancel_button, key="-CANCEL-", size=(12, 1)),
-            ],
+            *action_buttons.create_layout(),
         ]
 
-        dialog_window = sg.Window(
+        window = sg.Window(
             dialog_title,
             layout,
             modal=True,
@@ -122,7 +371,7 @@ class BaseGUI(ABC):
         input_value = ""
 
         while True:
-            event, values = dialog_window.read()
+            event, values = window.read()
 
             if event in (sg.WIN_CLOSED, "-CANCEL-"):
                 result = False
@@ -132,5 +381,104 @@ class BaseGUI(ABC):
                 input_value = values["-INPUT-"].strip()
                 break
 
-        dialog_window.close()
+        window.close()
+
+        sg.theme(current_theme)
+
         return result, input_value
+
+    def show_animated_wait_popup(
+        self,
+        gif_path: str,
+        message: str,
+        time_between_frames: int = 50,
+        thread_to_wait_for: threading.Thread | None = None,
+    ):
+        """
+        Shows an animated GIF popup window
+        Args:
+            gif_path: Path to the GIF file
+            message: Message to display above the GIF
+            time_between_frames: Time in milliseconds between animation frames
+            thread_to_wait_for: Optional thread to wait for before closing the popup
+        """
+
+        current_theme = sg.theme()
+        sg.theme("PopupTheme")
+
+        popup_layout = [
+            [
+                sg.Text(
+                    message,
+                    font=("Montserrat", 14, "bold"),
+                    justification="center",
+                )
+            ],
+            [
+                sg.Image(
+                    filename=gif_path,
+                    enable_events=True,
+                    key="-IMAGE-",
+                    pad=(0, 20),
+                )
+            ],
+            [
+                sg.Text(
+                    "Please wait",
+                    font=("Montserrat", 14),
+                    justification="center",
+                    text_color=COLORS["secondary_darker"],
+                    key="-WAITING_TEXT-",
+                )
+            ],
+        ]
+
+        content = [
+            [sg.VPush()],
+            [
+                sg.Column(
+                    layout=popup_layout,
+                    element_justification="center",
+                    expand_x=True,
+                    expand_y=True,
+                    pad=(10, 20),
+                )
+            ],
+            [sg.VPush()],
+        ]
+
+        layout = content
+
+        window = sg.Window(
+            "",
+            layout,
+            no_titlebar=True,
+            grab_anywhere=True,
+            keep_on_top=True,
+            modal=True,
+            finalize=True,
+            element_justification="center",
+        )
+
+        dot_counter = 0
+
+        while True:
+            event, _ = window.read(timeout=100)
+
+            if event == sg.WIN_CLOSED:
+                break
+
+            if thread_to_wait_for and not thread_to_wait_for.is_alive():
+                break
+
+            window["-IMAGE-"].update_animation_no_buffering(
+                gif_path, time_between_frames=time_between_frames
+            )
+
+            dots = "." * dot_counter
+            window["-WAITING_TEXT-"].update(value=f"Please wait{dots}")
+            dot_counter = (dot_counter + 1) % 4
+
+        window.close()
+
+        sg.theme(current_theme)

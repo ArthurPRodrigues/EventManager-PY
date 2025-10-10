@@ -1,9 +1,14 @@
+import os
+
 import FreeSimpleGUI as sg
 
-from events.ui.list_event_gui import ListEventGui
+from event.ui.list_event_client_gui import ListEventClientGui
+from event.ui.list_event_organizer_gui import ListEventOrganizerGui
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
+from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
+from ticket.ui.validate_ticket_gui import ValidateTicketGUI
 from user.application.authenticate_user_use_case import AuthenticateUserInputDto
 from user.domain.user import User
 from user.domain.user_role import UserRole
@@ -13,14 +18,27 @@ from user.ui.create_user_gui import CreateUserGUI
 class AuthenticateGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None):
         super().__init__(
-            title="Login", size=(400, 140), use_cases=use_cases, navigator=navigator
+            title="Login",
+            size=WINDOW_SIZES["SQUARE_PANEL"],
+            use_cases=use_cases,
+            navigator=navigator,
         )
 
         self.roles = [role.value for role in UserRole]
 
         self.action_buttons = ActionButtonsComponent([
-            {"text": "Login", "key": "-LOGIN-", "size": (12, 1)},
-            {"text": "Create User", "key": "-CREATE_USER-", "size": (12, 1)},
+            {
+                "text": "Login",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "key": "-LOGIN-",
+                "button_color": (COLORS["dark"], COLORS["secondary"]),
+            },
+            {
+                "text": "Create User",
+                "font": FONTS["SECONDARY_BUTTON"],
+                "key": "-CREATE_USER-",
+                "button_color": (COLORS["white"], COLORS["primary"]),
+            },
         ])
 
         self.event_map = {
@@ -29,19 +47,106 @@ class AuthenticateGUI(BaseGUI):
         }
 
     def create_layout(self):
-        layout = [
-            [sg.Text("Email", size=(12, 1)), sg.Input(key="-EMAIL-")],
+        # Left column (labels) and right column (inputs)
+        labels = [
             [
-                sg.Text("Password", size=(12, 1)),
-                sg.Input(key="-PASSWORD-", password_char="*"),
+                sg.Text(
+                    "Email*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
             ],
             [
-                sg.Text("Role", size=(12, 1)),
+                sg.Text(
+                    "Password*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
+                sg.Text(
+                    "Role*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
+            ],
+        ]
+
+        inputs = [
+            [
+                sg.Input(
+                    key="-EMAIL-",
+                    tooltip="Enter your email (e.g., user@email.com)",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
+                sg.Input(
+                    key="-PASSWORD-",
+                    password_char="*",
+                    tooltip="Enter your password",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
                 sg.Combo(
                     self.roles,
                     default_value=self.roles[0],
                     key="-ROLE-",
                     readonly=True,
+                    tooltip="Select your role in the system",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                )
+            ],
+        ]
+
+        layout = [
+            [
+                sg.Image(
+                    filename=os.path.join("assets", "png", "festum_logo_325x320.png"),
+                    subsample=2,
+                    pad=(5),
+                )
+            ],
+            [
+                sg.Text(
+                    "WELCOME AGAIN!",
+                    font=FONTS["TITLE_MAIN"],
+                    justification="center",
+                    pad=(1, 0),
+                ),
+                sg.Image(
+                    filename=os.path.join("assets", "png", "grin_32x32.png"),
+                    pad=(1, 0),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Please log in to continue",
+                    font=FONTS["SUBTITLE"],
+                    justification="center",
+                    pad=(20, 20),
+                    text_color=COLORS["secondary"],
+                )
+            ],
+            [
+                sg.Column(
+                    labels,
+                    element_justification="right",
+                    vertical_alignment="top",
+                    pad=((30, 0), (0, 0)),
+                ),
+                sg.Column(
+                    inputs,
+                    element_justification="left",
+                    vertical_alignment="top",
+                    pad=((0, 30), (0, 0)),
                 ),
             ],
             *self.action_buttons.create_layout(),
@@ -69,17 +174,22 @@ class AuthenticateGUI(BaseGUI):
             )
             user = self.use_cases.authenticate_user_use_case.execute(input_dto)
             self._set_auth_context(user)
-            self.show_info_popup(
+            self.show_success_popup(
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            if (
-                self.auth_context.role.value == "CLIENT"
-                or self.auth_context.role.value == "ORGANIZER"
-            ):
-                self.navigator.push_screen(ListEventGui, auth_context=self.auth_context)
+            if self.auth_context.role.value == "CLIENT":
+                self.navigator.push_screen(
+                    ListEventClientGui, auth_context=self.auth_context
+                )
+            elif self.auth_context.role.value == "ORGANIZER":
+                self.navigator.push_screen(
+                    ListEventOrganizerGui, auth_context=self.auth_context
+                )
             else:
-                self.show_info_popup("Interface for STAFF are not implemented yet.")
+                self.navigator.push_screen(
+                    ValidateTicketGUI, auth_context=self.auth_context
+                )
 
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")

@@ -1,8 +1,11 @@
+import os
+
 import FreeSimpleGUI as sg
 
 from shared.ui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
+from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
 from user.application.create_user_use_case import CreateUserInputDto
 from user.domain.user_role import UserRole
 
@@ -11,7 +14,7 @@ class CreateUserGUI(BaseGUI):
     def __init__(self, use_cases=None, navigator=None):
         super().__init__(
             title="Register User",
-            size=(400, 240),
+            size=WINDOW_SIZES["SQUARE_PANEL"],
             use_cases=use_cases,
             navigator=navigator,
         )
@@ -21,7 +24,12 @@ class CreateUserGUI(BaseGUI):
         self.header = HeaderComponent()
 
         self.action_buttons = ActionButtonsComponent([
-            {"text": "Create User", "key": "-CREATE-", "size": (12, 1)},
+            {
+                "text": "Create User",
+                "key": "-CREATE-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "button_color": (COLORS["dark"], COLORS["secondary"]),
+            },
         ])
 
         self.event_map = {
@@ -29,39 +37,136 @@ class CreateUserGUI(BaseGUI):
         }
 
     def create_layout(self):
-        layout = [
-            *self.header.create_layout(),
-            [sg.HorizontalSeparator()],
+        labels = [
             [
-                sg.Text("Name*", size=(12, 1)),
-                sg.Input(key="-NAME-"),
+                sg.Text(
+                    "Name*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
             ],
             [
-                sg.Text("Email*", size=(12, 1)),
-                sg.Input(key="-EMAIL-"),
+                sg.Text(
+                    "Email*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
             ],
             [
-                sg.Text("Password*", size=(12, 1)),
-                sg.Input(key="-PASSWORD-", password_char="*"),
+                sg.Text(
+                    "Password*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
             ],
             [
-                sg.Text("Role*", size=(8, 1)),
+                sg.Text(
+                    "Role*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+        ]
+
+        inputs = [
+            [
+                sg.Input(
+                    key="-NAME-",
+                    tooltip="Enter your full name",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Input(
+                    key="-EMAIL-",
+                    tooltip="Enter your email (e.g., user@email.com)",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Input(
+                    key="-PASSWORD-",
+                    password_char="*",
+                    tooltip="Enter your password",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
                 sg.Combo(
                     self.roles,
                     default_value=self.roles[0],
                     key="-ROLE-",
                     readonly=True,
+                    tooltip="Select your role in the system",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                ),
+            ],
+        ]
+
+        layout = [
+            *self.header.create_layout(),
+            [
+                sg.Text(
+                    "CREATE YOUR ACCOUNT",
+                    font=FONTS["TITLE_MAIN"],
+                    justification="center",
+                    pad=((0, 5), (20, 0)),
+                ),
+                sg.Image(
+                    filename=os.path.join("assets", "png", "tada_32x32.png"),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Create an account to manage\nand discover new events.",
+                    font=FONTS["SUBTITLE"],
+                    justification="center",
+                    pad=(20, 20),
+                    text_color=COLORS["secondary"],
+                ),
+            ],
+            [
+                sg.Column(
+                    labels,
+                    element_justification="left",
+                    vertical_alignment="top",
+                    pad=((30, 0), (0, 0)),
+                ),
+                sg.Column(
+                    inputs,
+                    element_justification="left",
+                    vertical_alignment="top",
+                    pad=((0, 30), (0, 0)),
                 ),
             ],
             [
                 sg.Checkbox(
                     "I confirm I am 18 years or older*",
                     key="-AGE_CONFIRM-",
+                    font=FONTS["CHECKBOX"],
                     enable_events=False,
+                    expand_x=True,
+                    pad=(20, 10),
+                    checkbox_color=(COLORS["primary_lighter"]),
                 )
             ],
             [
-                sg.Text("Fields marked with * are required", text_color="red"),
+                sg.Text(
+                    "Fields marked with * are required",
+                    text_color=COLORS["info"],
+                    font=FONTS["FOOTNOTE"],
+                    expand_x=True,
+                    justification="left",
+                    pad=((30, 0), (0, 0)),
+                ),
             ],
             *self.action_buttons.create_layout(),
         ]

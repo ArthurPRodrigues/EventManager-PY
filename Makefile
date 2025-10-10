@@ -12,8 +12,8 @@ default: help
 
 help:
 	@echo "Targets:"
-	@echo "  install     - Create venv and install production dependencies"
-	@echo "  install-dev - Create venv and install all dependencies (prod + dev)"
+	@echo "  install     - Create venv, install fonts, and install production dependencies"
+	@echo "  install-dev - Create venv, install fonts, and install all dependencies (prod + dev)"
 	@echo "  run         - Start the application"
 	@echo "  clean       - Remove caches and build artifacts"
 	@echo "  play <name> - Run playground script (e.g., make play friendship)"
@@ -21,7 +21,12 @@ help:
 $(VENV_DIR):
 	$(PYTHON) -m venv $(VENV_DIR)
 
-install: $(VENV_DIR)
+install-fonts:
+	mkdir -p ~/.fonts
+	cp -r assets/fonts/* ~/.fonts/ 2>/dev/null || true
+	fc-cache -f ~/.fonts
+
+install: $(VENV_DIR) install-fonts
 	$(VENV_PIP) install --upgrade pip
 	$(VENV_PIP) install -e .
 
