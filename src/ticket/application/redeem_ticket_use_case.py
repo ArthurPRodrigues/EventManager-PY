@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from events.infra.persistence.sqlite_event_repository import SqliteEventRepository
+from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
-from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketRepository
+from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
@@ -34,7 +34,7 @@ class RedeemTicketResult:
 class RedeemTicketUseCase:
     def __init__(
         self,
-        ticket_repository: SqliteTicketRepository,
+        ticket_repository: SqliteTicketsRepository,
         event_repository: SqliteEventRepository,
         user_repository: SqliteUsersRepository,
     ) -> None:
