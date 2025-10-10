@@ -2,7 +2,6 @@ import os
 
 import FreeSimpleGUI as sg
 
-from events.ui.list_events_gui import ListEventGui
 from event.ui.list_event_client_gui import ListEventClientGui
 from event.ui.list_event_organizer_gui import ListEventOrganizerGui
 from shared.domain.auth_context import AuthContext
@@ -47,22 +46,61 @@ class AuthenticateGUI(BaseGUI):
         }
 
     def create_layout(self):
-        layout = [
-            [sg.Text("Email", size=(12, 1)), sg.Input(key="-EMAIL-")],
+        # Left column (labels) and right column (inputs)
+        labels = [
             [
-                sg.Text("Password", size=(12, 1)),
-                sg.Input(key="-PASSWORD-", password_char="*"),
+                sg.Text(
+                    "Email*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
             ],
             [
-                sg.Text("Role", size=(12, 1)),
+                sg.Text(
+                    "Password*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
+                sg.Text(
+                    "Role*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                )
+            ],
+        ]
+
+        inputs = [
+            [
+                sg.Input(
+                    key="-EMAIL-",
+                    tooltip="Enter your email (e.g., user@email.com)",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
+                sg.Input(
+                    key="-PASSWORD-",
+                    password_char="*",
+                    tooltip="Enter your password",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                )
+            ],
+            [
                 sg.Combo(
                     self.roles,
                     default_value=self.roles[0],
                     key="-ROLE-",
                     readonly=True,
                     tooltip="Select your role in the system",
-                    pad=(0, 10),
                     font=FONTS["INPUT"],
+                    pad=(0, 10),
                 )
             ],
         ]
@@ -139,10 +177,7 @@ class AuthenticateGUI(BaseGUI):
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )
 
-            if (
-                self.auth_context.role.value == "CLIENT"
-            ):
-                self.navigator.push_screen(ListEventGui, auth_context=self.auth_context)
+            if self.auth_context.role.value == "CLIENT":
                 self.navigator.push_screen(
                     ListEventClientGui, auth_context=self.auth_context
                 )

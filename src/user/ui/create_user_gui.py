@@ -47,12 +47,39 @@ class CreateUserGUI(BaseGUI):
                 ),
             ],
             [
-                sg.Text("Name*", size=(12, 1)),
-                sg.Input(key="-NAME-"),
+                sg.Text(
+                    "Email*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
             ],
             [
-                sg.Text("Email*", size=(12, 1)),
-                sg.Input(key="-EMAIL-"),
+                sg.Text(
+                    "Password*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Role*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+        ]
+
+        inputs = [
+            [
+                sg.Input(
+                    key="-NAME-",
+                    tooltip="Enter your full name",
+                    font=FONTS["INPUT"],
+                    pad=(0, 10),
+                ),
             ],
             [
                 sg.Input(
