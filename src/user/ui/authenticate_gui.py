@@ -2,7 +2,8 @@ import os
 
 import FreeSimpleGUI as sg
 
-from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
+from event.ui.list_event_client_gui import ListEventClientGui
+from event.ui.list_event_organizer_gui import ListEventOrganizerGui
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
@@ -46,10 +47,11 @@ class AuthenticateGUI(BaseGUI):
         }
 
     def create_layout(self):
+        # Left column (labels) and right column (inputs)
         labels = [
             [
                 sg.Text(
-                    "Email",
+                    "Email*",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -57,7 +59,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Password",
+                    "Password*",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -65,7 +67,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Role",
+                    "Role*",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -78,8 +80,8 @@ class AuthenticateGUI(BaseGUI):
                 sg.Input(
                     key="-EMAIL-",
                     tooltip="Enter your email (e.g., user@email.com)",
-                    pad=(0, 10),
                     font=FONTS["INPUT"],
+                    pad=(0, 10),
                 )
             ],
             [
@@ -87,8 +89,8 @@ class AuthenticateGUI(BaseGUI):
                     key="-PASSWORD-",
                     password_char="*",
                     tooltip="Enter your password",
-                    pad=(0, 10),
                     font=FONTS["INPUT"],
+                    pad=(0, 10),
                 )
             ],
             [
@@ -98,8 +100,8 @@ class AuthenticateGUI(BaseGUI):
                     key="-ROLE-",
                     readonly=True,
                     tooltip="Select your role in the system",
-                    pad=(0, 10),
                     font=FONTS["INPUT"],
+                    pad=(0, 10),
                 )
             ],
         ]
@@ -178,16 +180,17 @@ class AuthenticateGUI(BaseGUI):
 
             if self.auth_context.role.value == "CLIENT":
                 self.navigator.push_screen(
-                    FriendshipManagerGUI, auth_context=self.auth_context
+                    ListEventClientGui, auth_context=self.auth_context
                 )
-
-            elif self.auth_context.role.value == "STAFF":
+            elif self.auth_context.role.value == "ORGANIZER":
+                self.navigator.push_screen(
+                    ListEventOrganizerGui, auth_context=self.auth_context
+                )
+            else:
                 self.navigator.push_screen(
                     ValidateTicketGUI, auth_context=self.auth_context
                 )
 
-            else:
-                self.show_info_popup("Interfaces for ORGANIZER is not implemented yet.")
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
 

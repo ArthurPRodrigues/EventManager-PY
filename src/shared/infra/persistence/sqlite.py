@@ -43,6 +43,22 @@ class SQLiteDatabase:
             )
             conn.execute(
                 """
+                CREATE TABLE IF NOT EXISTS events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    created_at TIMESTAMP NOT NULL,
+                    end_date TIMESTAMP NOT NULL,
+                    location TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    start_date TIMESTAMP NOT NULL,
+                    tickets_available INTEGER NOT NULL,
+                    organizer_id INTEGER NOT NULL,
+                    staffs_id TEXT NOT NULL,
+                    FOREIGN KEY(organizer_id) REFERENCES users(id) ON DELETE CASCADE
+                    )
+                """
+            )
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS tickets (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     event_id INTEGER NOT NULL,
