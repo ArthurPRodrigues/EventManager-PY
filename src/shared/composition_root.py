@@ -46,6 +46,16 @@ class CompositionRoot:
 def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
+
+    # # Services
+    # templates_dir = os.path.join(
+    #     "assets",
+    #     "html_templates",
+    # )
+
+    # html_template_engine = HtmlTemplateEngine(templates_dir)
+    # smtp_email_service = SmtpEmailService()
+
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
