@@ -43,7 +43,6 @@ class ListEventClientGui(BaseGUI):
                 "ID",
                 "NAME",
                 "LOCATION",
-                "CREATED AT",
                 "START DATE",
                 "END DATE",
                 "TICKETS AVAILABLE",
@@ -158,7 +157,6 @@ class ListEventClientGui(BaseGUI):
                 event.id,  # n vai pasarecer la na tabela
                 event.name,
                 event.location,
-                event.created_at,
                 event.start_date,
                 event.end_date,
                 event.tickets_available,

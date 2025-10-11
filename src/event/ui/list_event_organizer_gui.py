@@ -46,7 +46,6 @@ class ListEventOrganizerGui(BaseGUI):
             headers=[
                 "ID",
                 "NAME",
-                "CREATED AT",
                 "START DATE",
                 "END DATE",
                 "LOCATION",
@@ -164,7 +163,6 @@ class ListEventOrganizerGui(BaseGUI):
             table_data.append([
                 event.id,
                 event.name,
-                event.created_at,
                 event.start_date,
                 event.end_date,
                 event.location,
