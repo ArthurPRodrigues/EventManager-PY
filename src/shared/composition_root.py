@@ -18,6 +18,8 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
 from shared.infra.persistence.sqlite import SQLiteDatabase
+from src.ticket.application import redeem_ticket_use_case
+from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_use_case import ValidateTicketUseCase
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
@@ -41,6 +43,8 @@ class CompositionRoot:
     validate_ticket_use_case: ValidateTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
+    ticket_repo: SqliteTicketsRepository
+    redeem_ticket_use_case: RedeemTicketUseCase
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
@@ -81,15 +85,17 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
 
     return CompositionRoot(
         db=db,
+        friendship_repo=friendship_repo,
         send_friendship_invite_use_case=send_friendship_invite_use_case,
         accept_friendship_invite_use_case=accept_friendship_invite_use_case,
         delete_friendship_use_case=delete_friendship_use_case,
         list_friendships_use_case=list_friendships_use_case,
+        user_repo=user_repo,
         create_user_use_case=create_user_use_case,
         authenticate_user_use_case=authenticate_user_use_case,
         validate_ticket_use_case=validate_ticket_use_case,
-        list_event_use_case=list_event_use_case,
         event_repo=event_repo,
-        friendship_repo=friendship_repo,
-        user_repo=user_repo,
+        list_event_use_case=list_event_use_case,
+        ticket_repo=tickets_repo,
+        redeem_ticket_use_case=redeem_ticket_use_case,
     )
