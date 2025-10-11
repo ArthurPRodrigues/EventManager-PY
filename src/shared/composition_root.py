@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from events.application.create_event_use_case import CreateEventUseCase
+from events.infra.persistence.SqliteEventsRepository import SqliteEventsRepository
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
 )
@@ -35,6 +37,8 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
+    event_repo: SqliteEventsRepository
+    create_event_use_case: CreateEventUseCase
     # validate_ticket_use_case: ValidateTicketUseCase
     # smtp_email_service: SmtpEmailService
     # html_template_engine: HtmlTemplateEngine
@@ -58,6 +62,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
     tickets_repo = SqliteTicketsRepository(db)  # noqa: F841
+    event_repo = SqliteEventsRepository(db)
 
     # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(
@@ -71,6 +76,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
     # validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
+    create_event_use_case = CreateEventUseCase(event_repo, user_repo)
 
     return CompositionRoot(
         db=db,
@@ -83,4 +89,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         # validate_ticket_use_case=validate_ticket_use_case,
         # smtp_email_service=smtp_email_service,
         # html_template_engine=html_template_engine,
+        create_event_use_case=create_event_use_case,
+        event_repo=event_repo,
+        friendship_repo=friendship_repo,
+        user_repo=user_repo,
     )

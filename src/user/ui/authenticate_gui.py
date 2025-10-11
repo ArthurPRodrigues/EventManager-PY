@@ -2,9 +2,9 @@ import os
 
 import FreeSimpleGUI as sg
 
-from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
-
 # from events.ui.list_events_gui import ListEventsGui
+from events.ui.create_event_gui import CreateEventGUI
+from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.domain.auth_context import AuthContext
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components import ActionButtonsComponent
@@ -189,7 +189,9 @@ class AuthenticateGUI(BaseGUI):
                 )
 
             else:
-                self.show_info_popup("Interfaces for ORGANIZER is not implemented yet.")
+                self.navigator.push_screen(
+                    CreateEventGUI, auth_context=self.auth_context
+                )
         except Exception as e:
             self.show_error_popup(f"Error authenticating user: {e}")
 

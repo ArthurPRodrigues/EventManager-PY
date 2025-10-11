@@ -1,14 +1,13 @@
 import os
-import datetime
+from datetime import datetime
 
 import FreeSimpleGUI as sg
 
+from events.application.create_event_use_case import CreateEventInputDto
 from shared.ui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
-from events.application.create_event_use_case import CreateEventInputDto
-from events.domain.events import Events
 
 
 class CreateEventGUI(BaseGUI):
@@ -72,7 +71,7 @@ class CreateEventGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Tickets Available*",
+                    "Tickets*",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -138,7 +137,7 @@ class CreateEventGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Create an account to manage\nand discover new events.",
+                    "Create an event.",
                     font=FONTS["SUBTITLE"],
                     justification="center",
                     pad=(20, 20),
@@ -186,27 +185,31 @@ class CreateEventGUI(BaseGUI):
         location = values.get("-LOCATION-")
         tickets_available = values.get("-TICKETS_AVAILABLE-")
 
-        if not name or not start_date or not end_date or not location or not tickets_available:
+        if (
+            not name
+            or not start_date
+            or not end_date
+            or not location
+            or not tickets_available
+        ):
             self.show_warning_popup("Please fill all fields")
             return
-        
+
         try:
             input_dto = CreateEventInputDto(
-                name=name, 
-                start_date=datetime.datetime.strptime(start_date, '%d/%m/%Y'), 
-                end_date=datetime.datetime.strptime(end_date, '%d/%m/%Y'), 
-                location=location, 
+                name=name,
+                start_date=datetime.strptime(start_date, "%d/%m/%Y").date(),
+                end_date=datetime.strptime(end_date, "%d/%m/%Y").date(),
+                location=location,
                 tickets_available=int(tickets_available),
-                organizer_id=self.auth_context.id
+                organizer_id=self.auth_context.id,
             )
 
             event = self.use_cases.create_event_use_case.execute(input_dto)
 
-            self.show_info_popup(
-                f"Event {event.name} create successfully!"
-            )
+            self.show_info_popup(f"Event {event.name} create successfully!")
 
             self.navigator.pop_screen()
-        
+
         except Exception as e:
             self.show_error_popup(f"Error creating event: {e!s}")
