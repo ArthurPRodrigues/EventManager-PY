@@ -50,6 +50,8 @@ WINDOW_SIZES = {
     "HORIZONTAL_SMALL": (480, 270),
     "HORIZONTAL_COMPACT": (640, 360),
     "HORIZONTAL_DEFAULT": (800, 450),
+    # TODO: Define a better name for this size
+    # @ArthurPRodrigues
     "ARTHUR": (1000, 450),  # legacy temporary size
     "EVENT_LIST_WIDE": (1100, 600),
     # --- Verticais (Portrait) ---

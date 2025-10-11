@@ -23,6 +23,7 @@ class ListEventInputDto:
     filter_mode: str | None = None
 
 
+# TODO: Split that use case into ListEventsUseCase and ListEventsByOrganizerUseCase
 class ListEventUseCase:
     def __init__(self, events_repository: SqliteEventRepository) -> PaginatedEventsDto:
         self._events_repository = events_repository
