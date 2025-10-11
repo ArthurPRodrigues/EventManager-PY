@@ -3,8 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime
 
-from events.domain.events import Events
-from events.infra.persistence.SqliteEventsRepository import SqliteEventsRepository
+from event.domain.errors import InvalidEventError
+from event.domain.event import Event
+from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
@@ -21,16 +22,16 @@ class CreateEventInputDto:
 class CreateEventUseCase:
     def __init__(
         self,
-        events_repository: SqliteEventsRepository,
+        events_repository: SqliteEventRepository,
         users_repository: SqliteUsersRepository,
     ) -> None:
         self._events_repository = events_repository
         self._users_repository = users_repository
 
-    def execute(self, input_dto: CreateEventInputDto) -> Events:
+    def execute(self, input_dto: CreateEventInputDto) -> Event:
         organizer_id = input_dto.organizer_id
 
-        event = Events.create(
+        event = Event.create(
             name=input_dto.name,
             start_date=input_dto.start_date,
             end_date=input_dto.end_date,
@@ -40,5 +41,9 @@ class CreateEventUseCase:
             created_at=datetime.now(),
         )
 
-        created_event = self._events_repository.add(event)
-        return created_event
+        try:
+            created_event = self._events_repository.add(event)
+            return created_event
+
+        except Exception as e:
+            raise InvalidEventError(event) from e

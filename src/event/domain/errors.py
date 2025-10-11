@@ -5,6 +5,12 @@ class DomainError(Exception):
     """Base class for domain errors."""
 
 
+class InvalidEventError(DomainError):
+    def __init__(self, event) -> None:
+        message = f'Invalid event: "{event}".'
+        super().__init__(message)
+
+
 class InvalidCreatedAtError(DomainError):
     def __init__(self, created_at) -> None:
         message = f'Invalid created_at: "{created_at}".'
@@ -41,19 +47,19 @@ class InvalidTicketsAvailableError(DomainError):
         super().__init__(message)
 
 
-class InvalidPageSizeError(DomainError):
-    def __init__(self, size: int) -> None:
-        message = f"Invalid page size: {size}."
-        super().__init__(message)
-
-
-class InvalidPageError(DomainError):
-    def __init__(self, page: int) -> None:
-        message = f"Invalid page number: {page}."
-        super().__init__(message)
-
-
-class InvalidOrganizerIDError(DomainError):
+class InvalidOrganizerIdError(DomainError):
     def __init__(self, organizer_id) -> None:
         message = f'Invalid organizer_id: "{organizer_id}".'
+        super().__init__(message)
+
+
+class InvalidStaffsIdError(DomainError):
+    def __init__(self, staffs_id) -> None:
+        message = f'Invalid staffs_id: "{staffs_id}".'
+        super().__init__(message)
+
+
+class StaffAlreadyAddedError(DomainError):
+    def __init__(self, staff_id) -> None:
+        message = f'Staff with id "{staff_id}" has already been added.'
         super().__init__(message)

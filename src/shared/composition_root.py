@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from events.application.create_event_use_case import CreateEventUseCase
-from events.infra.persistence.SqliteEventsRepository import SqliteEventsRepository
+from event.application.create_event_use_case import CreateEventUseCase
+from event.application.list_event_use_case import ListEventUseCase
+from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
 )
@@ -18,6 +19,7 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
 from shared.infra.persistence.sqlite import SQLiteDatabase
+from ticket.application.validate_ticket_use_case import ValidateTicketUseCase
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
 from user.application.create_user_use_case import CreateUserUseCase
@@ -37,14 +39,12 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    event_repo: SqliteEventsRepository
+    validate_ticket_use_case: ValidateTicketUseCase
+    list_event_use_case: ListEventUseCase
     create_event_use_case: CreateEventUseCase
-    # validate_ticket_use_case: ValidateTicketUseCase
-    # smtp_email_service: SmtpEmailService
-    # html_template_engine: HtmlTemplateEngine
+    event_repo: SqliteEventRepository
 
 
-# TODO: Maybe adjust later to include frontend
 def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
@@ -61,8 +61,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
-    tickets_repo = SqliteTicketsRepository(db)  # noqa: F841
-    event_repo = SqliteEventsRepository(db)
+    event_repo = SqliteEventRepository(db)
+    tickets_repo = SqliteTicketsRepository(db)
 
     # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(
@@ -77,6 +77,11 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
     # validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
     create_event_use_case = CreateEventUseCase(event_repo, user_repo)
+    list_event_use_case = ListEventUseCase(event_repo)
+    validate_ticket_use_case = ValidateTicketUseCase(
+        tickets_repository=tickets_repo,
+        events_repository=event_repo,
+    )
 
     return CompositionRoot(
         db=db,
@@ -90,6 +95,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         # smtp_email_service=smtp_email_service,
         # html_template_engine=html_template_engine,
         create_event_use_case=create_event_use_case,
+        validate_ticket_use_case=validate_ticket_use_case,
+        list_event_use_case=list_event_use_case,
         event_repo=event_repo,
         friendship_repo=friendship_repo,
         user_repo=user_repo,
