@@ -2,7 +2,7 @@ import FreeSimpleGUI as sg
 
 from event.application.delete_event_use_case import DeleteEventInputDto
 from event.application.list_event_use_case import ListEventInputDto
-from event.ui.create_event_gui import CreateEventGUI
+from event.ui.event_form_gui import EventFormGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
@@ -106,7 +106,9 @@ class ListEventOrganizerGui(BaseGUI):
         self.navigator.navigate_to("tickets_redeemed")
 
     def handle_create_event(self):
-        self.navigator.push_screen(CreateEventGUI, auth_context=self.auth_context)
+        self.navigator.push_screen(
+            EventFormGUI, auth_context=self.auth_context, operation="CREATE"
+        )
 
     def handle_delete_selected(self):
         selected_data = self.table.get_selected_row_data(self.window)
@@ -127,7 +129,17 @@ class ListEventOrganizerGui(BaseGUI):
             self.show_warning_popup("No row selected!")
 
     def handle_edit_selected(self):
-        self.navigator.navigate_to("edit_selected")
+        selected_data = self.table.get_selected_row_data(self.window)
+        if selected_data:
+            event_id = selected_data[0]
+            self.navigator.push_screen(
+                EventFormGUI,
+                auth_context=self.auth_context,
+                event={"id": event_id},
+                operation="UPDATE",
+            )
+        else:
+            self.show_warning_popup("No event selected!")
 
     def create_layout(self):
         filter_row = [
