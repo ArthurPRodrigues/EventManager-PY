@@ -1,5 +1,6 @@
 import FreeSimpleGUI as sg
 
+from event.application.delete_event_use_case import DeleteEventInputDto
 from event.application.list_event_use_case import ListEventInputDto
 from event.ui.create_event_gui import CreateEventGUI
 from shared.ui.base_gui import BaseGUI
@@ -108,7 +109,22 @@ class ListEventOrganizerGui(BaseGUI):
         self.navigator.push_screen(CreateEventGUI, auth_context=self.auth_context)
 
     def handle_delete_selected(self):
-        self.navigator.navigate_to("delete_selected")
+        selected_data = self.table.get_selected_row_data(self.window)
+        if selected_data:
+            event_id = selected_data[0]
+            event_name = selected_data[1]
+            if self.show_confirmation_popup(
+                f"Are you sure you want to delete the event '{event_name}'?"
+            ):
+                try:
+                    input_dto = DeleteEventInputDto(event_id=event_id)
+                    self.use_cases.delete_event_use_case.execute(input_dto)
+                    self.show_info_popup(f"Event {event_name} deleted successufully!")
+                    self.table.refresh(self.window)
+                except Exception as e:
+                    self.show_error_popup(f"Error deleting event: {e}")
+        else:
+            self.show_warning_popup("No row selected!")
 
     def handle_edit_selected(self):
         self.navigator.navigate_to("edit_selected")

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
+from event.application.errors import PastDateError
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
@@ -40,5 +41,12 @@ class CreateEventUseCase:
             created_at=datetime.now(),
         )
 
-        created_event = self._events_repository.add(event)
-        return created_event
+        if event.start_date < event.created_at or event.end_date < event.created_at:
+            raise PastDateError(
+                event.start_date
+                if event.start_date < event.created_at
+                else event.end_date
+            )
+        else:
+            created_event = self._events_repository.add(event)
+            return created_event

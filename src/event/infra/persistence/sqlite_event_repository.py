@@ -113,8 +113,6 @@ class SqliteEventRepository:
                         (event.staffs_id and ",".join(event.staffs_id)) or None,
                     ),
                 )
-                print(f"start_date {event.start_date}")
-                print(f"start_date.isoformat() {event.start_date.isoformat()}")
                 conn.commit()
                 return replace(event, id=cursor.lastrowid)
 

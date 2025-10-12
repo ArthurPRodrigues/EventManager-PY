@@ -91,7 +91,7 @@ class CreateEventGUI(BaseGUI):
             [
                 sg.Input(
                     key="-START_DATE-",
-                    tooltip="Enter the event's starting date",
+                    tooltip="Enter the event's starting date in the format DD/MM/YYYY HHhMM",
                     font=FONTS["INPUT"],
                     pad=(0, 10),
                 ),
@@ -99,7 +99,7 @@ class CreateEventGUI(BaseGUI):
             [
                 sg.Input(
                     key="-END_DATE-",
-                    tooltip="Enter the event's ending date",
+                    tooltip="Enter the event's ending date in the format DD/MM/YYYY HHhMM",
                     font=FONTS["INPUT"],
                     pad=(0, 10),
                 ),
@@ -198,8 +198,8 @@ class CreateEventGUI(BaseGUI):
         try:
             input_dto = CreateEventInputDto(
                 name=name,
-                start_date=datetime.strptime(start_date, "%d/%m/%Y"),
-                end_date=datetime.strptime(end_date, "%d/%m/%Y"),
+                start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
+                end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
                 location=location,
                 tickets_available=int(tickets_available),
                 organizer_id=self.auth_context.id,
@@ -207,7 +207,7 @@ class CreateEventGUI(BaseGUI):
 
             event = self.use_cases.create_event_use_case.execute(input_dto)
 
-            self.show_info_popup(f"Event {event.name} create successfully!")
+            self.show_info_popup(f"Event {event.name} created successfully!")
 
             self.navigator.pop_screen()
 
