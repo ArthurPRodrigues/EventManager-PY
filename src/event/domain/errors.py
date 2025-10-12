@@ -41,23 +41,19 @@ class InvalidTicketsAvailableError(DomainError):
         super().__init__(message)
 
 
-# TODO: Remove unused error
-# @ArthurPRodrigues
-class InvalidOrganizerIdError(DomainError):
-    def __init__(self, organizer_id) -> None:
-        message = f'Invalid organizer_id: "{organizer_id}".'
-        super().__init__(message)
-
-
-# TODO: Remove unused error
-# @ArthurPRodrigues
-class InvalidStaffsIdError(DomainError):
-    def __init__(self, staffs_id) -> None:
-        message = f'Invalid staffs_id: "{staffs_id}".'
-        super().__init__(message)
-
-
 class StaffAlreadyAddedError(DomainError):
     def __init__(self, staff_id) -> None:
         message = f'Staff with id "{staff_id}" has already been added.'
+        super().__init__(message)
+
+
+class EventNotFoundError(DomainError):
+    def __init__(self, event_id: int) -> None:
+        message = f'Event not found: "{event_id}".'
+        super().__init__(message)
+
+
+class EventHasNoTicketsAvailableError(DomainError):
+    def __init__(self, event_id: int) -> None:
+        message = f'Event with id "{event_id}" has no tickets available.'
         super().__init__(message)
