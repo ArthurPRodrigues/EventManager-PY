@@ -198,8 +198,8 @@ class CreateEventGUI(BaseGUI):
         try:
             input_dto = CreateEventInputDto(
                 name=name,
-                start_date=datetime.strptime(start_date, "%d/%m/%Y").date(),
-                end_date=datetime.strptime(end_date, "%d/%m/%Y").date(),
+                start_date=datetime.strptime(start_date, "%d/%m/%Y"),
+                end_date=datetime.strptime(end_date, "%d/%m/%Y"),
                 location=location,
                 tickets_available=int(tickets_available),
                 organizer_id=self.auth_context.id,

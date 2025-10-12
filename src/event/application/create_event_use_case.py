@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import datetime
 
-from event.domain.errors import InvalidEventError
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
@@ -12,8 +11,8 @@ from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 @dataclass(frozen=True)
 class CreateEventInputDto:
     name: str
-    start_date: date
-    end_date: date
+    start_date: datetime
+    end_date: datetime
     location: str
     tickets_available: int
     organizer_id: int
@@ -41,9 +40,5 @@ class CreateEventUseCase:
             created_at=datetime.now(),
         )
 
-        try:
-            created_event = self._events_repository.add(event)
-            return created_event
-
-        except Exception as e:
-            raise InvalidEventError(event) from e
+        created_event = self._events_repository.add(event)
+        return created_event

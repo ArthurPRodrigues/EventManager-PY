@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from datetime import date, datetime
+from datetime import datetime
 
 from event.domain.errors import (
     InvalidCreatedAtError,
@@ -20,8 +20,8 @@ class Event:
     name: str
     location: str
     created_at: datetime
-    start_date: date
-    end_date: date
+    start_date: datetime
+    end_date: datetime
     tickets_available: int
     organizer_id: int
     staffs_id: list[str] = None
@@ -32,8 +32,8 @@ class Event:
         name: str,
         location: str,
         created_at: datetime,
-        start_date: date,
-        end_date: date,
+        start_date: datetime,
+        end_date: datetime,
         tickets_available: int,
         organizer_id: int,
     ) -> Event:
@@ -43,9 +43,9 @@ class Event:
             raise InvalidLocationError(location)
         if not created_at or not isinstance(created_at, datetime):
             raise InvalidCreatedAtError(created_at)
-        if not start_date or not isinstance(start_date, date):
+        if not start_date or not isinstance(start_date, datetime):
             raise InvalidStartDateError(start_date)
-        if not end_date or not isinstance(end_date, date):
+        if not end_date or not isinstance(end_date, datetime):
             raise InvalidEndDateError(end_date)
         if not isinstance(tickets_available, int) or tickets_available < 0:
             raise InvalidTicketsAvailableError(tickets_available)

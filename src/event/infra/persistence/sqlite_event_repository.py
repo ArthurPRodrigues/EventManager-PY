@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime
 
 from event.application.dtos import Event, PaginatedEventsDto
@@ -112,23 +113,20 @@ class SqliteEventRepository:
                         (event.staffs_id and ",".join(event.staffs_id)) or None,
                     ),
                 )
-                event_id = cursor.lastrowid
+                print(f"start_date {event.start_date}")
+                print(f"start_date.isoformat() {event.start_date.isoformat()}")
                 conn.commit()
+                return replace(event, id=cursor.lastrowid)
 
             except Exception as e:
                 conn.rollback()
                 raise e
 
-        created_event = self.get_by_id(event_id)
-        if not created_event:
-            raise Exception(f"Failed to retrieve created event with id {event_id}")
-        return created_event
-
     def get_by_id(self, id: int) -> Event | None:
         with self._db.connect() as conn:
             row = conn.execute(
                 """
-                SELECT id, name, end_date, start_date, location, tickets_available, organizer_id, staffs_id
+                SELECT id, name, end_date, start_date, location, tickets_available, organizer_id, staffs_id, created_at
                 FROM events
                 WHERE id = ?
                 """,
@@ -141,13 +139,13 @@ class SqliteEventRepository:
         return Event(
             id=row[0],
             name=row[1],
-            location=row[2],
-            created_at=datetime.fromisoformat(row[3]),
-            start_date=datetime.fromisoformat(row[4]),
-            end_date=datetime.fromisoformat(row[5]),
-            tickets_available=row[6],
-            organizer_id=row[7],
-            staffs_id=row[8].split(",") if row[8] else None,
+            end_date=datetime.fromisoformat(row[2]),
+            start_date=datetime.fromisoformat(row[3]),
+            location=row[4],
+            tickets_available=row[5],
+            organizer_id=row[6],
+            staffs_id=row[7].split(",") if row[7] else None,
+            created_at=datetime.fromisoformat(row[8]),
         )
 
     def update(self, event: Event) -> None:
