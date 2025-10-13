@@ -7,6 +7,7 @@ from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.components.table_component import TableComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
+from ticket.ui.redeem_ticket_gui import RedeemTicketGUI
 
 
 class ListEventClientGui(BaseGUI):
@@ -36,7 +37,7 @@ class ListEventClientGui(BaseGUI):
             ]
         )
         self.current_filter_mode = "ALL"
-        # TODO: Don't match with prototype
+        # TODO: update prototype
         # @ArthurPRodrigues
         self.table = TableComponent(
             headers=[
@@ -92,19 +93,25 @@ class ListEventClientGui(BaseGUI):
     def handle_manage_friends(self):
         self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
 
-    # TODO: This method is not yet implemented. A popup should be used to inform the user that the feature is unavailable.
-    # @ArthurPRodrigues
     def handle_tickets(self):
         # self.navigator.push_screen("TicketManagerGui", auth_context=self.auth_context)
         pass
 
-    # TODO: This method is not yet implemented. A popup should be used to inform the user that the feature is unavailable.
-    # @ArthurPRodrigues
     def handle_redeem_ticket(self):
-        # self.navigator.push_screen(
-        #   "RedeemTicketGui", auth_context=self.auth_context
-        # )
-        pass
+        selected = self.table.get_selected_row_data(self.window)
+        if not selected:
+            self.show_warning_popup("Select an event first.")
+            return
+
+        event_id = selected[0]
+        tickets_available = selected[5]
+
+        self.navigator.push_screen(
+            RedeemTicketGUI,
+            auth_context=self.auth_context,
+            event_id=event_id,
+            tickets_available=tickets_available,
+        )
 
     # TODO: Use the damn filter parameter on TableComponent instead of doing this manually
     # @ArthurPRodrigues
@@ -150,11 +157,9 @@ class ListEventClientGui(BaseGUI):
     def _convert_events_to_table_data(self, events):
         table_data = []
 
-        # TODO: Don't leave unexplained comments
-        # @ArthurPRodrigues
         for event in events:
             table_data.append([
-                event.id,  # n vai pasarecer la na tabela
+                event.id,
                 event.name,
                 event.location,
                 event.start_date,
