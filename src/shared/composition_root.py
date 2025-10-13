@@ -21,14 +21,12 @@ from friendship.infra.persistence.sqlite_friendship_repository import (
 from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
-from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_as_organizer_use_case import (
     ValidateTicketAsOrganizerUseCase,
 )
 from ticket.application.validate_ticket_as_staff_use_case import (
     ValidateTicketAsStaffUseCase,
 )
-from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
@@ -50,8 +48,6 @@ class CompositionRoot:
     authenticate_user_use_case: AuthenticateUserUseCase
     validate_ticket_as_organizer_use_case: ValidateTicketAsOrganizerUseCase
     validate_ticket_as_staff_use_case: ValidateTicketAsStaffUseCase
-    redeem_ticket_use_case: RedeemTicketUseCase
-    redeem_ticket_use_case: RedeemTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
     ticket_repo: SqliteTicketsRepository
@@ -101,6 +97,11 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         events_repository=event_repo,
     )
     validate_ticket_as_staff_use_case = ValidateTicketAsStaffUseCase(
+    validate_ticket_as_organizer_use_case = ValidateTicketAsOrganizerUseCase(
+        tickets_repository=tickets_repo,
+        events_repository=event_repo,
+    )
+    validate_ticket_as_staff_use_case = ValidateTicketAsStaffUseCase(
         tickets_repository=tickets_repo,
         events_repository=event_repo,
     )
@@ -127,7 +128,6 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         authenticate_user_use_case=authenticate_user_use_case,
         validate_ticket_as_organizer_use_case=validate_ticket_as_organizer_use_case,
         validate_ticket_as_staff_use_case=validate_ticket_as_staff_use_case,
-        event_repo=event_repo,
         list_event_use_case=list_event_use_case,
         ticket_repo=tickets_repo,
         redeem_ticket_use_case=redeem_ticket_use_case,
