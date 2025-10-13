@@ -27,14 +27,10 @@ from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_as_organizer_use_case import (
     ValidateTicketAsOrganizerUseCase,
 )
-from ticket.application.validate_ticket_as_organizer_use_case import (
-    ValidateTicketAsOrganizerUseCase,
+from ticket.application.validate_ticket_as_staff_use_case import (
+    ValidateTicketAsStaffUseCase,
 )
-from ticket.application.validate_ticket_as_staff_as_staff_use_case import (
-    (
-    ValidateTicketAsStaffAsStaffUseCase,
-),
-)
+from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
@@ -54,7 +50,8 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    validate_ticket_use_case: ValidateTicketUseCase
+    validate_ticket_as_organizer_use_case: ValidateTicketAsOrganizerUseCase
+    validate_ticket_as_staff_use_case: ValidateTicketAsStaffUseCase
     redeem_ticket_use_case: RedeemTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
@@ -100,7 +97,11 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
     list_event_use_case = ListEventUseCase(event_repo)
-    validate_ticket_use_case = ValidateTicketUseCase(
+    validate_ticket_as_organizer_use_case = ValidateTicketAsOrganizerUseCase(
+        tickets_repository=tickets_repo,
+        events_repository=event_repo,
+    )
+    validate_ticket_as_staff_use_case = ValidateTicketAsStaffUseCase(
         tickets_repository=tickets_repo,
         events_repository=event_repo,
     )
@@ -133,7 +134,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         user_repo=user_repo,
         create_user_use_case=create_user_use_case,
         authenticate_user_use_case=authenticate_user_use_case,
-        validate_ticket_use_case=validate_ticket_use_case,
+        validate_ticket_as_organizer_use_case=validate_ticket_as_organizer_use_case,
+        validate_ticket_as_staff_use_case=validate_ticket_as_staff_use_case,
         event_repo=event_repo,
         list_event_use_case=list_event_use_case,
         ticket_repo=tickets_repo,
