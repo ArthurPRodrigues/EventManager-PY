@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from user.domain.user_role import UserRole
 
 
@@ -20,4 +22,10 @@ class TicketEventNotFoundError(AppError):
 class TicketNotFoundError(AppError):
     def __init__(self, code: str) -> None:
         message: str = f"Ticket with code '{code}' not found."
+        super().__init__(message)
+
+
+class TicketValidationTimeError(AppError):
+    def __init__(self, start_date: datetime, end_date: datetime, event_id: int) -> None:
+        message: str = f"Cannot validate ticket for event with ID '{event_id}' because the event has either not started ({start_date}) or has already finished ({end_date})."
         super().__init__(message)
