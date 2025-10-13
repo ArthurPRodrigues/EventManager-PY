@@ -49,6 +49,7 @@ class CompositionRoot:
     authenticate_user_use_case: AuthenticateUserUseCase
     validate_ticket_as_organizer_use_case: ValidateTicketAsOrganizerUseCase
     validate_ticket_as_staff_use_case: ValidateTicketAsStaffUseCase
+    redeem_ticket_use_case: RedeemTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
     ticket_repo: SqliteTicketRepository
@@ -90,10 +91,19 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
     list_event_use_case = ListEventUseCase(event_repo)
-    redeem_ticket_use_case = RedeemTicketUseCase(ticket_repo, event_repo, user_repo)
     validate_ticket_as_organizer_use_case = ValidateTicketAsOrganizerUseCase(
         tickets_repository=tickets_repo,
         events_repository=event_repo,
+    )
+    validate_ticket_as_staff_use_case = ValidateTicketAsStaffUseCase(
+        tickets_repository=tickets_repo,
+        events_repository=event_repo,
+    )
+
+    redeem_ticket_use_case = RedeemTicketUseCase(
+        tickets_repository=tickets_repo,
+        events_repository=event_repo,
+        users_repository=user_repo,
     )
 
     redeem_ticket_use_case = RedeemTicketUseCase(
