@@ -58,3 +58,25 @@ class SqliteTicketsRepository:
                 ),
             )
             conn.commit()
+
+    def create_many(self, tickets: list[Ticket]) -> None:
+        rows = [
+            (
+                ticket.event_id,
+                ticket.client_id,
+                ticket.code,
+                ticket.status.value,
+                ticket.created_at.isoformat(),
+            )
+            for ticket in tickets
+        ]
+        with self._db.connect() as conn:
+            conn.executemany(
+                """
+                INSERT INTO tickets (event_id, client_id, code, status, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                rows,
+            )
+            conn.commit()
+        return tickets
