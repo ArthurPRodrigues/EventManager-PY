@@ -151,7 +151,7 @@ class SqliteEventRepository:
         assert event is not None
         existing_event = self.get_by_id(event.id)
         if not existing_event:
-            raise EventNotFoundError(existing_event.id)
+            raise EventNotFoundError(event.id)
         with self._db.connect() as conn:
             conn.execute(
                 """

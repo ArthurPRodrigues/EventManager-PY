@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from event.application.errors import PastDateError
+from event.domain.errors import InvalidOrganizerIdError
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
@@ -30,6 +30,8 @@ class CreateEventUseCase:
 
     def execute(self, input_dto: CreateEventInputDto) -> Event:
         organizer_id = input_dto.organizer_id
+        if not organizer_id or not self._users_repository.get_by_id(organizer_id):
+            raise InvalidOrganizerIdError(organizer_id)
 
         event = Event.create(
             name=input_dto.name,
@@ -41,12 +43,5 @@ class CreateEventUseCase:
             created_at=datetime.now(),
         )
 
-        if event.start_date < event.created_at or event.end_date < event.created_at:
-            raise PastDateError(
-                event.start_date
-                if event.start_date < event.created_at
-                else event.end_date
-            )
-        else:
-            created_event = self._events_repository.add(event)
-            return created_event
+        created_event = self._events_repository.add(event)
+        return created_event

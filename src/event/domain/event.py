@@ -3,6 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from datetime import datetime
 
+from event.application.errors import (
+    IncorrectEndDateError,
+    PastDateError,
+)
 from event.domain.errors import (
     InvalidCreatedAtError,
     InvalidEndDateError,
@@ -51,6 +55,12 @@ class Event:
             raise InvalidTicketsAvailableError(tickets_available)
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIdError(organizer_id)
+
+        if start_date < created_at or end_date < created_at:
+            raise PastDateError(start_date if start_date < created_at else end_date)
+
+        if end_date < start_date:
+            raise IncorrectEndDateError()
 
         return Event(
             name=name,

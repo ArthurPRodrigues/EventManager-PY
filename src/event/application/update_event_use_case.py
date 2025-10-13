@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 
 from event.application.errors import (
     EventNotFoundError,
     IncorrectOrganizerError,
-    PastDateError,
 )
 from event.domain.errors import InvalidOrganizerIdError
 from event.domain.event import Event
@@ -44,19 +43,10 @@ class UpdateEventUseCase:
             raise InvalidOrganizerIdError(organizer_id)
 
         if event.organizer_id != organizer_id:
-            raise IncorrectOrganizerError(
-                event.name, self._users_repostory.get_by_id(organizer_id).name
-            )
+            organizer = self._users_repository.get_by_id(organizer_id)
+            raise IncorrectOrganizerError(organizer.name, event.name)
 
-        if input_dto.start_date < datetime.now() or input_dto.end_date < datetime.now():
-            raise PastDateError(
-                input_dto.start_date
-                if input_dto.start_date < datetime.now()
-                else input_dto.end_date
-            )
-
-        updated_event = Event(
-            id=input_dto.event_id,
+        updated_event = Event.create(
             name=input_dto.name,
             start_date=input_dto.start_date,
             end_date=input_dto.end_date,
@@ -65,6 +55,8 @@ class UpdateEventUseCase:
             organizer_id=organizer_id,
             created_at=event.created_at,
         )
+
+        updated_event = replace(updated_event, id=event.id)
 
         self._events_repository.update(updated_event)
 

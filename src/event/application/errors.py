@@ -35,3 +35,9 @@ class IncorrectOrganizerError(AppError):
     def __init__(self, organizer_name: str, event_name: str) -> None:
         message = f"User {organizer_name} is not the organizer of event {event_name}."
         super().__init__(message)
+
+
+class IncorrectEndDateError(AppError):
+    def __init__(self) -> None:
+        message = "The event's ending date is incorrect, it cannot be before the starting date."
+        super().__init__(message)
