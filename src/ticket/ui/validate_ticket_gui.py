@@ -7,8 +7,6 @@ from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, WINDOW_SIZES
 from ticket.application.dtos import ValidateTicketInputDto
-from ticket.application.dtos import ValidateTicketInputDto
-from ticket.application.dtos import ValidateTicketInputDto
 
 
 class ValidateTicketGUI(BaseGUI):
