@@ -22,6 +22,7 @@ from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
+from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_as_organizer_use_case import (
     ValidateTicketAsOrganizerUseCase,
 )
@@ -50,6 +51,7 @@ class CompositionRoot:
     authenticate_user_use_case: AuthenticateUserUseCase
     validate_ticket_as_organizer_use_case: ValidateTicketAsOrganizerUseCase
     validate_ticket_as_staff_use_case: ValidateTicketAsStaffUseCase
+    redeem_ticket_use_case: RedeemTicketUseCase
     redeem_ticket_use_case: RedeemTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
