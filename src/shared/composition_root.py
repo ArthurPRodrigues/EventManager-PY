@@ -22,6 +22,7 @@ from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
+from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_as_organizer_use_case import (
     ValidateTicketAsOrganizerUseCase,
 )
@@ -95,6 +96,11 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         events_repository=event_repo,
     )
     validate_ticket_as_staff_use_case = ValidateTicketAsStaffUseCase(
+        tickets_repository=tickets_repo,
+        events_repository=event_repo,
+    )
+    
+    redeem_ticket_use_case = RedeemTicketUseCase(
         tickets_repository=tickets_repo,
         events_repository=event_repo,
     )
