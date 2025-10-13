@@ -89,13 +89,32 @@ class ValidateTicketGUI(BaseGUI):
                 self.show_warning_popup("Ticket ID cannot be empty.")
                 return
 
-            try:
-                input_dto = ValidateTicketInputDto(
-                    user_id=self.auth_context.id,
-                    user_role=self.auth_context.role,
-                    code=ticket_code.strip().upper(),
-                )
-                self.use_cases.validate_ticket_use_case.execute(input_dto)
-                self.show_info_popup(f"Ticket '{ticket_code}' validated successfully!")
-            except Exception as e:
-                self.show_error_popup(f"Error validating ticket: {e!s}")
+            if self.auth_context.role.value == "ORGANIZER":
+                try:
+                    input_dto = ValidateTicketInputDto(
+                        user_id=self.auth_context.id,
+                        user_role=self.auth_context.role,
+                        code=ticket_code.strip().upper(),
+                    )
+                    self.use_cases.validate_ticket_as_organizer_use_case.execute(
+                        input_dto
+                    )
+                    self.show_info_popup(
+                        f"Ticket '{ticket_code}' validated successfully!"
+                    )
+                except Exception as e:
+                    self.show_error_popup(f"Error validating ticket: {e!s}")
+
+            elif self.auth_context.role.value == "STAFF":
+                try:
+                    input_dto = ValidateTicketInputDto(
+                        user_id=self.auth_context.id,
+                        user_role=self.auth_context.role,
+                        code=ticket_code.strip().upper(),
+                    )
+                    self.use_cases.validate_ticket_as_staff_use_case.execute(input_dto)
+                    self.show_info_popup(
+                        f"Ticket '{ticket_code}' validated successfully!"
+                    )
+                except Exception as e:
+                    self.show_error_popup(f"Error validating ticket: {e!s}")
