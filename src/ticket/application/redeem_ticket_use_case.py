@@ -1,98 +1,88 @@
-from dataclasses import dataclass
-from datetime import datetime
+from __future__ import annotations
 
+import secrets
+from dataclasses import dataclass, replace
+from datetime import UTC, datetime
+
+from event.domain.errors import EventHasNoTicketsAvailableError, EventNotFoundError
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
+from ticket.application.errors import TicketCodeAlreadyExistsError
 from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
-from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
-@dataclass(frozen=True)
-class TicketInputDto:
-    code: str
-    user_id: int
-    event_id: int
-
-
-@dataclass(frozen=True)
-class TicketView:
-    id: int
-    code: str
-    created_at: str
-    status: str
+@dataclass
+class RedeemTicketInputDto:
     event_id: int
     client_id: int
-
-
-@dataclass(frozen=True)
-class RedeemTicketResult:
-    items: list[TicketView]
-    total: int
+    redeem_ticket_count: int
+    send_email: bool = False
 
 
 class RedeemTicketUseCase:
     def __init__(
         self,
-        ticket_repository: SqliteTicketsRepository,
-        event_repository: SqliteEventRepository,
-        user_repository: SqliteUsersRepository,
+        tickets_repository: SqliteTicketsRepository,
+        events_repository: SqliteEventRepository,
     ) -> None:
-        self._ticket_repository = ticket_repository
-        self._event_repository = event_repository
-        self._user_repository = user_repository
+        self._tickets_repository = tickets_repository
+        self._events_repository = events_repository
 
-    def redeem(self, input_dto: TicketInputDto) -> RedeemTicketResult:
-        user = self._user_repository.get_by_id(input_dto.user_id)
-        if user is None:
-            raise ValueError("User not found")
+    def _generate_code(self, length: int = 8) -> str:
+        alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # excludes O, I, 0, 1
+        return "".join(secrets.choice(alphabet) for _ in range(length))
 
-        event_row = self._event_repository.list_by_id(input_dto.event_id)
-        if event_row is None:
-            raise ValueError("Event not found")
-        (
-            event_id,
-            _name,
-            _location,
-            _event_start_date,
-            event_end_date,
-            tickets_available,
-            _organizer_id,
-            _created_at,
-        ) = event_row
+    def _generate_unique_codes(self, count: int) -> list[str]:
+        if count <= 0:
+            return []
+        codes: set[str] = set()
+        max_attempts = max(100, count * 20)
+        attempts = 0
+        while len(codes) < count and attempts < max_attempts:
+            attempts += 1
+            candidate = self._generate_code()
+            if candidate in codes:
+                continue
+            existing = self._tickets_repository.get_by_code(candidate)
+            if existing is None:
+                codes.add(candidate)
+        if len(codes) < count:
+            raise TicketCodeAlreadyExistsError()
+        return list(codes)
+
+    def execute(self, input_dto: RedeemTicketInputDto) -> None:
+        client_id = input_dto.client_id
+        redeem_ticket_count = input_dto.redeem_ticket_count
+        event_id = input_dto.event_id
+        event = self._events_repository.get_by_id(event_id)
+        tickets_available = event.tickets_available
+        ticket_list = []
+
+        if redeem_ticket_count <= 0:
+            return []
+
+        if event is None:
+            raise EventNotFoundError(event_id)
 
         if tickets_available <= 0:
-            raise ValueError("No tickets available for this event")
+            raise EventHasNoTicketsAvailableError(event_id)
 
-        now = datetime.now()
-        if isinstance(event_end_date, str):
-            try:
-                parsed_end = datetime.fromisoformat(event_end_date.replace(" ", "T"))
-            except Exception:
-                parsed_end = now
-        else:
-            parsed_end = event_end_date
+        if redeem_ticket_count > tickets_available:
+            raise EventHasNoTicketsAvailableError(event.id)
 
-        if parsed_end < now:
-            raise ValueError("Event already finished")
+        for _ in range(redeem_ticket_count):
+            ticket = Ticket(
+                event_id=input_dto.event_id,
+                client_id=client_id,
+                code=self._generate_code(),
+                status=TicketStatus.PENDING,
+                created_at=datetime.now(UTC),
+            )
+            ticket_list.append(ticket)
 
-        redeemed_ticket = Ticket.create(
-            code=input_dto.code,
-            created_at=now,
-            status=TicketStatus.PENDING,
-            event_id=event_id,
-            client_id=input_dto.user_id,
+        self._tickets_repository.create_many(ticket_list)
+        updated_event = replace(
+            event, tickets_available=event.tickets_available - redeem_ticket_count
         )
-        saved_ticket = self._ticket_repository.add(redeemed_ticket)
-
-        self._event_repository.decrement_tickets_available(event_id)
-
-        view = TicketView(
-            id=saved_ticket.id or -1,
-            code=saved_ticket.code,
-            created_at=saved_ticket.created_at.isoformat(sep=" "),
-            status=saved_ticket.status.value,
-            event_id=saved_ticket.event_id,
-            client_id=saved_ticket.client_id,
-        )
-        return RedeemTicketResult(items=[view], total=1)
+        self._events_repository.update(updated_event)
