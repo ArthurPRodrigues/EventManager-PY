@@ -6,7 +6,6 @@ from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from ticket.domain.ticket import Ticket
 from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
-from user.domain.user_role import UserRole
 
 from .dtos import ValidateTicketInputDto
 from .errors import (
@@ -17,7 +16,7 @@ from .errors import (
 )
 
 
-class ValidateTicketUseCase:
+class ValidateTicketAsOrganizerUseCase:
     def __init__(
         self,
         tickets_repository: SqliteTicketsRepository,
@@ -44,12 +43,8 @@ class ValidateTicketUseCase:
         if datetime.now(UTC) < event.start_date or datetime.now(UTC) > event.end_date:
             raise TicketValidationTimeError(event.start_date, event.end_date, event.id)
 
-        if user_role == UserRole.ORGANIZER:
-            if event.organizer_id != user_id:
-                raise UnauthorizedValidationError(user_id, user_role, code)
-        elif user_role == UserRole.STAFF:
-            if user_id not in event.staffs_id:
-                raise UnauthorizedValidationError(user_id, user_role, code)
+        if event.organizer_id != user_id:
+            raise UnauthorizedValidationError(user_id, user_role, code)
 
         validated_ticket = ticket.validate()
         self._tickets_repository.update(validated_ticket)
