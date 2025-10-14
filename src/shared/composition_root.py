@@ -54,6 +54,8 @@ class CompositionRoot:
     event_repo: SqliteEventRepository
     ticket_repo: SqliteTicketRepository
     redeem_ticket_use_case: RedeemTicketUseCase
+    html_template_engine: HtmlTemplateEngine | None = None
+    smtp_email_service: SmtpEmailService | None = None
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
@@ -104,6 +106,8 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         tickets_repository=tickets_repo,
         events_repository=event_repo,
         users_repository=user_repo,
+        email_service=smtp_email_service,
+        template_engine=html_template_engine,
     )
 
     redeem_ticket_use_case = RedeemTicketUseCase(
