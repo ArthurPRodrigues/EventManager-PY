@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 from event.application.list_event_use_case import ListEventUseCase
@@ -17,8 +18,9 @@ from friendship.application.send_friendship_invite_use_case import (
 from friendship.infra.persistence.sqlite_friendship_repository import (
     SqliteFriendshipRepository,
 )
+from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
+from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
-from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_as_organizer_use_case import (
     ValidateTicketAsOrganizerUseCase,
@@ -51,20 +53,26 @@ class CompositionRoot:
     event_repo: SqliteEventRepository
     ticket_repo: SqliteTicketsRepository
     redeem_ticket_use_case: RedeemTicketUseCase
+    html_template_engine: HtmlTemplateEngine | None = None
+    smtp_email_service: SmtpEmailService | None = None
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
     db = SQLiteDatabase(path=db_path)
     db.initialize()
 
-    # # Services
-    # templates_dir = os.path.join(
-    #     "assets",
-    #     "html_templates",
-    # )
-
-    # html_template_engine = HtmlTemplateEngine(templates_dir)
-    # smtp_email_service = SmtpEmailService()
+    # Services
+    templates_dir = os.path.join("assets", "html_templates")
+    html_template_engine: HtmlTemplateEngine | None = None
+    smtp_email_service: SmtpEmailService | None = None
+    try:
+        html_template_engine = HtmlTemplateEngine(templates_dir)
+    except Exception:
+        html_template_engine = None
+    try:
+        smtp_email_service = SmtpEmailService()
+    except Exception:
+        smtp_email_service = None
 
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
@@ -92,10 +100,13 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         tickets_repository=tickets_repo,
         events_repository=event_repo,
     )
-    
+
     redeem_ticket_use_case = RedeemTicketUseCase(
         tickets_repository=tickets_repo,
         events_repository=event_repo,
+        users_repository=user_repo,
+        email_service=smtp_email_service,
+        template_engine=html_template_engine,
     )
 
     return CompositionRoot(
@@ -114,4 +125,6 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         list_event_use_case=list_event_use_case,
         ticket_repo=tickets_repo,
         redeem_ticket_use_case=redeem_ticket_use_case,
+        html_template_engine=html_template_engine,
+        smtp_email_service=smtp_email_service,
     )
