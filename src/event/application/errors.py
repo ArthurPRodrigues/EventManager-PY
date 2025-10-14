@@ -41,3 +41,9 @@ class IncorrectEndDateError(AppError):
     def __init__(self) -> None:
         message = "The event's ending date is incorrect, it cannot be before the starting date."
         super().__init__(message)
+
+
+class IncorrectTicketQuantityError(AppError):
+    def __init__(self, quantity: int) -> None:
+        message = f"The ticket quantity is incorrect: it cannot be less than the actual quantity ({quantity})."
+        super().__init__(message)

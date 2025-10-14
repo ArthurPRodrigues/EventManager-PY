@@ -28,6 +28,7 @@ class Event:
     end_date: datetime
     tickets_available: int
     organizer_id: int
+    tickets_redeemed: int = 0
     staffs_id: list[str] = None
     id: int | None = None
 

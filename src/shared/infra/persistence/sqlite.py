@@ -53,6 +53,7 @@ class SQLiteDatabase:
                     tickets_available INTEGER NOT NULL,
                     organizer_id INTEGER NOT NULL,
                     staffs_id TEXT DEFAULT NULL,
+                    tickets_redeemed INTEGER NOT NULL,
                     FOREIGN KEY(organizer_id) REFERENCES users(id) ON DELETE CASCADE
                     )
                 """

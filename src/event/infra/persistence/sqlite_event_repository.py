@@ -100,8 +100,8 @@ class SqliteEventRepository:
             try:
                 cursor = conn.execute(
                     """
-                    INSERT INTO events (name, created_at, end_date, location, start_date, tickets_available, organizer_id, staffs_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO events (name, created_at, end_date, location, start_date, tickets_available, organizer_id, staffs_id, tickets_redeemed)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         event.name,
@@ -112,6 +112,7 @@ class SqliteEventRepository:
                         event.tickets_available,
                         event.organizer_id,
                         (event.staffs_id and ",".join(event.staffs_id)) or None,
+                        event.tickets_redeemed,
                     ),
                 )
                 conn.commit()
