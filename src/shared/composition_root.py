@@ -22,7 +22,6 @@ from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
-from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_as_organizer_use_case import (
     ValidateTicketAsOrganizerUseCase,
 )
