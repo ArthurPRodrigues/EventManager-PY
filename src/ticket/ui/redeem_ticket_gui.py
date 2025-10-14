@@ -1,6 +1,7 @@
 import FreeSimpleGUI as sg
 
 from shared.ui.base_gui import BaseGUI
+from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, WINDOW_SIZES
 from ticket.application.redeem_ticket_use_case import (
@@ -41,15 +42,24 @@ class RedeemTicketGUI(BaseGUI):
 
     def create_layout(self):
         max_count = max(1, int(self.tickets_available or 1))
-
-        instruction_row = [
-            sg.Text(
-                "How many tickets do you want to redeem?",
-                font=FONTS["SUBTITLE"],
-                justification="center",
-                pad=((0, 0), (10, 20)),
-            )
-        ]
+        content_column = (
+            [
+                sg.Text(
+                    "Redeem Ticket",
+                    font=FONTS["TITLE_MAIN"],
+                    justification="center",
+                    pad=((0, 0), (0, 10)),
+                ),
+            ],
+            [
+                sg.Text(
+                    "How many tickets do you want to redeem?",
+                    font=FONTS["SUBTITLE"],
+                    justification="center",
+                    text_color=COLORS["secondary"],
+                )
+            ],
+        )
 
         spinner_row = [
             sg.Spin(
@@ -67,30 +77,29 @@ class RedeemTicketGUI(BaseGUI):
             sg.Checkbox("Send to my e-mail", key="-SEND_EMAIL-", default=False)
         ]
 
-        buttons_row = [
-            sg.Button(
-                "Redeem",
-                key="-REDEEM-",
-                size=BUTTON_SIZES["MEDIUM"],
-                button_color=(COLORS["dark"], COLORS["secondary"]),
-                font=FONTS["PRIMARY_BUTTON"],
-            ),
-            sg.Push(),
-            sg.Button(
-                "Cancel",
-                key="-CANCEL-",
-                size=BUTTON_SIZES["MEDIUM"],
-                button_color=(COLORS["dark"], COLORS["light"]),
-                font=FONTS["SECONDARY_BUTTON"],
-            ),
-        ]
+        self.action_buttons = ActionButtonsComponent([
+            {
+                "text": "Redeem Ticket",
+                "key": "-REDEEM-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "size": BUTTON_SIZES["EXTRA_LARGE"],
+                "button_color": (COLORS["dark"], COLORS["secondary"]),
+            },
+            {
+                "text": "Cancel",
+                "key": "-CANCEL-",
+                "font": FONTS["PRIMARY_BUTTON"],
+                "size": BUTTON_SIZES["EXTRA_LARGE"],
+                "button_color": (COLORS["dark"], COLORS["secondary"]),
+            },
+        ])
 
         layout = [
             *self.header.create_layout(),
-            instruction_row,
+            *content_column,
             spinner_row,
             email_row,
-            buttons_row,
+            *self.action_buttons.create_layout(),
         ]
 
         return layout
@@ -132,12 +141,16 @@ class RedeemTicketGUI(BaseGUI):
             self.use_cases.redeem_ticket_use_case.execute(input_dto)
             if count > 1:
                 self.show_success_popup(f"{count} tickets were successfully redeemed!")
+                self.show_success_popup(f"{count} tickets were sent to your email!")
+
             else:
                 self.show_success_popup("Ticket successfully redeemed!")
-        except Exception as e:
-            self.show_error_popup(f"Error redeeming ticket(s): {e!s}")
+                self.show_success_popup("Ticket was sent to your email!")
 
-    def _handle_back(self):
+        except Exception as e:
+            self.show_error_popup(f"Error redeeming ticket(s): {e}")
+
+    def _handle_back(self, _values=None):
         try:
             if self.navigator:
                 self.window.close()
