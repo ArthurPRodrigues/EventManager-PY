@@ -46,8 +46,7 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    validate_ticket_as_organizer_use_case: ValidateTicketAsOrganizerUseCase
-    validate_ticket_as_staff_use_case: ValidateTicketAsStaffUseCase
+    validate_ticket_use_case: ValidateTicketUseCase
     redeem_ticket_use_case: RedeemTicketUseCase
     list_event_use_case: ListEventUseCase
     event_repo: SqliteEventRepository
@@ -125,9 +124,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         user_repo=user_repo,
         create_user_use_case=create_user_use_case,
         authenticate_user_use_case=authenticate_user_use_case,
-        validate_ticket_as_organizer_use_case=validate_ticket_as_organizer_use_case,
-        validate_ticket_as_staff_use_case=validate_ticket_as_staff_use_case,
-        event_repo=event_repo,
+        validate_ticket_use_case=validate_ticket_use_case,
         list_event_use_case=list_event_use_case,
         ticket_repo=tickets_repo,
         redeem_ticket_use_case=redeem_ticket_use_case,
