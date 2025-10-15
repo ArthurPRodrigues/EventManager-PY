@@ -131,11 +131,11 @@ class ListEventOrganizerGui(BaseGUI):
     def handle_edit_selected(self):
         selected_data = self.table.get_selected_row_data(self.window)
         if selected_data:
-            event_id = selected_data[0]
+            event = selected_data
             self.navigator.push_screen(
                 EventFormGUI,
                 auth_context=self.auth_context,
-                event={"id": event_id},
+                event=event,
                 operation="UPDATE",
             )
         else:

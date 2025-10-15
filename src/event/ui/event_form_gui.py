@@ -29,7 +29,8 @@ class EventFormGUI(BaseGUI):
         )
 
         self.operation = operation
-        self.event_id = event["id"] if event else None
+        self.event_id = event[0] if event else None
+        self.event = event
 
         self.header = HeaderComponent()
 
@@ -61,48 +62,97 @@ class EventFormGUI(BaseGUI):
             }
 
     def create_layout(self):
-        labels = [
-            [
-                sg.Text(
-                    "Name*",
-                    font=FONTS["LABEL"],
-                    size=LABEL_SIZES["DEFAULT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Text(
-                    "Start Date*",
-                    font=FONTS["LABEL"],
-                    size=LABEL_SIZES["DEFAULT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Text(
-                    "End Date*",
-                    font=FONTS["LABEL"],
-                    size=LABEL_SIZES["DEFAULT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Text(
-                    "Location*",
-                    font=FONTS["LABEL"],
-                    size=LABEL_SIZES["DEFAULT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Text(
-                    "Tickets*",
-                    font=FONTS["LABEL"],
-                    size=LABEL_SIZES["DEFAULT"],
-                    pad=(0, 10),
-                ),
-            ],
-        ]
+        if self.operation == "CREATE":
+            labels = [
+                [
+                    sg.Text(
+                        "Name*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "Start Date*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "End Date*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "Location*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "Tickets*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                    ),
+                ],
+            ]
+        else:
+            labels = [
+                [
+                    sg.Text(
+                        "Name*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                        placeholder=self.event[1],
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "Start Date*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                        placeholder=self.event[2].strftime("%d/%m/%Y %Hh%M"),
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "End Date*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                        placeholder=self.event[3].strftime("%d/%m/%Y %Hh%M"),
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "Location*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                        placeholder=self.event[4],
+                    ),
+                ],
+                [
+                    sg.Text(
+                        "Tickets*",
+                        font=FONTS["LABEL"],
+                        size=LABEL_SIZES["DEFAULT"],
+                        pad=(0, 10),
+                        placeholder=self.event[5],
+                    ),
+                ],
+            ]
 
         inputs = [
             [
@@ -211,7 +261,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Text(
-                        "Update an event.",
+                        "Update an existing event.",
                         font=FONTS["SUBTITLE"],
                         justification="center",
                         pad=(20, 20),
@@ -307,7 +357,7 @@ class EventFormGUI(BaseGUI):
 
         try:
             input_dto = UpdateEventInputDto(
-                event_id=self.event_id,
+                event_id=self.event[0],
                 name=name,
                 start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
                 end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),

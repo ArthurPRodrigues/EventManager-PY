@@ -6,7 +6,6 @@ from datetime import datetime
 from event.application.errors import (
     EventNotFoundError,
     IncorrectOrganizerError,
-    IncorrectTicketQuantityError,
 )
 from event.domain.errors import InvalidOrganizerIdError
 from event.domain.event import Event
@@ -46,9 +45,6 @@ class UpdateEventUseCase:
         if event.organizer_id != organizer_id:
             organizer = self._users_repository.get_by_id(organizer_id)
             raise IncorrectOrganizerError(organizer.name, event.name)
-
-        if input_dto.tickets_available < event.tickets_redeemed:
-            raise IncorrectTicketQuantityError(event.tickets_redeemed)
 
         updated_event = Event.create(
             name=input_dto.name,
