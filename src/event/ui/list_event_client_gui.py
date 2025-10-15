@@ -65,7 +65,7 @@ class ListEventClientGui(BaseGUI):
             ],
             data_callback=self._load_events_callback,
             key="-TABLE-",
-            items_per_page=10,
+            items_per_page=8,
             has_hidden_id_column=True,
             filters=event_filters,
         )
