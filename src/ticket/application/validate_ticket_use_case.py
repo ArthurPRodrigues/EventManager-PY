@@ -51,8 +51,6 @@ class ValidateTicketUseCase:
         elif user_role == UserRole.STAFF:
             if user_id not in event.staffs_id:
                 raise UnauthorizedValidationError(user_id, user_role, code)
-        else:
-            raise UnauthorizedValidationError(user_id, user_role, code)
 
         validated_ticket = ticket.validate()
         self._tickets_repository.update(validated_ticket)
