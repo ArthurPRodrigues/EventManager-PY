@@ -44,7 +44,6 @@ class ValidateTicketUseCase:
         if datetime.now(UTC) < event.start_date or datetime.now(UTC) > event.end_date:
             raise TicketValidationTimeError(event.start_date, event.end_date, event.id)
 
-        # Authorization check based on user role
         if user_role == UserRole.ORGANIZER:
             if event.organizer_id != user_id:
                 raise UnauthorizedValidationError(user_id, user_role, code)
