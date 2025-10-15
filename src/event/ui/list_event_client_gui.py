@@ -1,4 +1,4 @@
-import FreeSimpleGUI as sg
+import FreeSimpleGUI as sg  # noqa: F401
 
 from event.application.list_event_use_case import ListEventInputDto
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
@@ -36,9 +36,24 @@ class ListEventClientGui(BaseGUI):
                 },
             ]
         )
-        self.current_filter_mode = "ALL"
-        # TODO: update prototype
-        # @ArthurPRodrigues
+        event_filters = [
+            {
+                "text": "All",
+                "group_id": "EVENT_FILTER",
+                "default": True,
+                "filter_value": "ALL",
+            },
+            {
+                "text": "With Tickets",
+                "group_id": "EVENT_FILTER",
+                "filter_value": "WITH_TICKETS",
+            },
+            {
+                "text": "Sold Out",
+                "group_id": "EVENT_FILTER",
+                "filter_value": "SOLD_OUT",
+            },
+        ]
         self.table = TableComponent(
             headers=[
                 "ID",
@@ -52,6 +67,7 @@ class ListEventClientGui(BaseGUI):
             key="-TABLE-",
             items_per_page=10,
             has_hidden_id_column=True,
+            filters=event_filters,
         )
 
         self.action_buttons = ActionButtonsComponent([
@@ -69,18 +85,6 @@ class ListEventClientGui(BaseGUI):
         }
 
     def handle_events(self, event, values):
-        if event in ("-ORG_F_ALL-", "-ORG_F_WITH-", "-ORG_F_SOLD-"):
-            if values.get("-ORG_F_ALL-"):
-                self.current_filter_mode = "ALL"
-            elif values.get("-ORG_F_WITH-"):
-                self.current_filter_mode = "WITH_TICKETS"
-            elif values.get("-ORG_F_SOLD-"):
-                self.current_filter_mode = "SOLD_OUT"
-            if self.window:
-                self.table.current_page = 1
-                self.table.refresh(self.window)
-            return
-
         if self.table.handle_event(event, self.window):
             return
 
@@ -113,33 +117,23 @@ class ListEventClientGui(BaseGUI):
             tickets_available=tickets_available,
         )
 
-    # TODO: Use the damn filter parameter on TableComponent instead of doing this manually
-    # @ArthurPRodrigues
     def create_layout(self):
-        filter_row = [
-            sg.Text("Filter:"),
-            sg.Radio(
-                "All", "ORG_FILTER", key="-ORG_F_ALL-", default=True, enable_events=True
-            ),
-            sg.Radio(
-                "With Tickets", "ORG_FILTER", key="-ORG_F_WITH-", enable_events=True
-            ),
-            sg.Radio("Sold Out", "ORG_FILTER", key="-ORG_F_SOLD-", enable_events=True),
-        ]
         layout = [
             *self.header.create_layout(),
-            filter_row,
             *self.table.create_layout(),
             *self.action_buttons.create_layout(),
         ]
         return layout
 
-    def _load_events_callback(self, page: int, items_per_page: int):
+    def _load_events_callback(
+        self, page: int, items_per_page: int, filter_value: str | None = None
+    ):
         try:
+            filter_mode = filter_value or "ALL"
             input_dto = ListEventInputDto(
                 page=page,
                 page_size=items_per_page,
-                filter_mode=self.current_filter_mode,
+                filter_mode=filter_mode,
             )
             paginated_events = self.use_cases.list_event_use_case.execute(input_dto)
 
