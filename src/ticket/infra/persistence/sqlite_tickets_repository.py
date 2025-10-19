@@ -10,8 +10,8 @@ class SqliteTicketsRepository:
         self._db = db
 
     def get_by_code(self, code: str) -> Ticket | None:
-        with self._db.connect() as connection:
-            row = connection.execute(
+        with self._db.connect() as conn:
+            row = conn.execute(
                 """
                 SELECT id, event_id, client_id, code, status, created_at
                 FROM tickets
