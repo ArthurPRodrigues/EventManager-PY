@@ -137,12 +137,8 @@ class TableComponent:
             self.total_pages = max(
                 1, (self.total_items + self.items_per_page - 1) // self.items_per_page
             )
-        # TODO: Discover how to throw and handle errors in the parent component
-        except Exception as e:
-            print(f"Erro ao carregar dados: {e}")
-            self.data = []
-            self.total_items = 0
-            self.total_pages = 1
+        except Exception:
+            raise
 
     def handle_event(self, event: str, window: sg.Window) -> bool:
         if event == self.prev_key and self.current_page > 1:
