@@ -38,7 +38,7 @@ class RedeemTicketUseCase:
         self._email_service = email_service
         self._template_engine = template_engine
 
-    def _generate_code(self, length: int = 8) -> str:
+    def _generate_code(self, length: int = 6) -> str:
         alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # excludes O, I, 0, 1
         return "".join(secrets.choice(alphabet) for _ in range(length))
 
