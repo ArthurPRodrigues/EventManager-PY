@@ -1,3 +1,4 @@
+import os
 from collections.abc import Callable
 from typing import Any
 
@@ -34,6 +35,7 @@ class TableComponent:
         self.next_key = f"{key}_NEXT"
         self.page_info_key = f"{key}_PAGE_INFO"
         self.total_items_key = f"{key}_TOTAL"
+        self.refresh_key = f"{key}_REFRESH"
         self.filter_component = FilterRadioRowComponent(self.filters)
 
         self._load_data()
@@ -67,10 +69,16 @@ class TableComponent:
                     font=FONTS["PAGINATION_BUTTON"],
                 ),
                 sg.Push(),
+                sg.Button(
+                    key=self.refresh_key,
+                    size=BUTTON_SIZES["SMALL"],
+                    button_color=(COLORS["info"], COLORS["primary"]),
+                    image_source=os.path.join("assets", "png", "list-restart.png"),
+                    tooltip="Refresh Table Data",
+                ),
                 sg.Text(
                     f"Total: {self.total_items}",
                     key=self.total_items_key,
-                    size=LABEL_SIZES["DEFAULT"],
                     justification="right",
                     font=FONTS["PAGINATION_INFO"],
                 ),
@@ -141,6 +149,10 @@ class TableComponent:
             raise
 
     def handle_event(self, event: str, window: sg.Window) -> bool:
+        if event == self.refresh_key:
+            self.refresh(window)
+            return True
+
         if event == self.prev_key and self.current_page > 1:
             self.current_page -= 1
             self._load_data(window)
