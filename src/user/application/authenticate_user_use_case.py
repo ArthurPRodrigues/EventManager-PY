@@ -20,10 +20,10 @@ class AuthenticateUserUseCase:
         self._users_repository = users_repository
 
     def execute(self, input_dto: AuthenticateUserInputDto) -> User:
-        email = input_dto.email.strip().lower()
-        user = self._users_repository.get_by_email_and_role(email, input_dto.role)
+        email, role, password = input_dto.email, input_dto.role, input_dto.password
+        user = self._users_repository.get_by_email_and_role(email, role)
         if not user:
             raise UserNotFoundError()
-        elif user and not user.check_password(input_dto.password):
+        elif user and not user.check_password(password):
             raise WrongPasswordError()
         return user
