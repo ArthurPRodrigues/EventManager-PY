@@ -2,7 +2,6 @@ import FreeSimpleGUI as sg
 
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
-from shared.ui.components.header_component import HeaderComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, WINDOW_SIZES
 from ticket.application.redeem_ticket_use_case import (
     RedeemTicketInputDto,
@@ -28,16 +27,13 @@ class RedeemTicketGUI(BaseGUI):
             auth_context=auth_context,
         )
 
-        self.header = HeaderComponent()
-
         self.event_id = event_id
         self.tickets_available = tickets_available
         self.redeem_ticket_count = redeem_ticket_count
 
         self.event_map = {
             "-REDEEM-": self._handle_redeem_ticket,
-            "-CANCEL-": self._handle_back,
-            "-BACK-": self._handle_back,
+            "-CANCEL-": self._handle_cancel,
         }
 
     def create_layout(self):
@@ -45,7 +41,7 @@ class RedeemTicketGUI(BaseGUI):
         content_column = (
             [
                 sg.Text(
-                    "Redeem Ticket",
+                    "Redeem",
                     font=FONTS["TITLE_MAIN"],
                     justification="center",
                     pad=((0, 0), (0, 10)),
@@ -53,7 +49,7 @@ class RedeemTicketGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "How many tickets do you want to redeem?",
+                    "How many tickets do you want?",
                     font=FONTS["SUBTITLE"],
                     justification="center",
                     text_color=COLORS["secondary"],
@@ -79,7 +75,7 @@ class RedeemTicketGUI(BaseGUI):
 
         self.action_buttons = ActionButtonsComponent([
             {
-                "text": "Redeem Ticket",
+                "text": "Redeem",
                 "key": "-REDEEM-",
                 "font": FONTS["PRIMARY_BUTTON"],
                 "size": BUTTON_SIZES["EXTRA_LARGE"],
@@ -95,7 +91,6 @@ class RedeemTicketGUI(BaseGUI):
         ])
 
         layout = [
-            *self.header.create_layout(),
             *content_column,
             spinner_row,
             email_row,
@@ -147,7 +142,7 @@ class RedeemTicketGUI(BaseGUI):
         except Exception as e:
             self.show_error_popup(f"Error redeeming ticket(s): {e}")
 
-    def _handle_back(self, _values=None):
+    def _handle_cancel(self, _values=None):
         try:
             if self.navigator:
                 self.window.close()
