@@ -139,16 +139,10 @@ class RedeemTicketGUI(BaseGUI):
                 send_email=send_email,
             )
             self.use_cases.redeem_ticket_use_case.execute(input_dto)
-            if count > 1 and send_email:
-                self.show_success_popup(f"{count} tickets were successfully redeemed!")
-                self.show_success_popup(f"{count} tickets were sent to your email!")
-            elif count > 1 and not send_email:
-                self.show_success_popup(f"{count} tickets were successfully redeemed!")
-            elif count == 1 and not send_email:
-                self.show_success_popup("Ticket successfully redeemed!")
-            else:
-                self.show_success_popup("Ticket successfully redeemed!")
-                self.show_success_popup("Ticket was sent to your email!")
+            message = f"{count} ticket(s) were successfully redeemed!"
+            if send_email:
+                message += "\n\nA confirmation was also sent to your email."
+            self.show_success_popup(message)
 
         except Exception as e:
             self.show_error_popup(f"Error redeeming ticket(s): {e}")
