@@ -51,7 +51,7 @@ class AuthenticateGUI(BaseGUI):
         labels = [
             [
                 sg.Text(
-                    "Email*",
+                    "Email",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -59,7 +59,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Password*",
+                    "Password",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -67,7 +67,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Role*",
+                    "Role",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
