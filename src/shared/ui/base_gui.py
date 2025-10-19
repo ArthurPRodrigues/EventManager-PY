@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import os
 import threading
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import Any
 
 import FreeSimpleGUI as sg
 
@@ -45,7 +49,16 @@ sg.theme_add_new(
 )
 
 
-# TODO: Refactor success/warning/error popups, create a PopupConfig dataclass and implement a popup template method pattern
+@dataclass
+class PopupConfig:
+    title: str
+    message: str
+    icon_path: str | None = None
+    buttons: list[dict[str, Any]] = field(default_factory=list)
+    modal: bool = True
+    theme: str = "PopupTheme"
+
+
 class BaseGUI(ABC):
     def __init__(
         self,
@@ -110,189 +123,130 @@ class BaseGUI(ABC):
         if self.window:
             self.window.close()
 
-    def show_success_popup(self, message: str, title: str = "Success"):
-        """Common helper method for success popups"""
+    def _show_popup_template(
+        self, config: PopupConfig
+    ) -> tuple[str | None, dict | None]:
+        """Template method to show a popup based on a configuration."""
         current_theme = sg.theme()
-        sg.theme("PopupTheme")
+        sg.theme(config.theme)
 
-        layout = [
-            [
+        top_row = []
+        if config.icon_path:
+            top_row.append(
                 sg.Image(
-                    filename=os.path.join("assets", "png", "badge-check.png"),
+                    filename=config.icon_path,
                     pad=((20, 0), (10, 20)),
-                ),
-                sg.Text(
-                    message,
-                    font=FONTS["POPUP_LABEL"],
-                    justification="center",
-                    auto_size_text=True,
-                    pad=((10, 20), (10, 20)),
-                ),
-            ],
-            [
-                sg.Button(
-                    "OK",
-                    key="-YES-",
-                    font=FONTS["PRIMARY_BUTTON"],
-                    button_color=(COLORS["white"], COLORS["success"]),
-                    size=BUTTON_SIZES["SMALL"],
-                ),
-            ],
-        ]
+                )
+            )
+
+        top_row.append(
+            sg.Text(
+                config.message,
+                font=FONTS["POPUP_LABEL"],
+                justification="center",
+                auto_size_text=True,
+                pad=((10, 20), (10, 20)),
+            )
+        )
+
+        action_buttons = ActionButtonsComponent(config.buttons)
+
+        layout = [top_row, *action_buttons.create_layout()]
 
         window = sg.Window(
-            title,
+            config.title,
             layout,
-            modal=True,
+            modal=config.modal,
             element_justification="center",
         )
-        event, _ = window.read()
+        event, values = window.read()
         window.close()
 
         sg.theme(current_theme)
+        return event, values
 
+    def show_success_popup(self, message: str, title: str = "Success"):
+        """Common helper method for success popups"""
+        config = PopupConfig(
+            title=title,
+            message=message,
+            icon_path=os.path.join("assets", "png", "badge-check.png"),
+            buttons=[
+                {
+                    "text": "OK",
+                    "key": "-OK-",
+                    "font": FONTS["PRIMARY_BUTTON"],
+                    "button_color": (COLORS["white"], COLORS["success"]),
+                    "size": BUTTON_SIZES["SMALL"],
+                }
+            ],
+        )
+        event, _ = self._show_popup_template(config)
         return event
 
     def show_warning_popup(self, message: str, title: str = "Warning"):
         """Common helper method for warning popups"""
-
-        current_theme = sg.theme()
-        sg.theme("PopupTheme")
-
-        layout = [
-            [
-                sg.Image(
-                    filename=os.path.join("assets", "png", "triangle-alert.png"),
-                    pad=((20, 0), (10, 20)),
-                ),
-                sg.Text(
-                    message,
-                    font=FONTS["POPUP_LABEL"],
-                    justification="center",
-                    auto_size_text=True,
-                    pad=((10, 20), (10, 20)),
-                ),
+        config = PopupConfig(
+            title=title,
+            message=message,
+            icon_path=os.path.join("assets", "png", "triangle-alert.png"),
+            buttons=[
+                {
+                    "text": "OK",
+                    "key": "-OK-",
+                    "font": FONTS["PRIMARY_BUTTON"],
+                    "button_color": (COLORS["white"], COLORS["warning"]),
+                    "size": BUTTON_SIZES["SMALL"],
+                }
             ],
-            [
-                sg.Button(
-                    "OK",
-                    key="-YES-",
-                    font=FONTS["PRIMARY_BUTTON"],
-                    button_color=(COLORS["white"], COLORS["warning"]),
-                    size=BUTTON_SIZES["SMALL"],
-                ),
-            ],
-        ]
-
-        window = sg.Window(
-            title,
-            layout,
-            modal=True,
-            element_justification="center",
         )
-        event, _ = window.read()
-        window.close()
-
-        sg.theme(current_theme)
-
+        event, _ = self._show_popup_template(config)
         return event
-
-    def show_confirmation_popup(self, message: str, title: str = "Confirmation"):
-        """Common helper method for confirmation popups"""
-        current_theme = sg.theme()
-        sg.theme("PopupTheme")
-
-        action_buttons = ActionButtonsComponent([
-            {
-                "text": "Yes",
-                "key": "-YES-",
-                "font": FONTS["PRIMARY_BUTTON"],
-                "button_color": (COLORS["white"], COLORS["primary_lighter"]),
-            },
-            {
-                "text": "No",
-                "key": "-NO-",
-                "font": FONTS["SECONDARY_BUTTON"],
-                "button_color": (COLORS["dark"], COLORS["light"]),
-            },
-        ])
-
-        layout = [
-            [
-                sg.Image(
-                    filename=os.path.join("assets", "png", "circle-question-mark.png"),
-                    pad=((20, 0), (10, 20)),
-                ),
-                sg.Text(
-                    message,
-                    font=FONTS["POPUP_LABEL"],
-                    justification="center",
-                    auto_size_text=True,
-                    pad=((10, 20), (10, 20)),
-                ),
-            ],
-            *action_buttons.create_layout(),
-        ]
-
-        window = sg.Window(
-            title,
-            layout,
-            modal=True,
-            element_justification="center",
-        )
-
-        event, _ = window.read()
-
-        window.close()
-
-        sg.theme(current_theme)
-
-        return event == "-YES-"
 
     def show_error_popup(self, message: str, title: str = "Error"):
         """Common helper method for error popups with logging"""
         log_error(message, self.auth_context)
 
-        current_theme = sg.theme()
-        sg.theme("PopupTheme")
-
-        layout = [
-            [
-                sg.Image(
-                    filename=os.path.join("assets", "png", "circle-x.png"),
-                    pad=((20, 0), (10, 20)),
-                ),
-                sg.Text(
-                    message,
-                    font=FONTS["POPUP_LABEL"],
-                    justification="center",
-                    auto_size_text=True,
-                    pad=((10, 20), (10, 20)),
-                ),
+        config = PopupConfig(
+            title=title,
+            message=message,
+            icon_path=os.path.join("assets", "png", "circle-x.png"),
+            buttons=[
+                {
+                    "text": "OK",
+                    "key": "-OK-",
+                    "font": FONTS["PRIMARY_BUTTON"],
+                    "button_color": (COLORS["white"], COLORS["error"]),
+                    "size": BUTTON_SIZES["SMALL"],
+                }
             ],
-            [
-                sg.Button(
-                    "OK",
-                    key="-YES-",
-                    font=FONTS["PRIMARY_BUTTON"],
-                    button_color=(COLORS["white"], COLORS["error"]),
-                    size=BUTTON_SIZES["SMALL"],
-                ),
-            ],
-        ]
-
-        window = sg.Window(
-            title,
-            layout,
-            modal=True,
-            element_justification="center",
         )
-        event, _ = window.read()
-        window.close()
-
-        sg.theme(current_theme)
-
+        event, _ = self._show_popup_template(config)
         return event
+
+    def show_confirmation_popup(self, message: str, title: str = "Confirmation"):
+        """Common helper method for confirmation popups"""
+        config = PopupConfig(
+            title=title,
+            message=message,
+            icon_path=os.path.join("assets", "png", "circle-question-mark.png"),
+            buttons=[
+                {
+                    "text": "Yes",
+                    "key": "-YES-",
+                    "font": FONTS["PRIMARY_BUTTON"],
+                    "button_color": (COLORS["white"], COLORS["primary_lighter"]),
+                },
+                {
+                    "text": "No",
+                    "key": "-NO-",
+                    "font": FONTS["SECONDARY_BUTTON"],
+                    "button_color": (COLORS["dark"], COLORS["light"]),
+                },
+            ],
+        )
+        event, _ = self._show_popup_template(config)
+        return event == "-YES-"
 
     def show_input_dialog(
         self,
