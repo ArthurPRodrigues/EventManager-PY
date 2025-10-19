@@ -111,7 +111,7 @@ class FriendshipManagerGUI(BaseGUI):
                     requested_client_email=friend_email,
                 )
                 self.use_cases.send_friendship_invite_use_case.execute(input_dto)
-                self.show_info_popup(f"Friendship invite sent to: {friend_email}")
+                self.show_success_popup(f"Friendship invite sent to: {friend_email}")
                 self.table.refresh(self.window)
             except Exception as e:
                 self.show_error_popup(f"Error sending friendship invite: {e!s}")
@@ -129,7 +129,9 @@ class FriendshipManagerGUI(BaseGUI):
                         friendship_id=friendship_id,
                     )
                     self.use_cases.delete_friendship_use_case.execute(input_dto)
-                    self.show_info_popup(f"Friend {friend_name} removed successfully!")
+                    self.show_success_popup(
+                        f"Friend {friend_name} removed successfully!"
+                    )
                     self.table.refresh(self.window)
                 except Exception as e:
                     self.show_error_popup(f"Error removing friend: {e}")
@@ -139,7 +141,7 @@ class FriendshipManagerGUI(BaseGUI):
     def _handle_transfer_ticket(self, values):
         selected_data = self.table.get_selected_row_data(self.window)
         if selected_data:
-            self.show_info_popup(
+            self.show_success_popup(
                 f"Transfer Ticket button clicked! Selected friend: {selected_data[1]} ({selected_data[2]})"
             )
         else:

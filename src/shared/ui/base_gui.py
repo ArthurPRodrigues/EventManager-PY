@@ -110,11 +110,6 @@ class BaseGUI(ABC):
         if self.window:
             self.window.close()
 
-    # TODO: Deprecate info popup in favor of success/warning popup
-    def show_info_popup(self, message: str, title: str = "Info"):
-        """Common helper method for info popups"""
-        sg.popup(message, title=title)
-
     def show_success_popup(self, message: str, title: str = "Success"):
         """Common helper method for success popups"""
         current_theme = sg.theme()
