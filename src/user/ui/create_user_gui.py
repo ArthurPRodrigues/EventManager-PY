@@ -205,7 +205,7 @@ class CreateUserGUI(BaseGUI):
 
             user = self.use_cases.create_user_use_case.execute(input_dto)
 
-            self.show_info_popup(
+            self.show_success_popup(
                 f"User '{user.name}' for {user.role.value} role created successfully!"
             )
 

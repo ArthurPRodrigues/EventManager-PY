@@ -96,6 +96,8 @@ class ValidateTicketGUI(BaseGUI):
                     code=ticket_code.strip().upper(),
                 )
                 self.use_cases.validate_ticket_use_case.execute(input_dto)
-                self.show_info_popup(f"Ticket '{ticket_code}' validated successfully!")
+                self.show_success_popup(
+                    f"Ticket '{ticket_code}' validated successfully!"
+                )
             except Exception as e:
                 self.show_error_popup(f"Error validating ticket: {e!s}")
