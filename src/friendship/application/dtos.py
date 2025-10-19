@@ -3,9 +3,6 @@ from datetime import datetime
 
 from friendship.domain.friendship_status import FriendshipStatus
 
-# A place to put DTOs with circular import issues
-# TODO: Consider moving all DTOs to .dtos files for consistency
-
 
 @dataclass(frozen=True)
 class FriendshipSummary:
