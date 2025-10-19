@@ -1,5 +1,3 @@
-import FreeSimpleGUI as sg  # noqa: F401
-
 from event.application.list_event_use_case import ListEventInputDto
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.ui.base_gui import BaseGUI
@@ -23,14 +21,14 @@ class ListEventClientGui(BaseGUI):
         self.header = HeaderComponent(
             extra_buttons=[
                 {
-                    "text": "My Tickets",
-                    "key": "-MY_TICKETS-",
+                    "text": "Manage Friends",
+                    "key": "-MANAGE_FRIENDS-",
                     "size": BUTTON_SIZES["MEDIUM"],
                     "button_color": (COLORS["dark"], COLORS["secondary"]),
                 },
                 {
-                    "text": "Manage Friends",
-                    "key": "-MANAGE_FRIENDS-",
+                    "text": "My Tickets",
+                    "key": "-MY_TICKETS-",
                     "size": BUTTON_SIZES["MEDIUM"],
                     "button_color": (COLORS["dark"], COLORS["secondary"]),
                 },
@@ -61,7 +59,7 @@ class ListEventClientGui(BaseGUI):
                 "LOCATION",
                 "START DATE",
                 "END DATE",
-                "TICKETS AVAILABLE",
+                "TICKETS",
             ],
             data_callback=self._load_events_callback,
             key="-TABLE-",
