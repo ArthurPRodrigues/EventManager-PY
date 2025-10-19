@@ -41,14 +41,6 @@ class RedeemTicketGUI(BaseGUI):
         content_column = (
             [
                 sg.Text(
-                    "Redeem",
-                    font=FONTS["TITLE_MAIN"],
-                    justification="center",
-                    pad=((0, 0), (0, 10)),
-                ),
-            ],
-            [
-                sg.Text(
                     "How many tickets do you want?",
                     font=FONTS["SUBTITLE"],
                     justification="center",
