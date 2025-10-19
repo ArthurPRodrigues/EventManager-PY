@@ -16,15 +16,14 @@ class CreateUserInputDto:
     role: UserRole
 
 
-# todo: adicionar constraints de registro de usuário
 class CreateUserUseCase:
     def __init__(self, users_repository: SqliteUsersRepository) -> None:
         self._users_repository = users_repository
 
     def execute(self, input_dto: CreateUserInputDto) -> User:
-        email_norm = input_dto.email.strip().lower()
-        if self._users_repository.get_by_email_and_role(email_norm, input_dto.role):
-            raise EmailByRoleAlreadyExistsError(email_norm, input_dto.role)
+        email, role = input_dto.email, input_dto.role
+        if self._users_repository.get_by_email_and_role(email, role):
+            raise EmailByRoleAlreadyExistsError(email, role)
         user = User.register(
             name=input_dto.name,
             email=input_dto.email,

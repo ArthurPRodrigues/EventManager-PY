@@ -53,7 +53,7 @@ class SqliteUsersRepository:
         with self._db.connect() as conn:
             cur = conn.execute(
                 "SELECT id, name, email, hashed_password, role FROM users WHERE email = ? AND role = ?",
-                (email.strip().lower(), role.value),
+                (email, role.value),
             )
             row = cur.fetchone()
             if not row:
