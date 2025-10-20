@@ -68,6 +68,22 @@ class ListEventClientGui(BaseGUI):
             "-REDEEM_TICKET-": self.handle_redeem_ticket,
         }
 
+    def _format_tickets_with_indicator(self, tickets_available: int) -> str:
+        """
+        Formata a quantidade de tickets com indicador visual de cores.
+        RNF02: Vermelho para menos da metade, azul para mais da metade.
+
+        Usa símbolos coloridos:
+        - 🔵 (azul): mais da metade dos ingressos disponíveis
+        - 🔴 (vermelho): menos da metade dos ingressos disponíveis
+        """
+        if tickets_available >= 100:
+            indicator = "🔵"
+        else:
+            indicator = "🔴"
+
+        return f"{indicator} {tickets_available}"
+
     def handle_events(self, event, values):
         if event in ("-ORG_F_ALL-", "-ORG_F_WITH-", "-ORG_F_SOLD-"):
             if values.get("-ORG_F_ALL-"):
@@ -151,9 +167,13 @@ class ListEventClientGui(BaseGUI):
     def _convert_events_to_table_data(self, events):
         table_data = []
 
-        # TODO: Don't leave unexplained comments
-        # @ArthurPRodrigues
         for event in events:
+            tickets_display = self._format_tickets_with_indicator(
+                event.tickets_available
+            )
+
+            # TODO: Don't leave unexplained comments
+            # @ArthurPRodrigues
             table_data.append([
                 event.id,  # n vai pasarecer la na tabela
                 event.name,
@@ -161,6 +181,6 @@ class ListEventClientGui(BaseGUI):
                 event.created_at,
                 event.start_date,
                 event.end_date,
-                event.tickets_available,
+                tickets_display,
             ])
         return table_data
