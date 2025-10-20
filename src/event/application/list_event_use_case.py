@@ -25,6 +25,7 @@ class ListEventInputDto:
 
 # TODO: Split that use case into ListEventsUseCase and ListEventsByOrganizerUseCase
 # @ArthurPRodrigues
+# TODO: Deixar apenas o page, page_seze, filter_mode e organizer_id no input dto
 class ListEventUseCase:
     def __init__(self, events_repository: SqliteEventRepository) -> PaginatedEventsDto:
         self._events_repository = events_repository
