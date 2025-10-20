@@ -127,7 +127,7 @@ class SqliteEventRepository:
         with self._db.connect() as conn:
             row = conn.execute(
                 """
-                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at
+                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at, tickets_redeemed
                 FROM events
                 WHERE id = ?
                 """,
@@ -147,6 +147,7 @@ class SqliteEventRepository:
             organizer_id=row[6],
             staffs_id=row[7].split(",") if row[7] else None,
             created_at=datetime.fromisoformat(row[8]),
+            tickets_redeemed=row[9],
         )
 
     def update(self, event: Event) -> None:

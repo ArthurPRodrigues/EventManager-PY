@@ -3,10 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from datetime import datetime
 
-from event.application.errors import (
-    IncorrectEndDateError,
-    PastDateError,
-)
+from event.application.errors import IncorrectEndDateError, PastDateError
 from event.domain.errors import (
     InvalidCreatedAtError,
     InvalidEndDateError,
@@ -54,7 +51,7 @@ class Event:
                 organizer_id,
             )
             is True
-        ):
+        ) and Event.validate_date(start_date, end_date, created_at) is True:
             return Event(
                 name=name,
                 location=location,
@@ -90,6 +87,10 @@ class Event:
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIdError(organizer_id)
 
+        return True
+
+    @staticmethod
+    def validate_date(start_date, end_date, created_at) -> bool:
         if start_date < created_at or end_date < created_at:
             raise PastDateError(start_date if start_date < created_at else end_date)
 
