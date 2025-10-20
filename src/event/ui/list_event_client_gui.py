@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from event.application.list_event_use_case import ListEventInputDto
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.ui.base_gui import BaseGUI
@@ -73,6 +75,7 @@ class ListEventClientGui(BaseGUI):
                 "text": "Redeem Ticket",
                 "key": "-REDEEM_TICKET-",
                 "size": BUTTON_SIZES["EXTRA_LARGE"],
+                "disabled": True,
             },
         ])
 
@@ -84,13 +87,16 @@ class ListEventClientGui(BaseGUI):
 
     def handle_events(self, event, values):
         if self.table.handle_event(event, self.window):
+            # After pagination/filter refresh, update button state
+            self._update_redeem_button_state()
             return
 
         handler = self.event_map.get(event)
         if handler:
             handler()
         elif event == "-TABLE-":
-            pass
+            # Row selection changed
+            self._update_redeem_button_state()
 
     def handle_manage_friends(self):
         self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
@@ -150,12 +156,39 @@ class ListEventClientGui(BaseGUI):
         table_data = []
 
         for event in events:
+            start_display = self._fmt_dt(event.start_date)
+            end_display = self._fmt_dt(event.end_date)
             table_data.append([
                 event.id,
                 event.name,
                 event.location,
-                event.start_date,
-                event.end_date,
+                start_display,
+                end_display,
                 event.tickets_available,
             ])
         return table_data
+
+    def _update_redeem_button_state(self):
+        try:
+            selected = self.table.get_selected_row_data(self.window)
+            is_enabled = bool(selected)
+            if self.window:
+                self.window["-REDEEM_TICKET-"].update(disabled=not is_enabled)
+        except Exception:
+            if self.window:
+                self.window["-REDEEM_TICKET-"].update(disabled=True)
+
+    def _fmt_dt(self, value) -> str:
+        if isinstance(value, datetime):
+            try:
+                return value.strftime("%Y-%m-%d %H:%M:%S")
+            except Exception:
+                return value.isoformat()
+        if isinstance(value, str):
+            try:
+                iso = value.replace("Z", "+00:00")
+                dt = datetime.fromisoformat(iso)
+                return dt.strftime("%Y-%m-%d %H:%M:%S")
+            except Exception:
+                return value
+        return str(value)

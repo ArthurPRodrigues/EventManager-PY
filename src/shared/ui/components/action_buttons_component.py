@@ -34,4 +34,5 @@ class ActionButtonsComponent:
             size=btn_config.get("size", BUTTON_SIZES["SMALL"]),
             button_color=btn_config.get("button_color"),
             pad=btn_config.get("pad", (10, 15)),
+            disabled=btn_config.get("disabled", False),
         )
