@@ -11,7 +11,7 @@ from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from ticket.application.errors import TicketCodeAlreadyExistsError
 from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
-from ticket.infra.persistence.sqlite_tickets_repository import SqliteTicketsRepository
+from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
@@ -26,7 +26,7 @@ class RedeemTicketInputDto:
 class RedeemTicketUseCase:
     def __init__(
         self,
-        tickets_repository: SqliteTicketsRepository,
+        tickets_repository: SqliteTicketRepository,
         events_repository: SqliteEventRepository,
         users_repository: SqliteUsersRepository | None = None,
         email_service: SmtpEmailService | None = None,

@@ -5,7 +5,7 @@ from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
 
 
-class SqliteTicketsRepository:
+class SqliteTicketRepository:
     def __init__(self, db: SQLiteDatabase) -> None:
         self._db = db
 
