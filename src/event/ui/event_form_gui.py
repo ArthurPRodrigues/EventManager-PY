@@ -62,140 +62,145 @@ class EventFormGUI(BaseGUI):
             }
 
     def create_layout(self):
-        if self.operation == "CREATE":
-            labels = [
+        labels = [
+            [
+                sg.Text(
+                    "Name*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Start Date*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Text(
+                    "End Date*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Location*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+            [
+                sg.Text(
+                    "Tickets*",
+                    font=FONTS["LABEL"],
+                    size=LABEL_SIZES["DEFAULT"],
+                    pad=(0, 10),
+                ),
+            ],
+        ]
+
+        if self.operation == "UPDATE" and self.event:
+            inputs = [
                 [
-                    sg.Text(
-                        "Name*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        default_text=self.event[1],
+                        key="-NAME-",
+                        tooltip="Enter the event name",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
                     ),
                 ],
                 [
-                    sg.Text(
-                        "Start Date*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        default_text=datetime.fromisoformat(self.event[3]).strftime(
+                            "%d/%m/%Y %Hh%M"
+                        ),
+                        key="-START_DATE-",
+                        tooltip="Enter the event's starting date in the format DD/MM/YYYY HHhMM",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
                     ),
                 ],
                 [
-                    sg.Text(
-                        "End Date*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        default_text=datetime.fromisoformat(self.event[4]).strftime(
+                            "%d/%m/%Y %Hh%M"
+                        ),
+                        key="-END_DATE-",
+                        tooltip="Enter the event's ending date in the format DD/MM/YYYY HHhMM",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
                     ),
                 ],
                 [
-                    sg.Text(
-                        "Location*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        default_text=self.event[5],
+                        key="-LOCATION-",
+                        tooltip="Enter the event's location",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
                     ),
                 ],
                 [
-                    sg.Text(
-                        "Tickets*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        default_text=self.event[6],
+                        key="-MAX_TICKETS-",
+                        tooltip="Enter the event's max ticket quantity",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
                     ),
                 ],
             ]
         else:
-            labels = [
+            inputs = [
                 [
-                    sg.Text(
-                        "Name*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        key="-NAME-",
+                        tooltip="Enter the event name",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
-                        placeholder=self.event[1],
                     ),
                 ],
                 [
-                    sg.Text(
-                        "Start Date*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        key="-START_DATE-",
+                        tooltip="Enter the event's starting date in the format DD/MM/YYYY HHhMM",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
-                        placeholder=self.event[2].strftime("%d/%m/%Y %Hh%M"),
                     ),
                 ],
                 [
-                    sg.Text(
-                        "End Date*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        key="-END_DATE-",
+                        tooltip="Enter the event's ending date in the format DD/MM/YYYY HHhMM",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
-                        placeholder=self.event[3].strftime("%d/%m/%Y %Hh%M"),
                     ),
                 ],
                 [
-                    sg.Text(
-                        "Location*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        key="-LOCATION-",
+                        tooltip="Enter the event's location",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
-                        placeholder=self.event[4],
                     ),
                 ],
                 [
-                    sg.Text(
-                        "Tickets*",
-                        font=FONTS["LABEL"],
-                        size=LABEL_SIZES["DEFAULT"],
+                    sg.Input(
+                        key="-MAX_TICKETS-",
+                        tooltip="Enter the event's max ticket quantity",
+                        font=FONTS["INPUT"],
                         pad=(0, 10),
-                        placeholder=self.event[5],
                     ),
                 ],
             ]
 
-        inputs = [
-            [
-                sg.Input(
-                    key="-NAME-",
-                    tooltip="Enter the event name",
-                    font=FONTS["INPUT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Input(
-                    key="-START_DATE-",
-                    tooltip="Enter the event's starting date in the format DD/MM/YYYY HHhMM",
-                    font=FONTS["INPUT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Input(
-                    key="-END_DATE-",
-                    tooltip="Enter the event's ending date in the format DD/MM/YYYY HHhMM",
-                    font=FONTS["INPUT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Input(
-                    key="-LOCATION-",
-                    tooltip="Enter the event's location",
-                    font=FONTS["INPUT"],
-                    pad=(0, 10),
-                ),
-            ],
-            [
-                sg.Input(
-                    key="-MAX_TICKETS-",
-                    tooltip="Enter the event's max ticket quantity",
-                    font=FONTS["INPUT"],
-                    pad=(0, 10),
-                ),
-            ],
-        ]
         if self.operation == "CREATE":
             layout = [
                 *self.header.create_layout(),

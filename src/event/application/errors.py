@@ -31,13 +31,13 @@ class EventNotFoundError(AppError):
         super().__init__(message)
 
 
-class IncorrectOrganizerError(AppError):
-    def __init__(self, organizer_name: str, event_name: str) -> None:
-        message = f"User {organizer_name} is not the organizer of event {event_name}."
-        super().__init__(message)
-
-
 class IncorrectEndDateError(AppError):
     def __init__(self) -> None:
         message = "The event's ending date is incorrect, it cannot be before the starting date."
+        super().__init__(message)
+
+
+class IncorrectTicketQuantityError(AppError):
+    def __init__(self, max_tickets: int, tickets_redeemed: int) -> None:
+        message = f"This event has {tickets_redeemed} tickets already redeemed, so the maximum tickets cannot be set to {max_tickets}."
         super().__init__(message)

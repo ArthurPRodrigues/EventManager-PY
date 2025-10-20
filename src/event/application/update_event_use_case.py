@@ -3,10 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from datetime import datetime
 
-from event.application.errors import (
-    EventNotFoundError,
-    IncorrectOrganizerError,
-)
+from event.application.errors import EventNotFoundError, IncorrectTicketQuantityError
 from event.domain.errors import InvalidOrganizerIdError
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
@@ -20,7 +17,7 @@ class UpdateEventInputDto:
     start_date: datetime
     end_date: datetime
     location: str
-    tickets_available: int
+    max_tickets: int
     organizer_id: int
 
 
@@ -42,16 +39,21 @@ class UpdateEventUseCase:
         if not organizer_id or not self._users_repository.get_by_id(organizer_id):
             raise InvalidOrganizerIdError(organizer_id)
 
-        if event.organizer_id != organizer_id:
-            organizer = self._users_repository.get_by_id(organizer_id)
-            raise IncorrectOrganizerError(organizer.name, event.name)
+        if input_dto.max_tickets < event.tickets_redeemed:
+            raise IncorrectTicketQuantityError(
+                input_dto.max_tickets, event.tickets_redeemed
+            )  # por algum motivo não ta pegando corretamente a qtd de tickets_redeemed
+
+        print(
+            f"Tickets redeemed: {event.tickets_redeemed}, Max Tickets: {input_dto.max_tickets}"
+        )
 
         updated_event = Event.create(
             name=input_dto.name,
             start_date=input_dto.start_date,
             end_date=input_dto.end_date,
             location=input_dto.location,
-            tickets_available=input_dto.tickets_available,
+            max_tickets=input_dto.max_tickets,
             organizer_id=organizer_id,
             created_at=event.created_at,
         )

@@ -193,6 +193,6 @@ class ListEventOrganizerGui(BaseGUI):
                 event.start_date,
                 event.end_date,
                 event.location,
-                event.tickets_available,
+                event.max_tickets,
             ])
         return table_data

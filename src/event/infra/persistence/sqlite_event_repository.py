@@ -21,7 +21,7 @@ class SqliteEventRepository:
         created_at: datetime | None = None,
         start_date: datetime | None = None,
         end_date: datetime | None = None,
-        tickets_available: int | None = None,
+        max_tickets: int | None = None,
         organizer_id: int | None = None,
         staffs_id: list[str] | None = None,
         id: int | None = None,
@@ -38,7 +38,7 @@ class SqliteEventRepository:
             "created_at": created_at,
             "start_date": start_date,
             "end_date": end_date,
-            "tickets_available": tickets_available,
+            "max_tickets": max_tickets,
             "organizer_id": organizer_id,
         }
 
@@ -48,9 +48,9 @@ class SqliteEventRepository:
                 params.append(value)
 
         if filter_mode == "WITH_TICKETS":
-            conditions.append("tickets_available > 0")
+            conditions.append("max_tickets > 0")
         elif filter_mode == "SOLD_OUT":
-            conditions.append("tickets_available = 0")
+            conditions.append("max_tickets = 0")
 
         if staffs_id:
             for staff_id in staffs_id:
@@ -62,7 +62,7 @@ class SqliteEventRepository:
         count_query = "SELECT COUNT(*) " + base_query + where_clause
         select_query = (
             "SELECT id, name, location, created_at, start_date, end_date, "
-            "tickets_available, organizer_id, staffs_id "
+            "max_tickets, organizer_id, staffs_id "
             + base_query
             + where_clause
             + " ORDER BY id ASC LIMIT ? OFFSET ?"
@@ -84,7 +84,7 @@ class SqliteEventRepository:
                 created_at=row[3],
                 start_date=row[4],
                 end_date=row[5],
-                tickets_available=row[6],
+                max_tickets=row[6],
                 organizer_id=row[7],
                 staffs_id=row[8].split(",") if row[8] else [],
             )
