@@ -85,7 +85,7 @@ class ValidateTicketGUI(BaseGUI):
         )
 
         if confirmed:
-            if not ticket_code:
+            if not ticket_code or not ticket_code.strip():
                 self.show_warning_popup("Ticket ID cannot be empty.")
                 return
 

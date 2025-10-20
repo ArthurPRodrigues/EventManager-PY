@@ -327,7 +327,7 @@ class BaseGUI(ABC):
                 break
             elif event == "-CONFIRM-":
                 result = True
-                input_value = values["-INPUT-"].strip()
+                input_value = values["-INPUT-"]
                 break
 
         window.close()
