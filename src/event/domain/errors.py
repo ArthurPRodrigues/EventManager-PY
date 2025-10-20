@@ -54,6 +54,6 @@ class EventNotFoundError(DomainError):
 
 
 class EventHasNoTicketsAvailableError(DomainError):
-    def __init__(self, event_id: int) -> None:
-        message = f'Event with id "{event_id}" has no tickets available.'
+    def __init__(self, event_name: str) -> None:
+        message = f'Event "{event_name}" has no tickets available.'
         super().__init__(message)

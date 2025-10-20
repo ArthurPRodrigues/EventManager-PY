@@ -98,25 +98,7 @@ class RedeemTicketGUI(BaseGUI):
 
     def _handle_redeem_ticket(self, values):
         send_email = bool(values.get("-SEND_EMAIL-", False))
-        try:
-            count = int(values.get("-COUNT-", 1))
-        except (TypeError, ValueError):
-            self.show_warning_popup("Please choose a valid quantity.")
-            return
-
-        if count <= 0:
-            self.show_warning_popup("Count must be greater than zero.")
-            return
-
-        if self.event_id is None:
-            self.show_error_popup("Event not provided.")
-            return
-
-        if self.tickets_available is not None and count > int(self.tickets_available):
-            self.show_warning_popup(
-                f"Only {self.tickets_available} ticket(s) available for this event."
-            )
-            return
+        count = int(values.get("-COUNT-", 1))
 
         try:
             input_dto = RedeemTicketInputDto(

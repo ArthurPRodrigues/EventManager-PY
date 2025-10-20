@@ -65,6 +65,7 @@ class RedeemTicketUseCase:
         redeem_ticket_count = input_dto.redeem_ticket_count
         event_id = input_dto.event_id
         event = self._events_repository.get_by_id(event_id)
+        event_name = event.name
         send_email = input_dto.send_email
         ticket_list = []
 
@@ -72,14 +73,8 @@ class RedeemTicketUseCase:
             raise EventNotFoundError(event_id)
         tickets_available = event.tickets_available
 
-        if redeem_ticket_count <= 0:
-            return []
-
-        if tickets_available <= 0:
-            raise EventHasNoTicketsAvailableError(event_id)
-
         if redeem_ticket_count > tickets_available:
-            raise EventHasNoTicketsAvailableError(event.id)
+            raise EventHasNoTicketsAvailableError(event_name)
 
         for _ in range(redeem_ticket_count):
             ticket = Ticket(
