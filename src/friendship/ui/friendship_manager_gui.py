@@ -101,17 +101,19 @@ class FriendshipManagerGUI(BaseGUI):
         )
 
         if confirmed:
-            if not friend_email:
+            if not friend_email or not friend_email.strip():
                 self.show_warning_popup("Please enter a valid email address!")
                 return
 
             try:
                 input_dto = SendFriendshipInviteInputDto(
                     requester_client_email=self.auth_context.email,
-                    requested_client_email=friend_email,
+                    requested_client_email=friend_email.strip(),
                 )
                 self.use_cases.send_friendship_invite_use_case.execute(input_dto)
-                self.show_success_popup(f"Friendship invite sent to: {friend_email}")
+                self.show_success_popup(
+                    f"Friendship invite sent to: {friend_email.strip()}"
+                )
                 self.table.refresh(self.window)
             except Exception as e:
                 self.show_error_popup(f"Error sending friendship invite: {e!s}")
