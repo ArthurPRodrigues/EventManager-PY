@@ -44,13 +44,7 @@ class TicketNotActiveError(DomainError):
         super().__init__(message)
 
 
-class TicketAlreadyUsedError(DomainError):
+class TicketAlreadyValidatedError(DomainError):
     def __init__(self, ticket_id) -> None:
-        message = f'Ticket with ID "{ticket_id}" has already been used.'
-        super().__init__(message)
-
-
-class TicketNotActiveError(DomainError):
-    def __init__(self, ticket_id) -> None:
-        message = f'Ticket with ID "{ticket_id}" is not active.'
+        message = f'Ticket with ID "{ticket_id}" has already been validated.'
         super().__init__(message)
