@@ -59,7 +59,7 @@ class SQLiteDatabase:
             )
             conn.execute(
                 """
-                CREATE TABLE IF NOT EXISTS tickets (
+                CREATE TABLE IF NOT EXISTS ticket (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     event_id INTEGER NOT NULL,
                     client_id INTEGER NOT NULL,
