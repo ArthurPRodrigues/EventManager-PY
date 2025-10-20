@@ -58,9 +58,6 @@ class Ticket:
             status=status,
             event_id=event_id,
             client_id=client_id,
-            code=code,
-            status=status,
-            created_at=created_at,
             id=id,
         )
 
