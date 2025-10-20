@@ -69,20 +69,14 @@ class ListEventClientGui(BaseGUI):
         }
 
     def _format_tickets_with_indicator(self, tickets_available: int) -> str:
-        """
-        Formata a quantidade de tickets com indicador visual de cores.
-        RNF02: Vermelho para menos da metade, azul para mais da metade.
-
-        Usa símbolos coloridos:
-        - 🔵 (azul): mais da metade dos ingressos disponíveis
-        - 🔴 (vermelho): menos da metade dos ingressos disponíveis
-        """
-        if tickets_available >= 100:
+        if tickets_available > 100:
             indicator = "🔵"
         else:
             indicator = "🔴"
 
-        return f"{indicator} {tickets_available}"
+        # Emoji on the left, number on the right with padding
+        MAX_NUMBER_WIDTH = 5  # Assumes maximum 5 digits (99999)
+        return f"{indicator} {tickets_available:>{MAX_NUMBER_WIDTH}}"
 
     def handle_events(self, event, values):
         if event in ("-ORG_F_ALL-", "-ORG_F_WITH-", "-ORG_F_SOLD-"):
