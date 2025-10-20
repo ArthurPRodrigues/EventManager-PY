@@ -189,8 +189,8 @@ class EventFormGUI(BaseGUI):
             ],
             [
                 sg.Input(
-                    key="-TICKETS_AVAILABLE-",
-                    tooltip="Enter the event's ticket quantity",
+                    key="-MAX_TICKETS-",
+                    tooltip="Enter the event's max ticket quantity",
                     font=FONTS["INPUT"],
                     pad=(0, 10),
                 ),
@@ -307,14 +307,14 @@ class EventFormGUI(BaseGUI):
         start_date = values.get("-START_DATE-")
         end_date = values.get("-END_DATE-")
         location = values.get("-LOCATION-")
-        tickets_available = values.get("-TICKETS_AVAILABLE-")
+        max_tickets = values.get("-MAX_TICKETS-")
 
         if (
             not name
             or not start_date
             or not end_date
             or not location
-            or not tickets_available
+            or not max_tickets
         ):
             self.show_warning_popup("Please fill all fields")
             return
@@ -325,7 +325,7 @@ class EventFormGUI(BaseGUI):
                 start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
                 end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
                 location=location,
-                tickets_available=int(tickets_available),
+                max_tickets=int(max_tickets),
                 organizer_id=self.auth_context.id,
             )
 
@@ -343,14 +343,14 @@ class EventFormGUI(BaseGUI):
         start_date = values.get("-START_DATE-")
         end_date = values.get("-END_DATE-")
         location = values.get("-LOCATION-")
-        tickets_available = values.get("-TICKETS_AVAILABLE-")
+        max_tickets = values.get("-MAX_TICKETS-")
 
         if (
             not name
             or not start_date
             or not end_date
             or not location
-            or not tickets_available
+            or not max_tickets
         ):
             self.show_warning_popup("Please fill all fields")
             return
@@ -362,7 +362,7 @@ class EventFormGUI(BaseGUI):
                 start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
                 end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
                 location=location,
-                tickets_available=int(tickets_available),
+                max_tickets=int(max_tickets),
                 organizer_id=self.auth_context.id,
             )
 

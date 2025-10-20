@@ -41,9 +41,9 @@ class InvalidStartDateError(DomainError):
         super().__init__(message)
 
 
-class InvalidTicketsAvailableError(DomainError):
-    def __init__(self, tickets_available) -> None:
-        message = f'Invalid tickets_available: "{tickets_available}".'
+class InvalidMaxTicketsError(DomainError):
+    def __init__(self, max_tickets) -> None:
+        message = f'Invalid max_tickets: "{max_tickets}".'
         super().__init__(message)
 
 

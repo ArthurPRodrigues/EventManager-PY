@@ -15,7 +15,7 @@ class CreateEventInputDto:
     start_date: datetime
     end_date: datetime
     location: str
-    tickets_available: int
+    max_tickets: int
     organizer_id: int
 
 
@@ -38,7 +38,7 @@ class CreateEventUseCase:
             start_date=input_dto.start_date,
             end_date=input_dto.end_date,
             location=input_dto.location,
-            tickets_available=input_dto.tickets_available,
+            max_tickets=input_dto.max_tickets,
             organizer_id=organizer_id,
             created_at=datetime.now(),
         )

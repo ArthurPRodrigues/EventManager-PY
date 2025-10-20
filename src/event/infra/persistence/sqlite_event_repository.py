@@ -100,8 +100,8 @@ class SqliteEventRepository:
             try:
                 cursor = conn.execute(
                     """
-                    INSERT INTO events (name, created_at, end_date, location, start_date, tickets_available, organizer_id, staffs_id, tickets_redeemed)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO events (name, created_at, end_date, location, start_date, max_tickets, organizer_id, staffs_id, tickets_redeemed, initial_max_tickets)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         event.name,
@@ -109,10 +109,11 @@ class SqliteEventRepository:
                         event.end_date.isoformat(),
                         event.location,
                         event.start_date.isoformat(),
-                        event.tickets_available,
+                        event.max_tickets,
                         event.organizer_id,
                         (event.staffs_id and ",".join(event.staffs_id)) or None,
                         event.tickets_redeemed,
+                        event.initial_max_tickets,
                     ),
                 )
                 conn.commit()
@@ -126,7 +127,7 @@ class SqliteEventRepository:
         with self._db.connect() as conn:
             row = conn.execute(
                 """
-                SELECT id, name, end_date, start_date, location, tickets_available, organizer_id, staffs_id, created_at
+                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at
                 FROM events
                 WHERE id = ?
                 """,
@@ -142,7 +143,7 @@ class SqliteEventRepository:
             end_date=datetime.fromisoformat(row[2]),
             start_date=datetime.fromisoformat(row[3]),
             location=row[4],
-            tickets_available=row[5],
+            max_tickets=row[5],
             organizer_id=row[6],
             staffs_id=row[7].split(",") if row[7] else None,
             created_at=datetime.fromisoformat(row[8]),
@@ -157,7 +158,7 @@ class SqliteEventRepository:
             conn.execute(
                 """
                 UPDATE events
-                SET name = ?, end_date = ?, start_date = ?, location = ?, tickets_available = ?
+                SET name = ?, end_date = ?, start_date = ?, location = ?, max_tickets = ?
                 WHERE id = ?
                 """,
                 (
@@ -165,7 +166,7 @@ class SqliteEventRepository:
                     event.end_date,
                     event.start_date,
                     event.location,
-                    event.tickets_available,
+                    event.max_tickets,
                     event.id,
                 ),
             )
