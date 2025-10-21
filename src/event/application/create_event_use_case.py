@@ -28,9 +28,11 @@ class CreateEventUseCase:
         self._events_repository = events_repository
         self._users_repository = users_repository
 
-    def execute(self, input_dto: CreateEventInputDto) -> Event:
+    def create_event(self, input_dto: CreateEventInputDto) -> Event:
         organizer_id = input_dto.organizer_id
-        if not organizer_id or not self._users_repository.get_by_id(organizer_id):
+        if not organizer_id or not self._users_repository.get_by_id(
+            organizer_id
+        ):  # essa validação não faz sentido
             raise InvalidOrganizerIdError(organizer_id)
 
         event = Event.create(

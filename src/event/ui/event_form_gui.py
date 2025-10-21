@@ -334,7 +334,7 @@ class EventFormGUI(BaseGUI):
                 organizer_id=self.auth_context.id,
             )
 
-            event = self.use_cases.create_event_use_case.execute(input_dto)
+            event = self.use_cases.create_event_use_case.create_event(input_dto)
 
             self.show_success_popup(f"Event {event.name} created successfully!")
 

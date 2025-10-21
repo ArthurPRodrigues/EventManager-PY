@@ -125,12 +125,14 @@ class ListEventOrganizerGui(BaseGUI):
                 try:
                     input_dto = DeleteEventInputDto(event_id=event_id)
                     self.use_cases.delete_event_use_case.execute(input_dto)
-                    self.show_info_popup(f"Event {event_name} deleted successufully!")
+                    self.show_success_popup(
+                        f"Event {event_name} deleted successufully!"
+                    )
                     self.table.refresh(self.window)
                 except Exception as e:
                     self.show_error_popup(f"Error deleting event: {e}")
         else:
-            self.show_warning_popup("No row selected!")
+            self.show_warning_popup("No event selected!")
 
     def handle_edit_selected(self):
         selected_data = self.table.get_selected_row_data(self.window)

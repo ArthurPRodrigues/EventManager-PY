@@ -41,17 +41,20 @@ class Event:
         organizer_id: int,
     ) -> Event:
         if (
-            Event.validate_fields(
-                name,
-                location,
-                created_at,
-                start_date,
-                end_date,
-                max_tickets,
-                organizer_id,
+            (
+                Event.validate_fields(
+                    name,
+                    location,
+                    created_at,
+                    start_date,
+                    end_date,
+                    organizer_id,
+                )
+                is True
             )
-            is True
-        ) and Event.validate_date(start_date, end_date, created_at) is True:
+            and Event.validate_date(start_date, end_date, created_at) is True
+            and Event.validate_max_tickets(max_tickets) is True
+        ):
             return Event(
                 name=name,
                 location=location,
@@ -70,7 +73,7 @@ class Event:
 
     @staticmethod
     def validate_fields(
-        name, location, created_at, start_date, end_date, max_tickets, organizer_id
+        name, location, created_at, start_date, end_date, organizer_id
     ) -> bool:
         if not name or not isinstance(name, str) or not name.strip():
             raise InvalidNameError(name)
@@ -82,8 +85,6 @@ class Event:
             raise InvalidStartDateError(start_date)
         if not end_date or not isinstance(end_date, datetime):
             raise InvalidEndDateError(end_date)
-        if not isinstance(max_tickets, int) or max_tickets < 0:
-            raise InvalidMaxTicketsError(max_tickets)
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIdError(organizer_id)
 
@@ -96,5 +97,12 @@ class Event:
 
         if end_date < start_date:
             raise IncorrectEndDateError()
+
+        return True
+
+    @staticmethod
+    def validate_max_tickets(max_tickets) -> bool:
+        if not isinstance(max_tickets, int) or max_tickets < 0:
+            raise InvalidMaxTicketsError(max_tickets)
 
         return True
