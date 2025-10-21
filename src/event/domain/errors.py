@@ -63,3 +63,17 @@ class EventHasNoTicketsAvailableError(DomainError):
     def __init__(self, event_name: str) -> None:
         message = f'Event "{event_name}" has no tickets available.'
         super().__init__(message)
+
+
+class InvalidOrganizerIdError(DomainError):
+    def _init_(self, organizer_id) -> None:
+        message = f'Invalid organizer_id: "{organizer_id}".'
+        super()._init_(message)
+
+
+# TODO: Remove unused error
+# @ArthurPRodrigues
+class InvalidStaffsIdError(DomainError):
+    def _init_(self, staffs_id) -> None:
+        message = f'Invalid staffs_id: "{staffs_id}".'
+        super()._init_(message)
