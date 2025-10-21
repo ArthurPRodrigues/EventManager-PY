@@ -28,7 +28,6 @@ from user.application.create_user_use_case import CreateUserUseCase
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
-# TODO: Uncomment ticket use case lines when event repository is implemented
 # TODO: Uncomment html template engine and email service lines when ticket redemption is implemented
 @dataclass
 class CompositionRoot:

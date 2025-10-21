@@ -127,7 +127,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                         friendship_id=friendship_id,
                     )
                     self.use_cases.accept_friendship_invite_use_case.execute(input_dto)
-                    self.show_info_popup(
+                    self.show_success_popup(
                         f"Friendship invite from {friend_name} accepted successfully!"
                     )
                     self.table.refresh(self.window)
@@ -150,7 +150,7 @@ class FriendshipPendingInvitesGUI(BaseGUI):
                         friendship_id=friendship_id,
                     )
                     self.use_cases.delete_friendship_use_case.execute(input_dto)
-                    self.show_info_popup(
+                    self.show_success_popup(
                         f"Friendship invite from {friend_name} declined successfully!"
                     )
                     self.table.refresh(self.window)

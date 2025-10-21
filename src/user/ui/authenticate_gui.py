@@ -51,7 +51,7 @@ class AuthenticateGUI(BaseGUI):
         labels = [
             [
                 sg.Text(
-                    "Email*",
+                    "Email",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -59,7 +59,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Password*",
+                    "Password",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -67,7 +67,7 @@ class AuthenticateGUI(BaseGUI):
             ],
             [
                 sg.Text(
-                    "Role*",
+                    "Role",
                     font=FONTS["LABEL"],
                     size=LABEL_SIZES["DEFAULT"],
                     pad=(0, 10),
@@ -170,10 +170,13 @@ class AuthenticateGUI(BaseGUI):
 
         try:
             input_dto = AuthenticateUserInputDto(
-                email=email, password=password, role=UserRole(role)
+                email=email.strip().lower(), password=password, role=UserRole(role)
             )
+
             user = self.use_cases.authenticate_user_use_case.execute(input_dto)
+
             self._set_auth_context(user)
+
             self.show_success_popup(
                 f"Welcome, {self.auth_context.name} ({self.auth_context.role.value})!"
             )

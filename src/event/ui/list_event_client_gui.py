@@ -36,6 +36,8 @@ class ListEventClientGui(BaseGUI):
             ]
         )
         self.current_filter_mode = "ALL"
+        # TODO: Don't match with prototype
+        # @ArthurPRodrigues
         self.table = TableComponent(
             headers=[
                 "ID",
@@ -91,16 +93,22 @@ class ListEventClientGui(BaseGUI):
     def handle_manage_friends(self):
         self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
 
+    # TODO: This method is not yet implemented. A popup should be used to inform the user that the feature is unavailable.
+    # @ArthurPRodrigues
     def handle_tickets(self):
         # self.navigator.push_screen("TicketManagerGui", auth_context=self.auth_context)
         pass
 
+    # TODO: This method is not yet implemented. A popup should be used to inform the user that the feature is unavailable.
+    # @ArthurPRodrigues
     def handle_redeem_ticket(self):
         # self.navigator.push_screen(
         #   "RedeemTicketGui", auth_context=self.auth_context
         # )
         pass
 
+    # TODO: Use the damn filter parameter on TableComponent instead of doing this manually
+    # @ArthurPRodrigues
     def create_layout(self):
         filter_row = [
             sg.Text("Filter:"),
@@ -143,6 +151,8 @@ class ListEventClientGui(BaseGUI):
     def _convert_events_to_table_data(self, events):
         table_data = []
 
+        # TODO: Don't leave unexplained comments
+        # @ArthurPRodrigues
         for event in events:
             table_data.append([
                 event.id,  # n vai pasarecer la na tabela

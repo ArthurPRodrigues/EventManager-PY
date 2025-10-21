@@ -8,6 +8,7 @@ from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.components.table_component import TableComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
+from ticket.ui.validate_ticket_gui import ValidateTicketGUI
 
 
 class ListEventOrganizerGui(BaseGUI):
@@ -100,8 +101,11 @@ class ListEventOrganizerGui(BaseGUI):
             handler()
 
     def handle_validate_ticket(self):
-        self.navigator.navigate_to("validate_ticket")
+        self.navigator.push_screen(ValidateTicketGUI, auth_context=self.auth_context)
 
+    # TODO: If it's not working, pops up a message
+    # ⚠️ navigate_to method doesn't exist in navigator ⚠️
+    # @ArthurPRodrigues
     def handle_tickets_redeemed(self):
         self.navigator.navigate_to("tickets_redeemed")
 

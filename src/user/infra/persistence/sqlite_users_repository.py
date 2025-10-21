@@ -10,7 +10,6 @@ class SqliteUsersRepository:
     def __init__(self, db: SQLiteDatabase) -> None:
         self._db = db
 
-    # todo: trocar conn para connection
     def add(self, user: User) -> User:
         with self._db.connect() as conn:
             cursor = conn.execute(
@@ -53,7 +52,7 @@ class SqliteUsersRepository:
         with self._db.connect() as conn:
             cur = conn.execute(
                 "SELECT id, name, email, hashed_password, role FROM users WHERE email = ? AND role = ?",
-                (email.strip().lower(), role.value),
+                (email, role.value),
             )
             row = cur.fetchone()
             if not row:

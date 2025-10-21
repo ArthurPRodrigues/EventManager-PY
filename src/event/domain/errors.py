@@ -47,12 +47,16 @@ class InvalidMaxTicketsError(DomainError):
         super().__init__(message)
 
 
+# TODO: Remove unused error
+# @ArthurPRodrigues
 class InvalidOrganizerIdError(DomainError):
     def __init__(self, organizer_id) -> None:
         message = f'Invalid organizer_id: "{organizer_id}".'
         super().__init__(message)
 
 
+# TODO: Remove unused error
+# @ArthurPRodrigues
 class InvalidStaffsIdError(DomainError):
     def __init__(self, staffs_id) -> None:
         message = f'Invalid staffs_id: "{staffs_id}".'

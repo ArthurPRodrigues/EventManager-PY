@@ -197,12 +197,15 @@ class CreateUserGUI(BaseGUI):
 
         try:
             input_dto = CreateUserInputDto(
-                name=name, email=email, password=password, role=UserRole(role_str)
+                name=name,
+                email=email.strip().lower(),
+                password=password,
+                role=UserRole(role_str),
             )
 
             user = self.use_cases.create_user_use_case.execute(input_dto)
 
-            self.show_info_popup(
+            self.show_success_popup(
                 f"User '{user.name}' for {user.role.value} role created successfully!"
             )
 

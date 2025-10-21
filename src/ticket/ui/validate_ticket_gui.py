@@ -6,7 +6,7 @@ from shared.ui.base_gui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, FONTS, WINDOW_SIZES
-from ticket.application.validate_ticket_use_case import ValidateTicketInputDto
+from ticket.application.dtos import ValidateTicketInputDto
 
 
 class ValidateTicketGUI(BaseGUI):
@@ -85,7 +85,7 @@ class ValidateTicketGUI(BaseGUI):
         )
 
         if confirmed:
-            if not ticket_code:
+            if not ticket_code or not ticket_code.strip():
                 self.show_warning_popup("Ticket ID cannot be empty.")
                 return
 
@@ -96,6 +96,8 @@ class ValidateTicketGUI(BaseGUI):
                     code=ticket_code.strip().upper(),
                 )
                 self.use_cases.validate_ticket_use_case.execute(input_dto)
-                self.show_info_popup(f"Ticket '{ticket_code}' validated successfully!")
+                self.show_success_popup(
+                    f"Ticket '{ticket_code}' validated successfully!"
+                )
             except Exception as e:
                 self.show_error_popup(f"Error validating ticket: {e!s}")

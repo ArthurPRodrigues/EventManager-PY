@@ -56,7 +56,6 @@ class HeaderComponent:
             row.pop()
         return row
 
-    # TODO: Define fallback values for optional button config keys
     def _create_button(self, btn_config: dict[str, Any]) -> sg.Button:
         return sg.Button(
             btn_config["text"],
