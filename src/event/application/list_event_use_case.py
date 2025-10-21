@@ -16,7 +16,7 @@ class ListEventInputDto:
     created_at: datetime | None = None
     start_date: datetime | None = None
     end_date: datetime | None = None
-    tickets_available: int | None = None
+    max_tickets: int | None = None
     organizer_id: int | None = None
     staffs_id: list[str] | None = None
     id: int | None = None
@@ -39,7 +39,7 @@ class ListEventUseCase:
             created_at=input_dto.created_at,
             start_date=input_dto.start_date,
             end_date=input_dto.end_date,
-            tickets_available=input_dto.tickets_available,
+            max_tickets=input_dto.max_tickets,
             organizer_id=input_dto.organizer_id,
             staffs_id=input_dto.staffs_id,
             id=input_dto.id,

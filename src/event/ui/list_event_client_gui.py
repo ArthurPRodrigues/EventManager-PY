@@ -164,15 +164,16 @@ class ListEventClientGui(BaseGUI):
         # TODO: Don't leave unexplained comments
         # @ArthurPRodrigues
         for event in events:
-            start_display = self._fmt_dt(event.start_date)
-            end_display = self._fmt_dt(event.end_date)
+            # start_display = self._fmt_dt(event.start_date)
+            # end_display = self._fmt_dt(event.end_date)
             table_data.append([
                 event.id,
                 event.name,
                 event.location,
-                start_display,
-                end_display,
-                event.tickets_available,
+                event.created_at,
+                event.start_date,
+                event.end_date,
+                event.max_tickets,
             ])
         return table_data
 

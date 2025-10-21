@@ -5,6 +5,12 @@ class DomainError(Exception):
     """Base class for domain errors."""
 
 
+class InvalidEventError(DomainError):
+    def __init__(self, event) -> None:
+        message = f'Invalid event: "{event}".'
+        super().__init__(message)
+
+
 class InvalidCreatedAtError(DomainError):
     def __init__(self, created_at) -> None:
         message = f'Invalid created_at: "{created_at}".'
@@ -35,9 +41,9 @@ class InvalidStartDateError(DomainError):
         super().__init__(message)
 
 
-class InvalidTicketsAvailableError(DomainError):
-    def __init__(self, tickets_available) -> None:
-        message = f'Invalid tickets_available: "{tickets_available}".'
+class InvalidMaxTicketsError(DomainError):
+    def __init__(self, max_tickets) -> None:
+        message = f'Invalid max_tickets: "{max_tickets}".'
         super().__init__(message)
 
 

@@ -50,9 +50,11 @@ class SQLiteDatabase:
                     location TEXT NOT NULL,
                     name TEXT NOT NULL,
                     start_date TIMESTAMP NOT NULL,
-                    tickets_available INTEGER NOT NULL,
+                    max_tickets INTEGER NOT NULL,
+                    initial_max_tickets INTEGER NOT NULL,
                     organizer_id INTEGER NOT NULL,
-                    staffs_id TEXT NOT NULL,
+                    staffs_id TEXT DEFAULT NULL,
+                    tickets_redeemed INTEGER NOT NULL,
                     FOREIGN KEY(organizer_id) REFERENCES users(id) ON DELETE CASCADE
                     )
                 """

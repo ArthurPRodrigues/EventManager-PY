@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime
 
 from event.application.dtos import Event, PaginatedEventsDto
+from event.application.errors import EventNotFoundError
 from shared.infra.persistence.sqlite import SQLiteDatabase
 
 
@@ -19,7 +21,7 @@ class SqliteEventRepository:
         created_at: datetime | None = None,
         start_date: datetime | None = None,
         end_date: datetime | None = None,
-        tickets_available: int | None = None,
+        max_tickets: int | None = None,
         organizer_id: int | None = None,
         staffs_id: list[str] | None = None,
         id: int | None = None,
@@ -36,7 +38,7 @@ class SqliteEventRepository:
             "created_at": created_at,
             "start_date": start_date,
             "end_date": end_date,
-            "tickets_available": tickets_available,
+            "max_tickets": max_tickets,
             "organizer_id": organizer_id,
         }
 
@@ -46,9 +48,9 @@ class SqliteEventRepository:
                 params.append(value)
 
         if filter_mode == "WITH_TICKETS":
-            conditions.append("tickets_available > 0")
+            conditions.append("max_tickets > 0")
         elif filter_mode == "SOLD_OUT":
-            conditions.append("tickets_available = 0")
+            conditions.append("max_tickets = 0")
 
         if staffs_id:
             for staff_id in staffs_id:
@@ -60,7 +62,7 @@ class SqliteEventRepository:
         count_query = "SELECT COUNT(*) " + base_query + where_clause
         select_query = (
             "SELECT id, name, location, created_at, start_date, end_date, "
-            "tickets_available, organizer_id, staffs_id "
+            "max_tickets, organizer_id, staffs_id "
             + base_query
             + where_clause
             + " ORDER BY id ASC LIMIT ? OFFSET ?"
@@ -82,7 +84,7 @@ class SqliteEventRepository:
                 created_at=row[3],
                 start_date=row[4],
                 end_date=row[5],
-                tickets_available=row[6],
+                max_tickets=row[6],
                 organizer_id=row[7],
                 staffs_id=row[8].split(",") if row[8] else [],
             )
@@ -93,13 +95,44 @@ class SqliteEventRepository:
             event_list=event_list, total_event_count=int(total_event_count)
         )
 
-    def get_by_id(self, event_id: int) -> Event | None:
-        query = (
-            "SELECT id, name, location, created_at, start_date, end_date, "
-            "tickets_available, organizer_id, staffs_id FROM events WHERE id = ?"
-        )
+    def add(self, event: Event) -> Event:
         with self._db.connect() as conn:
-            row = conn.execute(query, (event_id,)).fetchone()
+            try:
+                cursor = conn.execute(
+                    """
+                    INSERT INTO events (name, created_at, end_date, location, start_date, max_tickets, organizer_id, staffs_id, tickets_redeemed, initial_max_tickets)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        event.name,
+                        event.created_at.isoformat(),
+                        event.end_date.isoformat(),
+                        event.location,
+                        event.start_date.isoformat(),
+                        event.max_tickets,
+                        event.organizer_id,
+                        (event.staffs_id and ",".join(event.staffs_id)) or None,
+                        event.tickets_redeemed,
+                        event.initial_max_tickets,
+                    ),
+                )
+                conn.commit()
+                return replace(event, id=cursor.lastrowid)
+
+            except Exception as e:
+                conn.rollback()
+                raise e
+
+    def get_by_id(self, id: int) -> Event | None:
+        with self._db.connect() as conn:
+            row = conn.execute(
+                """
+                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at, tickets_redeemed
+                FROM events
+                WHERE id = ?
+                """,
+                (id,),
+            ).fetchone()
 
         if not row:
             return None
@@ -107,34 +140,46 @@ class SqliteEventRepository:
         return Event(
             id=row[0],
             name=row[1],
-            location=row[2],
-            created_at=row[3],
-            start_date=row[4],
-            end_date=row[5],
-            tickets_available=row[6],
-            organizer_id=row[7],
-            staffs_id=row[8].split(",") if row[8] else [],
+            end_date=datetime.fromisoformat(row[2]),
+            start_date=datetime.fromisoformat(row[3]),
+            location=row[4],
+            max_tickets=row[5],
+            organizer_id=row[6],
+            staffs_id=row[7].split(",") if row[7] else None,
+            created_at=datetime.fromisoformat(row[8]),
+            tickets_redeemed=row[9],
         )
 
     def update(self, event: Event) -> None:
+        assert event is not None
+        existing_event = self.get_by_id(event.id)
+        if not existing_event:
+            raise EventNotFoundError(event.id)
         with self._db.connect() as conn:
             conn.execute(
                 """
                 UPDATE events
-                SET name = ?, location = ?, created_at = ?, start_date = ?, end_date = ?,
-                    tickets_available = ?, organizer_id = ?, staffs_id = ?
+                SET name = ?, end_date = ?, start_date = ?, location = ?, max_tickets = ?
                 WHERE id = ?
                 """,
                 (
                     event.name,
-                    event.location,
-                    event.created_at,
-                    event.start_date,
                     event.end_date,
-                    event.tickets_available,
-                    event.organizer_id,
-                    ",".join(event.staffs_id) if event.staffs_id else "",
+                    event.start_date,
+                    event.location,
+                    event.max_tickets,
                     event.id,
                 ),
+            )
+            conn.commit()
+
+    def delete(self, id: int) -> None:
+        with self._db.connect() as conn:
+            conn.execute(
+                """
+                DELETE FROM events
+                WHERE id = ?
+                """,
+                (id,),
             )
             conn.commit()

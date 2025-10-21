@@ -3,7 +3,10 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+from event.application.create_event_use_case import CreateEventUseCase
+from event.application.delete_event_use_case import DeleteEventUseCase
 from event.application.list_event_use_case import ListEventUseCase
+from event.application.update_event_use_case import UpdateEventUseCase
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from friendship.application.accept_friendship_invite_use_case import (
     AcceptFriendshipInviteUseCase,
@@ -44,6 +47,9 @@ class CompositionRoot:
     authenticate_user_use_case: AuthenticateUserUseCase
     redeem_ticket_use_case: RedeemTicketUseCase
     list_event_use_case: ListEventUseCase
+    create_event_use_case: CreateEventUseCase
+    delete_event_use_case: DeleteEventUseCase
+    update_event_use_case: UpdateEventUseCase
     event_repo: SqliteEventRepository
     ticket_repo: SqliteTicketRepository
     redeem_ticket_use_case: RedeemTicketUseCase
@@ -85,6 +91,10 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     )
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
+    # validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
+    create_event_use_case = CreateEventUseCase(event_repo, user_repo)
+    delete_event_use_case = DeleteEventUseCase(event_repo, user_repo)
+    update_event_use_case = UpdateEventUseCase(event_repo, user_repo)
     list_event_use_case = ListEventUseCase(event_repo)
 
     redeem_ticket_use_case = RedeemTicketUseCase(
@@ -105,7 +115,10 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         user_repo=user_repo,
         create_user_use_case=create_user_use_case,
         authenticate_user_use_case=authenticate_user_use_case,
-        event_repo=event_repo,
+        create_event_use_case=create_event_use_case,
+        delete_event_use_case=delete_event_use_case,
+        update_event_use_case=update_event_use_case,
+        # validate_ticket_use_case=validate_ticket_use_case,
         list_event_use_case=list_event_use_case,
         ticket_repo=ticket_repo,
         redeem_ticket_use_case=redeem_ticket_use_case,
