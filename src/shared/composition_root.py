@@ -25,6 +25,7 @@ from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from shared.infra.persistence.sqlite import SQLiteDatabase
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
+from ticket.application.validate_ticket_use_case import ValidateTicketUseCase
 from ticket.infra.persistence.sqlite_ticket_repository import (
     SqliteTicketRepository,
 )
@@ -45,7 +46,7 @@ class CompositionRoot:
     user_repo: SqliteUsersRepository
     create_user_use_case: CreateUserUseCase
     authenticate_user_use_case: AuthenticateUserUseCase
-    redeem_ticket_use_case: RedeemTicketUseCase
+    validate_ticket_use_case: ValidateTicketUseCase
     list_event_use_case: ListEventUseCase
     create_event_use_case: CreateEventUseCase
     delete_event_use_case: DeleteEventUseCase
@@ -91,7 +92,7 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
     )
     create_user_use_case = CreateUserUseCase(user_repo)
     authenticate_user_use_case = AuthenticateUserUseCase(user_repo)
-    # validate_ticket_use_case = ValidateTicketUseCase(tickets_repo)
+    validate_ticket_use_case = ValidateTicketUseCase(ticket_repo, event_repo)
     create_event_use_case = CreateEventUseCase(event_repo, user_repo)
     delete_event_use_case = DeleteEventUseCase(event_repo, user_repo)
     update_event_use_case = UpdateEventUseCase(event_repo, user_repo)
@@ -118,8 +119,9 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
         create_event_use_case=create_event_use_case,
         delete_event_use_case=delete_event_use_case,
         update_event_use_case=update_event_use_case,
-        # validate_ticket_use_case=validate_ticket_use_case,
+        validate_ticket_use_case=validate_ticket_use_case,
         list_event_use_case=list_event_use_case,
+        event_repo=event_repo,
         ticket_repo=ticket_repo,
         redeem_ticket_use_case=redeem_ticket_use_case,
         html_template_engine=html_template_engine,

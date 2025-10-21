@@ -3,12 +3,12 @@ from datetime import datetime
 
 import FreeSimpleGUI as sg
 
+from event.application.create_event_use_case import CreateEventInputDto
+from event.application.update_event_use_case import UpdateEventInputDto
 from shared.ui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.styles import COLORS, FONTS, LABEL_SIZES, WINDOW_SIZES
-from src.event.application.create_event_use_case import CreateEventInputDto
-from src.event.application.update_event_use_case import UpdateEventInputDto
 
 
 class EventFormGUI(BaseGUI):
