@@ -40,20 +40,8 @@ class Event:
         max_tickets: int,
         organizer_id: int,
     ) -> Event:
-        if (
-            (
-                Event.validate_fields(
-                    name,
-                    location,
-                    created_at,
-                    start_date,
-                    end_date,
-                    organizer_id,
-                )
-                is True
-            )
-            and Event.validate_date(start_date, end_date, created_at) is True
-            and Event.validate_max_tickets(max_tickets) is True
+        if Event.all_validations(
+            name, location, created_at, start_date, end_date, organizer_id, max_tickets
         ):
             return Event(
                 name=name,
@@ -106,3 +94,30 @@ class Event:
             raise InvalidMaxTicketsError(max_tickets)
 
         return True
+
+    @staticmethod
+    def all_validations(
+        name,
+        location,
+        created_at,
+        start_date,
+        end_date,
+        organizer_id,
+        max_tickets,
+    ):
+        if (
+            (
+                Event.validate_fields(
+                    name,
+                    location,
+                    created_at,
+                    start_date,
+                    end_date,
+                    organizer_id,
+                )
+                is True
+            )
+            and Event.validate_date(start_date, end_date, created_at) is True
+            and Event.validate_max_tickets(max_tickets) is True
+        ):
+            return True
