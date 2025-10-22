@@ -61,6 +61,7 @@ class ListEventClientGui(BaseGUI):
                 "LOCATION",
                 "START DATE",
                 "END DATE",
+                "STATUS",
                 "TICKETS",
             ],
             data_callback=self._load_events_callback,
@@ -84,6 +85,17 @@ class ListEventClientGui(BaseGUI):
             "-MY_TICKETS-": self.handle_tickets,
             "-REDEEM_TICKET-": self.handle_redeem_ticket,
         }
+
+    def _format_tickets_with_indicator(
+        self, initial_max_tickets, tickets_redeemed, max_tickets
+    ) -> str:
+        available = max(0, max_tickets - tickets_redeemed)
+        half = max(0, initial_max_tickets) / 2
+        is_red = tickets_redeemed > half or available <= 0
+        return "🔴" if is_red else "🔵"
+
+    def tickets_available(self, max_tickets, tickets_redeemed):
+        return max(0, max_tickets - tickets_redeemed)
 
     def handle_events(self, event, values):
         if self.table.handle_event(event, self.window):
@@ -109,7 +121,7 @@ class ListEventClientGui(BaseGUI):
             return
 
         event_id = selected[0]
-        tickets_available = selected[5]
+        tickets_available = selected[6]
 
         self.navigator.push_screen(
             RedeemTicketGUI,
@@ -160,7 +172,10 @@ class ListEventClientGui(BaseGUI):
                 event.location,
                 self._fmt_dt(event.start_date),
                 self._fmt_dt(event.end_date),
-                event.tickets_available,
+                self._format_tickets_with_indicator(
+                    event.initial_max_tickets, event.tickets_redeemed, event.max_tickets
+                ),
+                self.tickets_available(event.max_tickets, event.tickets_redeemed),
             ])
         return table_data
 
