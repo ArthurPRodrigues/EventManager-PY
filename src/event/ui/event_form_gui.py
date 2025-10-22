@@ -308,42 +308,63 @@ class EventFormGUI(BaseGUI):
             handler(values)
 
     def _handle_create_event(self, values):
-        name = values.get("-NAME-")
-        start_date = values.get("-START_DATE-")
-        end_date = values.get("-END_DATE-")
-        location = values.get("-LOCATION-")
-        max_tickets = values.get("-MAX_TICKETS-")
+        if self._check_filled_fields(values) is True:
+            name = values.get("-NAME-")
+            start_date = values.get("-START_DATE-")
+            end_date = values.get("-END_DATE-")
+            location = values.get("-LOCATION-")
+            max_tickets = values.get("-MAX_TICKETS-")
 
-        if (
-            not name
-            or not start_date
-            or not end_date
-            or not location
-            or not max_tickets
-        ):
-            self.show_warning_popup("Please fill all fields")
-            return
+            try:
+                input_dto = CreateEventInputDto(
+                    name=name,
+                    start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
+                    end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
+                    location=location,
+                    max_tickets=int(max_tickets),
+                    organizer_id=self.auth_context.id,
+                )
 
-        try:
-            input_dto = CreateEventInputDto(
-                name=name,
-                start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
-                end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
-                location=location,
-                max_tickets=int(max_tickets),
-                organizer_id=self.auth_context.id,
-            )
+                event = self.use_cases.create_event_use_case.create_event(input_dto)
 
-            event = self.use_cases.create_event_use_case.create_event(input_dto)
+                self.show_success_popup(f"Event {event.name} created successfully!")
 
-            self.show_success_popup(f"Event {event.name} created successfully!")
+                self.navigator.pop_screen()
 
-            self.navigator.pop_screen()
-
-        except Exception as e:
-            self.show_error_popup(f"Error creating event: {e!s}")
+            except Exception as e:
+                self.show_error_popup(f"Error creating event: {e!s}")
 
     def _handle_update_event(self, values):
+        if self._check_filled_fields(values) is True:
+            name = values.get("-NAME-")
+            start_date = values.get("-START_DATE-")
+            end_date = values.get("-END_DATE-")
+            location = values.get("-LOCATION-")
+            max_tickets = values.get("-MAX_TICKETS-")
+
+            try:
+                input_dto = UpdateEventInputDto(
+                    event_id=self.event[0],
+                    name=name,
+                    start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
+                    end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
+                    location=location,
+                    max_tickets=int(max_tickets),
+                    organizer_id=self.auth_context.id,
+                )
+
+                updated_event = self.use_cases.update_event_use_case.execute(input_dto)
+
+                self.show_success_popup(
+                    f"Event {updated_event.name} updated successfully!"
+                )
+
+                self.navigator.pop_screen()
+
+            except Exception as e:
+                self.show_error_popup(f"Error updating event: {e!s}")
+
+    def _check_filled_fields(self, values):
         name = values.get("-NAME-")
         start_date = values.get("-START_DATE-")
         end_date = values.get("-END_DATE-")
@@ -359,23 +380,5 @@ class EventFormGUI(BaseGUI):
         ):
             self.show_warning_popup("Please fill all fields")
             return
-
-        try:
-            input_dto = UpdateEventInputDto(
-                event_id=self.event[0],
-                name=name,
-                start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
-                end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
-                location=location,
-                max_tickets=int(max_tickets),
-                organizer_id=self.auth_context.id,
-            )
-
-            updated_event = self.use_cases.update_event_use_case.execute(input_dto)
-
-            self.show_success_popup(f"Event {updated_event.name} updated successfully!")
-
-            self.navigator.pop_screen()
-
-        except Exception as e:
-            self.show_error_popup(f"Error updating event: {e!s}")
+        else:
+            return True
