@@ -87,7 +87,6 @@ class ListEventClientGui(BaseGUI):
 
     def handle_events(self, event, values):
         if self.table.handle_event(event, self.window):
-            # After pagination/filter refresh, update button state
             self._update_redeem_button_state()
             return
 
@@ -95,7 +94,6 @@ class ListEventClientGui(BaseGUI):
         if handler:
             handler()
         elif event == "-TABLE-":
-            # Row selection changed
             self._update_redeem_button_state()
 
     def handle_manage_friends(self):
