@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
 
 from event.application.dtos import PaginatedEventsDto
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
@@ -11,21 +10,10 @@ from event.infra.persistence.sqlite_event_repository import SqliteEventRepositor
 class ListEventInputDto:
     page: int = 1
     page_size: int = 10
-    name: str | None = None
-    location: str | None = None
-    created_at: datetime | None = None
-    start_date: datetime | None = None
-    end_date: datetime | None = None
-    max_tickets: int | None = None
-    organizer_id: int | None = None
-    staffs_id: list[str] | None = None
-    id: int | None = None
     filter_mode: str | None = None
+    user_id: int | None = None
 
 
-# TODO: Split that use case into ListEventsUseCase and ListEventsByOrganizerUseCase
-# @ArthurPRodrigues
-# TODO: Deixar apenas o page, page_seze, filter_mode e organizer_id no input dto
 class ListEventUseCase:
     def __init__(self, events_repository: SqliteEventRepository) -> PaginatedEventsDto:
         self._events_repository = events_repository
@@ -34,16 +22,8 @@ class ListEventUseCase:
         paginated_events = self._events_repository.list(
             page=input_dto.page,
             page_size=input_dto.page_size,
-            name=input_dto.name,
-            location=input_dto.location,
-            created_at=input_dto.created_at,
-            start_date=input_dto.start_date,
-            end_date=input_dto.end_date,
-            max_tickets=input_dto.max_tickets,
-            organizer_id=input_dto.organizer_id,
-            staffs_id=input_dto.staffs_id,
-            id=input_dto.id,
             filter_mode=input_dto.filter_mode,
+            user_id=input_dto.user_id,
         )
 
         return paginated_events
