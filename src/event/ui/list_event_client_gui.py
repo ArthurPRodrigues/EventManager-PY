@@ -101,14 +101,9 @@ class ListEventClientGui(BaseGUI):
     def handle_manage_friends(self):
         self.navigator.push_screen(FriendshipManagerGUI, auth_context=self.auth_context)
 
-    # TODO: This method is not yet implemented. A popup should be used to inform the user that the feature is unavailable.
-    # @ArthurPRodrigues
     def handle_tickets(self):
-        # self.navigator.push_screen("TicketManagerGui", auth_context=self.auth_context)
-        pass
+        self.show_warning_popup("Not implemented.")
 
-    # TODO: This method is not yet implemented. A popup should be used to inform the user that the feature is unavailable.
-    # @ArthurPRodrigues
     def handle_redeem_ticket(self):
         selected = self.table.get_selected_row_data(self.window)
         if not selected:
@@ -125,8 +120,6 @@ class ListEventClientGui(BaseGUI):
             tickets_available=tickets_available,
         )
 
-    # TODO: Use the damn filter parameter on TableComponent instead of doing this manually
-    # @ArthurPRodrigues
     def create_layout(self):
         layout = [
             *self.header.create_layout(),
@@ -144,6 +137,7 @@ class ListEventClientGui(BaseGUI):
                 page=page,
                 page_size=items_per_page,
                 filter_mode=filter_mode,
+                user_id=self.auth_context.id,
             )
             paginated_events = self.use_cases.list_event_use_case.execute(input_dto)
 
@@ -161,19 +155,14 @@ class ListEventClientGui(BaseGUI):
     def _convert_events_to_table_data(self, events):
         table_data = []
 
-        # TODO: Don't leave unexplained comments
-        # @ArthurPRodrigues
         for event in events:
-            # start_display = self._fmt_dt(event.start_date)
-            # end_display = self._fmt_dt(event.end_date)
             table_data.append([
                 event.id,
                 event.name,
                 event.location,
-                event.created_at,
-                event.start_date,
-                event.end_date,
-                event.max_tickets,
+                self._fmt_dt(event.start_date),
+                self._fmt_dt(event.end_date),
+                event.tickets_available,
             ])
         return table_data
 
