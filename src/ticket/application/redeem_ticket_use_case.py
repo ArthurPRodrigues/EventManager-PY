@@ -72,7 +72,7 @@ class RedeemTicketUseCase:
         if event is None:
             raise EventNotFoundError(event_id)
 
-        if redeem_ticket_count > event.tickets_available:
+        if redeem_ticket_count > max(0, event.max_tickets - event.tickets_redeemed):
             raise EventHasNoTicketsAvailableError(event_name)
 
         for _ in range(redeem_ticket_count):
