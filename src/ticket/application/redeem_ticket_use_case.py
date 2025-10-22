@@ -71,9 +71,8 @@ class RedeemTicketUseCase:
 
         if event is None:
             raise EventNotFoundError(event_id)
-        tickets_available = event.tickets_available
 
-        if redeem_ticket_count > tickets_available:
+        if redeem_ticket_count > event.tickets_available:
             raise EventHasNoTicketsAvailableError(event_name)
 
         for _ in range(redeem_ticket_count):
@@ -88,7 +87,8 @@ class RedeemTicketUseCase:
 
         self._tickets_repository.create_many(ticket_list)
         updated_event = replace(
-            event, tickets_available=event.tickets_available - redeem_ticket_count
+            event,
+            tickets_redeemed=event.tickets_redeemed + redeem_ticket_count,
         )
         self._events_repository.update(updated_event)
 
