@@ -15,7 +15,7 @@ class ListEventOrganizerGui(BaseGUI):
     def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
             title="Event Organizer",
-            size=WINDOW_SIZES["ARTHUR"],
+            size=WINDOW_SIZES["EVENT_LIST_WIDE"],
             use_cases=use_cases,
             navigator=navigator,
             auth_context=auth_context,

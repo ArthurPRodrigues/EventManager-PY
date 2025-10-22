@@ -4,7 +4,6 @@ from dataclasses import replace
 from datetime import datetime
 
 from event.application.dtos import Event, PaginatedEventsDto
-from event.application.errors import EventNotFoundError
 from shared.infra.persistence.sqlite import SQLiteDatabase
 
 
@@ -105,10 +104,10 @@ class SqliteEventRepository:
                     """,
                     (
                         event.name,
-                        event.created_at.isoformat(),
-                        event.end_date.isoformat(),
+                        event.created_at,
+                        event.end_date,
                         event.location,
-                        event.start_date.isoformat(),
+                        event.start_date,
                         event.max_tickets,
                         event.organizer_id,
                         (event.staffs_id and ",".join(event.staffs_id)) or None,
@@ -152,9 +151,6 @@ class SqliteEventRepository:
 
     def update(self, event: Event) -> None:
         assert event is not None
-        existing_event = self.get_by_id(event.id)
-        if not existing_event:
-            raise EventNotFoundError(event.id)
         with self._db.connect() as conn:
             conn.execute(
                 """
