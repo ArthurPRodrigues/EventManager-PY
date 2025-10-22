@@ -30,12 +30,6 @@ class Event:
     staffs_id: list[str] = None
     id: int | None = None
 
-    @property
-    def tickets_available(self) -> int:
-        if isinstance(self.max_tickets, int) and self.max_tickets > 0:
-            tickets_available = max(0, self.max_tickets - self.tickets_redeemed)
-            return tickets_available
-
     @staticmethod
     def create(
         name: str,
