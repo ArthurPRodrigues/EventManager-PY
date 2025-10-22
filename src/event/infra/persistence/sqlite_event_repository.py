@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import datetime
 
-from event.application.dtos import Event, PaginatedEventsDto
-from event.application.errors import EventNotFoundError
+from event.application.dtos import PaginatedEventsDto
+from event.domain.event import Event
 from shared.infra.persistence.sqlite import SQLiteDatabase
 
 
@@ -16,80 +16,58 @@ class SqliteEventRepository:
         self,
         page: int,
         page_size: int,
-        name: str | None = None,
-        location: str | None = None,
-        created_at: datetime | None = None,
-        start_date: datetime | None = None,
-        end_date: datetime | None = None,
-        max_tickets: int | None = None,
-        organizer_id: int | None = None,
-        staffs_id: list[str] | None = None,
-        id: int | None = None,
         filter_mode: str | None = None,
-    ) -> PaginatedEventsDto | None:
+        user_id: int | None = None,
+    ) -> PaginatedEventsDto:
         base_query = "FROM events"
-        conditions = ["1=1"]
-        params = []
-
-        filters = {
-            "id": id,
-            "name": name,
-            "location": location,
-            "created_at": created_at,
-            "start_date": start_date,
-            "end_date": end_date,
-            "max_tickets": max_tickets,
-            "organizer_id": organizer_id,
-        }
-
-        for column, value in filters.items():
-            if value is not None:
-                conditions.append(f"{column} = ?")
-                params.append(value)
+        conditions: list[str] = ["1=1"]
+        params: list = []
 
         if filter_mode == "WITH_TICKETS":
-            conditions.append("max_tickets > 0")
+            conditions.append("(max_tickets - tickets_redeemed) > 0")
         elif filter_mode == "SOLD_OUT":
-            conditions.append("max_tickets = 0")
-
-        if staffs_id:
-            for staff_id in staffs_id:
-                conditions.append("',' || staffs_id || ',' LIKE ?")
-                params.append(f"%,{staff_id},%")
+            conditions.append("(max_tickets - tickets_redeemed) = 0")
 
         where_clause = " WHERE " + " AND ".join(conditions)
 
         count_query = "SELECT COUNT(*) " + base_query + where_clause
         select_query = (
             "SELECT id, name, location, created_at, start_date, end_date, "
-            "max_tickets, organizer_id, staffs_id "
+            "max_tickets, initial_max_tickets, organizer_id, staffs_id, tickets_redeemed "
             + base_query
             + where_clause
             + " ORDER BY id ASC LIMIT ? OFFSET ?"
         )
 
-        count_params = params.copy()
-
+        count_params = list(params)
         params.extend([page_size, (page - 1) * page_size])
 
         with self._db.connect() as conn:
             rows = conn.execute(select_query, params).fetchall()
             total_event_count = conn.execute(count_query, count_params).fetchone()[0]
 
-        event_list: list[Event] = [
-            Event(
+        def _to_event(row) -> Event:
+            return Event(
                 id=row[0],
                 name=row[1],
                 location=row[2],
-                created_at=row[3],
-                start_date=row[4],
-                end_date=row[5],
+                created_at=datetime.fromisoformat(row[3])
+                if isinstance(row[3], str)
+                else row[3],
+                start_date=datetime.fromisoformat(row[4])
+                if isinstance(row[4], str)
+                else row[4],
+                end_date=datetime.fromisoformat(row[5])
+                if isinstance(row[5], str)
+                else row[5],
                 max_tickets=row[6],
-                organizer_id=row[7],
-                staffs_id=row[8].split(",") if row[8] else [],
+                initial_max_tickets=row[7],
+                organizer_id=row[8],
+                staffs_id=(row[9].split(",") if row[9] else []),
+                tickets_redeemed=row[10],
             )
-            for row in rows
-        ]
+
+        event_list: list[Event] = [_to_event(r) for r in rows]
 
         return PaginatedEventsDto(
             event_list=event_list, total_event_count=int(total_event_count)
@@ -127,7 +105,7 @@ class SqliteEventRepository:
         with self._db.connect() as conn:
             row = conn.execute(
                 """
-                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at, tickets_redeemed
+                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at, initial_max_tickets, tickets_redeemed
                 FROM events
                 WHERE id = ?
                 """,
@@ -147,27 +125,26 @@ class SqliteEventRepository:
             organizer_id=row[6],
             staffs_id=row[7].split(",") if row[7] else None,
             created_at=datetime.fromisoformat(row[8]),
-            tickets_redeemed=row[9],
+            initial_max_tickets=row[9],
+            tickets_redeemed=row[10],
         )
 
     def update(self, event: Event) -> None:
-        assert event is not None
-        existing_event = self.get_by_id(event.id)
-        if not existing_event:
-            raise EventNotFoundError(event.id)
         with self._db.connect() as conn:
             conn.execute(
                 """
                 UPDATE events
-                SET name = ?, end_date = ?, start_date = ?, location = ?, max_tickets = ?
+                SET name = ?, end_date = ?, start_date = ?, location = ?, max_tickets = ?, tickets_redeemed = ?, initial_max_tickets = ?
                 WHERE id = ?
                 """,
                 (
                     event.name,
-                    event.end_date,
-                    event.start_date,
+                    event.end_date.isoformat(),
+                    event.start_date.isoformat(),
                     event.location,
                     event.max_tickets,
+                    event.tickets_redeemed,
+                    event.initial_max_tickets,
                     event.id,
                 ),
             )
