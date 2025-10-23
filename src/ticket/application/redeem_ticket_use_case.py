@@ -8,7 +8,6 @@ from event.domain.errors import EventHasNoTicketsAvailableError, EventNotFoundEr
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
-from ticket.application.errors import TicketCodeAlreadyExistsError
 from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
 from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketRepository
@@ -41,24 +40,6 @@ class RedeemTicketUseCase:
     def _generate_code(self, length: int = 6) -> str:
         alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # excludes O, I, 0, 1
         return "".join(secrets.choice(alphabet) for _ in range(length))
-
-    def _generate_unique_codes(self, count: int) -> list[str]:
-        if count <= 0:
-            return []
-        codes: set[str] = set()
-        max_attempts = max(100, count * 20)
-        attempts = 0
-        while len(codes) < count and attempts < max_attempts:
-            attempts += 1
-            candidate = self._generate_code()
-            if candidate in codes:
-                continue
-            existing = self._tickets_repository.get_by_code(candidate)
-            if existing is None:
-                codes.add(candidate)
-        if len(codes) < count:
-            raise TicketCodeAlreadyExistsError()
-        return list(codes)
 
     def execute(self, input_dto: RedeemTicketInputDto) -> None:
         client_id = input_dto.client_id
@@ -93,22 +74,15 @@ class RedeemTicketUseCase:
         self._events_repository.update(updated_event)
 
         if send_email:
-            if not (
-                self._users_repository and self._template_engine and self._email_service
-            ):
-                return
-            try:
-                user = self._users_repository.get_by_id(client_id)
-                if user is not None and getattr(user, "email", None):
-                    codes_html = "<br>".join(t.code for t in ticket_list)
-                    body = self._template_engine.render(
-                        "redeem_ticket.html",
-                        {
-                            "user_name": getattr(user, "name", ""),
-                            "ticket_code": codes_html,
-                        },
-                    )
-                    subject = "Your ticket(s) were redeemed"
-                    self._email_service.send_email(user.email, subject, body)
-            except Exception:
-                pass
+            user = self._users_repository.get_by_id(client_id)
+            if user is not None:
+                codes_html = "<br>".join(t.code for t in ticket_list)
+                body = self._template_engine.render(
+                    "redeem_ticket.html",
+                    {
+                        "user_name": getattr(user, "name", ""),
+                        "ticket_code": codes_html,
+                    },
+                )
+                subject = "Your ticket(s) were redeemed"
+                self._email_service.send_email(user.email, subject, body)
