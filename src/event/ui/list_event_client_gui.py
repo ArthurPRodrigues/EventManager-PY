@@ -86,16 +86,19 @@ class ListEventClientGui(BaseGUI):
             "-REDEEM_TICKET-": self.handle_redeem_ticket,
         }
 
-    def _format_tickets_with_indicator(
-        self, initial_max_tickets, tickets_redeemed, max_tickets
+    def _status_indicator(
+        self, initial_max_tickets, max_tickets, tickets_redeemed
     ) -> str:
-        available = max(0, max_tickets - tickets_redeemed)
-        half = max(0, initial_max_tickets) / 2
-        is_red = tickets_redeemed > half or available <= 0
-        return "🔴" if is_red else "🔵"
+        tickets_available = self._tickets_available(max_tickets, tickets_redeemed)
+        if tickets_available > (initial_max_tickets / 2):
+            return "🔴"
+        else:
+            return "🔵"
 
-    def tickets_available(self, max_tickets, tickets_redeemed):
-        return max(0, max_tickets - tickets_redeemed)
+    # faz calculo de tickets disponiveis de acordo com a regra nova
+    def _tickets_available(self, max_tickets, tickets_redeemed):
+        Tickets_available = max(0, max_tickets - tickets_redeemed)
+        return Tickets_available
 
     def handle_events(self, event, values):
         if self.table.handle_event(event, self.window):
@@ -116,10 +119,6 @@ class ListEventClientGui(BaseGUI):
 
     def handle_redeem_ticket(self):
         selected = self.table.get_selected_row_data(self.window)
-        if not selected:
-            self.show_warning_popup("Select an event first.")
-            return
-
         event_id = selected[0]
         tickets_available = selected[6]
 
@@ -157,7 +156,9 @@ class ListEventClientGui(BaseGUI):
             )
 
             table_data = self._convert_events_to_table_data(event_list)
+
             return {"data": table_data, "total": total_event_count}
+
         except Exception as e:
             self.show_error_popup(f"Error loading events: {e}")
             return {"data": [], "total": 0}
@@ -172,10 +173,10 @@ class ListEventClientGui(BaseGUI):
                 event.location,
                 self._fmt_dt(event.start_date),
                 self._fmt_dt(event.end_date),
-                self._format_tickets_with_indicator(
+                self._status_indicator(
                     event.initial_max_tickets, event.tickets_redeemed, event.max_tickets
                 ),
-                self.tickets_available(event.max_tickets, event.tickets_redeemed),
+                self._tickets_available(event.max_tickets, event.tickets_redeemed),
             ])
         return table_data
 

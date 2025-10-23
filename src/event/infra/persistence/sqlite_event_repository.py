@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from datetime import datetime
 
 from event.application.dtos import PaginatedEventsDto
 from event.domain.event import Event
@@ -45,30 +44,20 @@ class SqliteEventRepository:
         with self._db.connect() as conn:
             rows = conn.execute(select_query, params).fetchall()
             total_event_count = conn.execute(count_query, count_params).fetchone()[0]
-
-        def _to_event(row) -> Event:
-            return Event(
+        event_list: list[Event] = [
+            Event(
                 id=row[0],
                 name=row[1],
                 location=row[2],
-                created_at=datetime.fromisoformat(row[3])
-                if isinstance(row[3], str)
-                else row[3],
-                start_date=datetime.fromisoformat(row[4])
-                if isinstance(row[4], str)
-                else row[4],
-                end_date=datetime.fromisoformat(row[5])
-                if isinstance(row[5], str)
-                else row[5],
+                created_at=row[3],
+                start_date=row[4],
+                end_date=row[5],
                 max_tickets=row[6],
-                initial_max_tickets=row[7],
-                organizer_id=row[8],
-                staffs_id=(row[9].split(",") if row[9] else []),
-                tickets_redeemed=row[10],
+                organizer_id=row[7],
+                staffs_id=row[8],
             )
-
-        event_list: list[Event] = [_to_event(r) for r in rows]
-
+            for row in rows
+        ]
         return PaginatedEventsDto(
             event_list=event_list, total_event_count=int(total_event_count)
         )
@@ -118,15 +107,13 @@ class SqliteEventRepository:
         return Event(
             id=row[0],
             name=row[1],
-            end_date=datetime.fromisoformat(row[2]),
-            start_date=datetime.fromisoformat(row[3]),
-            location=row[4],
-            max_tickets=row[5],
-            organizer_id=row[6],
-            staffs_id=row[7].split(",") if row[7] else None,
-            created_at=datetime.fromisoformat(row[8]),
-            initial_max_tickets=row[9],
-            tickets_redeemed=row[10],
+            location=row[2],
+            created_at=row[3],
+            start_date=row[4],
+            end_date=row[5],
+            max_tickets=row[6],
+            organizer_id=row[7],
+            staffs_id=row[8],
         )
 
     def update(self, event: Event) -> None:
