@@ -110,7 +110,7 @@ class RedeemTicketGUI(BaseGUI):
                 redeem_ticket_count=count,
                 send_email=send_email,
             )
-            self.use_cases.redeem_ticket_use_case.list_event(input_dto)
+            self.use_cases.redeem_ticket_use_case.redeem_ticket(input_dto)
             message = f"{count} ticket(s) were successfully redeemed!"
             if send_email:
                 message += "\n\nA confirmation was also sent to your email."

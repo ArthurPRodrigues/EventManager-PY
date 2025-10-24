@@ -65,7 +65,7 @@ class RedeemTicketUseCase:
         if redeem_ticket_count > max(0, event.max_tickets - event.tickets_redeemed):
             raise EventHasNoTicketsAvailableError(event.name)
 
-    def list_event(self, input_dto: RedeemTicketInputDto) -> None:
+    def redeem_ticket(self, input_dto: RedeemTicketInputDto) -> None:
         client_id = input_dto.client_id
         redeem_ticket_count = input_dto.redeem_ticket_count
         event_id = input_dto.event_id

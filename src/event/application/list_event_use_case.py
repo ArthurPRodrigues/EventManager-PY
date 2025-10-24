@@ -19,7 +19,7 @@ class ListEventUseCase:
     def __init__(self, events_repository: SqliteEventRepository) -> PaginatedEventsDto:
         self._events_repository = events_repository
 
-    def List_event(self, input_dto: ListEventInputDto) -> PaginatedEventsDto:
+    def list_event(self, input_dto: ListEventInputDto) -> PaginatedEventsDto:
         paginated_events = self._events_repository.list(
             page=input_dto.page,
             page_size=input_dto.page_size,

@@ -147,7 +147,7 @@ class ListEventClientGui(BaseGUI):
                 filter_mode=filter_mode,
                 user_id=self.auth_context.id,
             )
-            paginated_events = self.use_cases.list_event_use_case.List_event(input_dto)
+            paginated_events = self.use_cases.list_event_use_case.list_event(input_dto)
 
             event_list, total_event_count = (
                 paginated_events.event_list,
