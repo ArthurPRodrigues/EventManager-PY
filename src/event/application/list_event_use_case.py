@@ -9,8 +9,9 @@ from event.infra.persistence.sqlite_event_repository import SqliteEventRepositor
 @dataclass(frozen=True)
 class ListEventInputDto:
     page: int = 1
-    page_size: int = 10
+    page_size: int = 8
     filter_mode: str | None = None
+    organizer_id: int | None = None
     user_id: int | None = None
 
 
@@ -23,6 +24,7 @@ class ListEventUseCase:
             page=input_dto.page,
             page_size=input_dto.page_size,
             filter_mode=input_dto.filter_mode,
+            organizer_id=input_dto.organizer_id,
             user_id=input_dto.user_id,
         )
 

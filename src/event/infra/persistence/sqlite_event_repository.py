@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import datetime
 
 from event.application.dtos import PaginatedEventsDto
 from event.domain.event import Event
@@ -15,12 +16,37 @@ class SqliteEventRepository:
         self,
         page: int,
         page_size: int,
+        name: str | None = None,
+        location: str | None = None,
+        created_at: datetime | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        max_tickets: int | None = None,
+        tickets_redeemed: int | None = None,
+        organizer_id: int | None = None,
+        id: int | None = None,
         filter_mode: str | None = None,
         user_id: int | None = None,
-    ) -> PaginatedEventsDto:
+    ) -> PaginatedEventsDto | None:
         base_query = "FROM events"
-        conditions: list[str] = ["1=1"]
-        params: list = []
+        conditions = ["1=1"]
+        params = []
+
+        filters = {
+            "name": name,
+            "location": location,
+            "created_at": created_at,
+            "start_date": start_date,
+            "end_date": end_date,
+            "max_tickets": max_tickets,
+            "tickets_redeemed": tickets_redeemed,
+            "organizer_id": organizer_id,
+        }
+
+        for column, value in filters.items():
+            if value is not None:
+                conditions.append(f"{column} = ?")
+                params.append(value)
 
         if filter_mode == "WITH_TICKETS":
             conditions.append("(max_tickets - tickets_redeemed) > 0")
@@ -32,18 +58,20 @@ class SqliteEventRepository:
         count_query = "SELECT COUNT(*) " + base_query + where_clause
         select_query = (
             "SELECT id, name, location, created_at, start_date, end_date, "
-            "max_tickets, initial_max_tickets, organizer_id, staffs_id, tickets_redeemed "
+            "initial_max_tickets, max_tickets, tickets_redeemed, organizer_id "
             + base_query
             + where_clause
             + " ORDER BY id ASC LIMIT ? OFFSET ?"
         )
 
-        count_params = list(params)
+        count_params = params.copy()
+
         params.extend([page_size, (page - 1) * page_size])
 
         with self._db.connect() as conn:
             rows = conn.execute(select_query, params).fetchall()
             total_event_count = conn.execute(count_query, count_params).fetchone()[0]
+
         event_list: list[Event] = [
             Event(
                 id=row[0],
@@ -52,12 +80,14 @@ class SqliteEventRepository:
                 created_at=row[3],
                 start_date=row[4],
                 end_date=row[5],
-                max_tickets=row[6],
-                organizer_id=row[7],
-                staffs_id=row[8],
+                initial_max_tickets=row[6],
+                max_tickets=row[7],
+                tickets_redeemed=row[8],
+                organizer_id=row[9],
             )
             for row in rows
         ]
+
         return PaginatedEventsDto(
             event_list=event_list, total_event_count=int(total_event_count)
         )
@@ -67,8 +97,8 @@ class SqliteEventRepository:
             try:
                 cursor = conn.execute(
                     """
-                    INSERT INTO events (name, created_at, end_date, location, start_date, max_tickets, organizer_id, staffs_id, tickets_redeemed, initial_max_tickets)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO events (name, created_at, end_date, location, start_date, max_tickets, organizer_id, tickets_redeemed, initial_max_tickets)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         event.name,
@@ -78,7 +108,6 @@ class SqliteEventRepository:
                         event.start_date.isoformat(),
                         event.max_tickets,
                         event.organizer_id,
-                        (event.staffs_id and ",".join(event.staffs_id)) or None,
                         event.tickets_redeemed,
                         event.initial_max_tickets,
                     ),
@@ -94,7 +123,7 @@ class SqliteEventRepository:
         with self._db.connect() as conn:
             row = conn.execute(
                 """
-                SELECT id, name, end_date, start_date, location, max_tickets, organizer_id, staffs_id, created_at, initial_max_tickets, tickets_redeemed
+                SELECT id, name, location, created_at, start_date, end_date, max_tickets, organizer_id, initial_max_tickets, tickets_redeemed
                 FROM events
                 WHERE id = ?
                 """,
@@ -108,12 +137,13 @@ class SqliteEventRepository:
             id=row[0],
             name=row[1],
             location=row[2],
-            created_at=row[3],
-            start_date=row[4],
-            end_date=row[5],
+            created_at=datetime.fromisoformat(row[3]),
+            start_date=datetime.fromisoformat(row[4]),
+            end_date=datetime.fromisoformat(row[5]),
             max_tickets=row[6],
             organizer_id=row[7],
-            staffs_id=row[8],
+            initial_max_tickets=row[8],
+            tickets_redeemed=row[9],
         )
 
     def update(self, event: Event) -> None:

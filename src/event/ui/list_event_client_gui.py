@@ -89,16 +89,15 @@ class ListEventClientGui(BaseGUI):
     def _status_indicator(
         self, initial_max_tickets, max_tickets, tickets_redeemed
     ) -> str:
-        tickets_available = self._tickets_available(max_tickets, tickets_redeemed)
-        if tickets_available > (initial_max_tickets / 2):
-            return "🔴"
-        else:
+        tickets_available = max_tickets - tickets_redeemed
+        if tickets_available > round(initial_max_tickets / 2):
             return "🔵"
+        else:
+            return "🔴"
 
-    # faz calculo de tickets disponiveis de acordo com a regra nova
     def _tickets_available(self, max_tickets, tickets_redeemed):
-        Tickets_available = max(0, max_tickets - tickets_redeemed)
-        return Tickets_available
+        tickets_available = max(0, max_tickets - tickets_redeemed)
+        return tickets_available
 
     def handle_events(self, event, values):
         if self.table.handle_event(event, self.window):
@@ -119,14 +118,17 @@ class ListEventClientGui(BaseGUI):
 
     def handle_redeem_ticket(self):
         selected = self.table.get_selected_row_data(self.window)
+
         event_id = selected[0]
-        tickets_available = selected[6]
+        max_tickets = selected[7]
+        tickets_redeemed = selected[8]
 
         self.navigator.push_screen(
             RedeemTicketGUI,
             auth_context=self.auth_context,
             event_id=event_id,
-            tickets_available=tickets_available,
+            max_tickets=max_tickets,
+            tickets_redeemed=tickets_redeemed,
         )
 
     def create_layout(self):
@@ -137,11 +139,8 @@ class ListEventClientGui(BaseGUI):
         ]
         return layout
 
-    def _load_events_callback(
-        self, page: int, items_per_page: int, filter_value: str | None = None
-    ):
+    def _load_events_callback(self, page: int, items_per_page: int, filter_mode: str):
         try:
-            filter_mode = filter_value or "ALL"
             input_dto = ListEventInputDto(
                 page=page,
                 page_size=items_per_page,
@@ -165,7 +164,6 @@ class ListEventClientGui(BaseGUI):
 
     def _convert_events_to_table_data(self, events):
         table_data = []
-
         for event in events:
             table_data.append([
                 event.id,
@@ -174,9 +172,11 @@ class ListEventClientGui(BaseGUI):
                 self._fmt_dt(event.start_date),
                 self._fmt_dt(event.end_date),
                 self._status_indicator(
-                    event.initial_max_tickets, event.tickets_redeemed, event.max_tickets
-                ),
+                    event.initial_max_tickets, event.max_tickets, event.tickets_redeemed
+                ),  # 5 cor do stuatus
                 self._tickets_available(event.max_tickets, event.tickets_redeemed),
+                event.max_tickets,
+                event.tickets_redeemed,
             ])
         return table_data
 
