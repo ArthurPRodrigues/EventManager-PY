@@ -60,9 +60,15 @@ class Event:
         return replace(self, staffs_id=[*self.staffs_id, staff_id])
 
     @staticmethod
-    def validate_fields(
-        name, location, created_at, start_date, end_date, organizer_id
-    ) -> bool:
+    def all_validations(
+        name,
+        location,
+        created_at,
+        start_date,
+        end_date,
+        organizer_id,
+        max_tickets,
+    ):
         if not name or not isinstance(name, str) or not name.strip():
             raise InvalidNameError(name)
         if not location or not isinstance(location, str) or not location.strip():
@@ -76,48 +82,13 @@ class Event:
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIdError(organizer_id)
 
-        return True
-
-    @staticmethod
-    def validate_date(start_date, end_date, created_at) -> bool:
         if start_date < created_at or end_date < created_at:
             raise PastDateError(start_date if start_date < created_at else end_date)
 
         if end_date < start_date:
             raise IncorrectEndDateError()
 
-        return True
-
-    @staticmethod
-    def validate_max_tickets(max_tickets) -> bool:
         if not isinstance(max_tickets, int) or max_tickets < 0:
             raise InvalidMaxTicketsError(max_tickets)
 
         return True
-
-    @staticmethod
-    def all_validations(
-        name,
-        location,
-        created_at,
-        start_date,
-        end_date,
-        organizer_id,
-        max_tickets,
-    ):
-        if (
-            (
-                Event.validate_fields(
-                    name,
-                    location,
-                    created_at,
-                    start_date,
-                    end_date,
-                    organizer_id,
-                )
-                is True
-            )
-            and Event.validate_date(start_date, end_date, created_at) is True
-            and Event.validate_max_tickets(max_tickets) is True
-        ):
-            return True

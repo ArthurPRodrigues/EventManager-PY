@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from event.domain.errors import InvalidOrganizerIdError
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
@@ -29,19 +28,13 @@ class CreateEventUseCase:
         self._users_repository = users_repository
 
     def create_event(self, input_dto: CreateEventInputDto) -> Event:
-        organizer_id = input_dto.organizer_id
-        if not organizer_id or not self._users_repository.get_by_id(
-            organizer_id
-        ):  # essa validação não faz sentido
-            raise InvalidOrganizerIdError(organizer_id)
-
         event = Event.create(
             name=input_dto.name,
             start_date=input_dto.start_date,
             end_date=input_dto.end_date,
             location=input_dto.location,
             max_tickets=input_dto.max_tickets,
-            organizer_id=organizer_id,
+            organizer_id=input_dto.organizer_id,
             created_at=datetime.now(),
         )
 
