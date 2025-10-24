@@ -11,7 +11,7 @@ class EventDto:
     created_at: datetime
     start_date: datetime
     end_date: datetime
-    tickets_available: int
+    max_tickets: int
     organizer_id: int
     staffs_id: list[str] | None
     id: int | None = None
