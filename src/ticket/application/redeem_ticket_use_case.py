@@ -85,4 +85,7 @@ class RedeemTicketUseCase:
                     },
                 )
                 subject = "Your ticket(s) were redeemed"
-                self._email_service.send_email(user.email, subject, body)
+                try:
+                    self._email_service.send_email(user.email, subject, body)
+                except Exception:
+                    pass

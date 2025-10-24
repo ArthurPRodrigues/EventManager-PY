@@ -15,8 +15,9 @@ class RedeemTicketGUI(BaseGUI):
         navigator=None,
         auth_context=None,
         event_id: int | None = None,
-        tickets_available: int | None = None,
         redeem_ticket_count: int | None = None,
+        max_tickets: int | None = None,
+        tickets_redeemed: int | None = None,
         send_email: bool | None = None,
     ):
         super().__init__(
@@ -28,8 +29,10 @@ class RedeemTicketGUI(BaseGUI):
         )
 
         self.event_id = event_id
-        self.tickets_available = tickets_available
         self.redeem_ticket_count = redeem_ticket_count
+        self.send_email = send_email
+        self.max_tickets = max_tickets
+        self.tickets_redeemed = tickets_redeemed
 
         self.event_map = {
             "-REDEEM-": self._handle_redeem_ticket,
@@ -37,7 +40,7 @@ class RedeemTicketGUI(BaseGUI):
         }
 
     def create_layout(self):
-        max_count = max(1, int(self.tickets_available or 1))
+        max_count = max(1, (self.max_tickets - self.tickets_redeemed) or 1)
         content_column = (
             [
                 sg.Text(
@@ -51,8 +54,8 @@ class RedeemTicketGUI(BaseGUI):
 
         spinner_row = [
             sg.Spin(
-                values=[i for i in range(1, max_count + 1)],
-                initial_value=min(1, max_count),
+                values=[i for i in range(1, max_count)],
+                initial_value=min(1, max_count + 1),
                 key="-COUNT-",
                 size=(4, 1),
                 font=FONTS["INPUT"],
