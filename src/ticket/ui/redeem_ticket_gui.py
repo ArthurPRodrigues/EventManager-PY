@@ -54,8 +54,8 @@ class RedeemTicketGUI(BaseGUI):
 
         spinner_row = [
             sg.Spin(
-                values=[i for i in range(1, max_count)],
-                initial_value=min(1, max_count + 1),
+                values=[i for i in range(1, max_count + 1)],
+                initial_value=1,
                 key="-COUNT-",
                 size=(4, 1),
                 font=FONTS["INPUT"],
