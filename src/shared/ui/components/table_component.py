@@ -92,7 +92,7 @@ class TableComponent:
                     values=self.data,
                     headings=self.headers,
                     pad=((0, 0), (0, 20)),
-                    max_col_width=35,
+                    max_col_width=26,
                     auto_size_columns=True,
                     justification="center",
                     num_rows=self.items_per_page,
