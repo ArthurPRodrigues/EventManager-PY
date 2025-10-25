@@ -89,9 +89,9 @@ class ListEventClientGui(BaseGUI):
     ) -> str:
         tickets_available = max_tickets - tickets_redeemed
         if tickets_available > round(initial_max_tickets / 2):
-            return "🔵"
+            return "🔵 Blue"
         else:
-            return "🔴"
+            return "🔴 Red"
 
     def _tickets_available(self, max_tickets, tickets_redeemed):
         tickets_available = max(0, max_tickets - tickets_redeemed)
