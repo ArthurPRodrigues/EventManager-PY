@@ -35,9 +35,5 @@ class SmtpEmailService:
                 server.starttls(context=context)
                 server.login(self.sender_email, self.password)
                 server.send_message(message)
-                # TODO: remove print after ticket redeeming implementation
-                print(f"Email sent successfully to {to}")
         except Exception as e:
-            # TODO: remove print after ticket redeeming implementation
-            print(f"Error sending email: {e}")
-            raise
+            raise RuntimeError(f"Failed to send email: {e}") from e

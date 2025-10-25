@@ -5,6 +5,12 @@ class DomainError(Exception):
     """Base class for domain errors."""
 
 
+class InvalidEventError(DomainError):
+    def __init__(self, event) -> None:
+        message = f'Invalid event: "{event}".'
+        super().__init__(message)
+
+
 class InvalidCreatedAtError(DomainError):
     def __init__(self, created_at) -> None:
         message = f'Invalid created_at: "{created_at}".'
@@ -35,25 +41,9 @@ class InvalidStartDateError(DomainError):
         super().__init__(message)
 
 
-class InvalidTicketsAvailableError(DomainError):
-    def __init__(self, tickets_available) -> None:
-        message = f'Invalid tickets_available: "{tickets_available}".'
-        super().__init__(message)
-
-
-# TODO: Remove unused error
-# @ArthurPRodrigues
-class InvalidOrganizerIdError(DomainError):
-    def __init__(self, organizer_id) -> None:
-        message = f'Invalid organizer_id: "{organizer_id}".'
-        super().__init__(message)
-
-
-# TODO: Remove unused error
-# @ArthurPRodrigues
-class InvalidStaffsIdError(DomainError):
-    def __init__(self, staffs_id) -> None:
-        message = f'Invalid staffs_id: "{staffs_id}".'
+class InvalidMaxTicketsError(DomainError):
+    def __init__(self, max_tickets) -> None:
+        message = f'Invalid max_tickets: "{max_tickets}".'
         super().__init__(message)
 
 
@@ -61,3 +51,29 @@ class StaffAlreadyAddedError(DomainError):
     def __init__(self, staff_id) -> None:
         message = f'Staff with id "{staff_id}" has already been added.'
         super().__init__(message)
+
+
+class EventNotFoundError(DomainError):
+    def __init__(self, event_id: int) -> None:
+        message = f'Event not found: "{event_id}".'
+        super().__init__(message)
+
+
+class EventHasNoTicketsAvailableError(DomainError):
+    def __init__(self, event_name: str) -> None:
+        message = f'Event "{event_name}" has no tickets available.'
+        super().__init__(message)
+
+
+class InvalidOrganizerIdError(DomainError):
+    def _init_(self, organizer_id) -> None:
+        message = f'Invalid organizer_id: "{organizer_id}".'
+        super()._init_(message)
+
+
+# TODO: Remove unused error
+# @ArthurPRodrigues
+class InvalidStaffsIdError(DomainError):
+    def _init_(self, staffs_id) -> None:
+        message = f'Invalid staffs_id: "{staffs_id}".'
+        super()._init_(message)
