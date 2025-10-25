@@ -119,7 +119,7 @@ class RedeemTicketGUI(BaseGUI):
         except Exception as e:
             self.show_error_popup(f"Error redeeming ticket(s): {e}")
 
-    def _handle_cancel(self, _values=None):
+    def _handle_cancel(self, values=None):
         try:
             if self.navigator:
                 self.window.close()
