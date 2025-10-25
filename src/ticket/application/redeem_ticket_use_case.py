@@ -1,25 +1,18 @@
 from __future__ import annotations
 
 import secrets
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from datetime import UTC, datetime
 
 from event.domain.errors import EventHasNoTicketsAvailableError, EventNotFoundError
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from shared.infra.email.smtp_ticket_email_service import SmtpEmailService
 from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
+from ticket.application.dtos import RedeemTicketInputDto
 from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
 from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
-
-
-@dataclass
-class RedeemTicketInputDto:
-    event_id: int
-    client_id: int
-    redeem_ticket_count: int
-    send_email: bool = False
 
 
 class RedeemTicketUseCase:

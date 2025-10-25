@@ -59,7 +59,7 @@ class SqliteTicketRepository:
             )
             conn.commit()
 
-    def create_many(self, tickets: list[Ticket]) -> None:
+    def create_many(self, ticket_list: list[Ticket]) -> None:
         rows = [
             (
                 ticket.event_id,
@@ -68,7 +68,7 @@ class SqliteTicketRepository:
                 ticket.status.value,
                 ticket.created_at.isoformat(),
             )
-            for ticket in tickets
+            for ticket in ticket_list
         ]
         with self._db.connect() as conn:
             conn.executemany(
@@ -79,4 +79,4 @@ class SqliteTicketRepository:
                 rows,
             )
             conn.commit()
-        return tickets
+        return ticket_list
