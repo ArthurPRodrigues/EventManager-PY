@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from event.application.list_event_use_case import ListEventInputDto
 from friendship.ui.friendship_manager_gui import FriendshipManagerGUI
 from shared.ui.base_gui import BaseGUI
@@ -169,11 +167,11 @@ class ListEventClientGui(BaseGUI):
                 event.id,
                 event.name,
                 event.location,
-                self._fmt_dt(event.start_date),
-                self._fmt_dt(event.end_date),
+                event.start_date.strftime("%d/%m/%Y %Hh%M"),
+                event.end_date.strftime("%d/%m/%Y %Hh%M"),
                 self._status_indicator(
                     event.initial_max_tickets, event.max_tickets, event.tickets_redeemed
-                ),  # 5 cor do stuatus
+                ),
                 self._tickets_available(event.max_tickets, event.tickets_redeemed),
                 event.max_tickets,
                 event.tickets_redeemed,
@@ -189,18 +187,3 @@ class ListEventClientGui(BaseGUI):
         except Exception:
             if self.window:
                 self.window["-REDEEM_TICKET-"].update(disabled=True)
-
-    def _fmt_dt(self, value) -> str:
-        if isinstance(value, datetime):
-            try:
-                return value.strftime("%Y-%m-%d %H:%M:%S")
-            except Exception:
-                return value.isoformat()
-        if isinstance(value, str):
-            try:
-                iso = value.replace("Z", "+00:00")
-                dt = datetime.fromisoformat(iso)
-                return dt.strftime("%Y-%m-%d %H:%M:%S")
-            except Exception:
-                return value
-        return str(value)
