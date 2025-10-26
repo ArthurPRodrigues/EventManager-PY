@@ -5,7 +5,6 @@ from datetime import datetime
 
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
-from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
 @dataclass(frozen=True)
@@ -19,13 +18,8 @@ class CreateEventInputDto:
 
 
 class CreateEventUseCase:
-    def __init__(
-        self,
-        events_repository: SqliteEventRepository,
-        users_repository: SqliteUsersRepository,
-    ) -> None:
+    def __init__(self, events_repository: SqliteEventRepository) -> None:
         self._events_repository = events_repository
-        self._users_repository = users_repository
 
     def create_event(self, input_dto: CreateEventInputDto) -> Event:
         event = Event.create(

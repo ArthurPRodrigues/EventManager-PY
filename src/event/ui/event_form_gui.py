@@ -49,7 +49,7 @@ class EventFormGUI(BaseGUI):
             }
         else:
             self.action_buttons = ActionButtonsComponent([
-                {
+                {  # TODO: INSERIR BOTÃO MANAGE STAFF CONFORME DEFINIDO NO PROTÓTIPO
                     "text": "Update Event",
                     "key": "-UPDATE-",
                     "font": FONTS["PRIMARY_BUTTON"],
