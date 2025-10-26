@@ -37,7 +37,7 @@ class RedeemTicketUseCase:
     def _send_email_to_client(self, client_id: int, ticket_list) -> None:
         user = self._users_repository.get_by_id(client_id)
         if user is not None:
-            codes_html = "<br>".join(t.code for t in ticket_list)
+            codes_html = "<br>".join(ticket.code for ticket in ticket_list)
             body = self._template_engine.render(
                 "redeem_ticket.html",
                 {
@@ -88,4 +88,7 @@ class RedeemTicketUseCase:
         self._events_repository.update(updated_event)
 
         if send_email:
-            self._send_email_to_client(client_id, ticket_list)
+            try:
+                self._send_email_to_client(client_id, ticket_list)
+            except Exception:
+                pass
