@@ -21,3 +21,16 @@ class EventDto:
 class PaginatedEventsDto:
     event_list: list[Event]
     total_event_count: int
+
+
+@dataclass(frozen=True)
+class StaffDto:
+    name: str
+    email: str
+    id: int | None = None
+
+
+@dataclass(frozen=True)
+class PaginatedStaffsDto:
+    staff_list: list[StaffDto]
+    total_staffs_count: int

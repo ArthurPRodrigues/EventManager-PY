@@ -55,9 +55,22 @@ class Event:
             )
 
     def add_staff(self, staff_id: str) -> Event:
+        if self.staffs_id is None:
+            return replace(self, staffs_id=[staff_id])
         if staff_id in self.staffs_id:
             raise StaffAlreadyAddedError(staff_id)
         return replace(self, staffs_id=[*self.staffs_id, staff_id])
+
+    def remove_staff(self, staff_id: str) -> Event:
+        if self.staffs_id is None or staff_id not in self.staffs_id:
+            return self
+        return replace(self, staffs_id=[s for s in self.staffs_id if s != staff_id])
+
+    def get_staffs(self) -> list[str]:
+        return self.staffs_id or []
+
+    def has_staff(self, staff_id: str) -> bool:
+        return self.staffs_id is not None and staff_id in self.staffs_id
 
     @staticmethod
     def all_validations(

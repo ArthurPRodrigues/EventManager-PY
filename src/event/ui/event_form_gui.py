@@ -5,6 +5,7 @@ import FreeSimpleGUI as sg
 
 from event.application.create_event_use_case import CreateEventInputDto
 from event.application.update_event_use_case import UpdateEventInputDto
+from event.ui.staff_manager_gui import StaffManagerGUI
 from shared.ui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
@@ -55,10 +56,17 @@ class EventFormGUI(BaseGUI):
                     "font": FONTS["PRIMARY_BUTTON"],
                     "button_color": (COLORS["dark"], COLORS["secondary"]),
                 },
+                {
+                    "text": "Manage Staff",
+                    "key": "-MANAGE_STAFF-",
+                    "font": FONTS["PRIMARY_BUTTON"],
+                    "button_color": (COLORS["dark"], COLORS["secondary"]),
+                },
             ])
 
             self.event_map = {
                 "-UPDATE-": self._handle_update_event,
+                "-MANAGE_STAFF-": self._handle_manage_staff,
             }
 
     def create_layout(self):
@@ -363,6 +371,11 @@ class EventFormGUI(BaseGUI):
 
             except Exception as e:
                 self.show_error_popup(f"Error updating event: {e!s}")
+
+    def _handle_manage_staff(self, values):
+        self.navigator.push_screen(
+            StaffManagerGUI, auth_context=self.auth_context, event_id=self.event_id
+        )
 
     def _check_filled_fields(self, values):
         name = values.get("-NAME-")

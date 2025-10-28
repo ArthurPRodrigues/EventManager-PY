@@ -42,7 +42,7 @@ class UpdateEventUseCase:
         if input_dto.max_tickets < event.tickets_redeemed:
             raise IncorrectTicketQuantityError(
                 input_dto.max_tickets, event.tickets_redeemed
-            )  # por algum motivo não ta pegando corretamente a qtd de tickets_redeemed
+            )
 
         print(
             f"Tickets redeemed: {event.tickets_redeemed}, Max Tickets: {input_dto.max_tickets}"
