@@ -27,14 +27,13 @@ from shared.infra.persistence.sqlite import SQLiteDatabase
 from ticket.application.redeem_ticket_use_case import RedeemTicketUseCase
 from ticket.application.validate_ticket_use_case import ValidateTicketUseCase
 from ticket.infra.persistence.sqlite_ticket_repository import (
-    SqliteTicketRepository,
+    SqliteTicketsRepository,
 )
 from user.application.authenticate_user_use_case import AuthenticateUserUseCase
 from user.application.create_user_use_case import CreateUserUseCase
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
-# TODO: Uncomment html template engine and email service lines when ticket redemption is implemented
 @dataclass
 class CompositionRoot:
     db: SQLiteDatabase
@@ -52,10 +51,10 @@ class CompositionRoot:
     delete_event_use_case: DeleteEventUseCase
     update_event_use_case: UpdateEventUseCase
     event_repo: SqliteEventRepository
-    ticket_repo: SqliteTicketRepository
+    ticket_repo: SqliteTicketsRepository
     redeem_ticket_use_case: RedeemTicketUseCase
-    html_template_engine: HtmlTemplateEngine | None = None
-    smtp_email_service: SmtpEmailService | None = None
+    html_template_engine: HtmlTemplateEngine
+    smtp_email_service: SmtpEmailService
 
 
 def build_application(db_path: str | None = None) -> CompositionRoot:
@@ -64,22 +63,14 @@ def build_application(db_path: str | None = None) -> CompositionRoot:
 
     # Services
     templates_dir = os.path.join("assets", "html_templates")
-    html_template_engine: HtmlTemplateEngine | None = None
-    smtp_email_service: SmtpEmailService | None = None
-    try:
-        html_template_engine = HtmlTemplateEngine(templates_dir)
-    except Exception:
-        html_template_engine = None
-    try:
-        smtp_email_service = SmtpEmailService()
-    except Exception:
-        smtp_email_service = None
+    html_template_engine = HtmlTemplateEngine(templates_dir)
+    smtp_email_service = SmtpEmailService()
 
     # Repositories
     friendship_repo = SqliteFriendshipRepository(db)
     user_repo = SqliteUsersRepository(db)
     event_repo = SqliteEventRepository(db)
-    ticket_repo = SqliteTicketRepository(db)
+    ticket_repo = SqliteTicketsRepository(db)
 
     # Use Cases
     send_friendship_invite_use_case = SendFriendshipInviteUseCase(

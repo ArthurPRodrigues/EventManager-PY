@@ -11,16 +11,16 @@ from shared.infra.html_template.html_template_engine import HtmlTemplateEngine
 from ticket.application.dtos import RedeemTicketInputDto
 from ticket.domain.ticket import Ticket
 from ticket.domain.ticket_status import TicketStatus
-from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketRepository
+from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketsRepository
 from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 
 
 class RedeemTicketUseCase:
     def __init__(
         self,
-        tickets_repository: SqliteTicketRepository,
+        tickets_repository: SqliteTicketsRepository,
         events_repository: SqliteEventRepository,
-        users_repository: SqliteUsersRepository | None = None,
+        users_repository: SqliteUsersRepository,
         email_service: SmtpEmailService | None = None,
         template_engine: HtmlTemplateEngine | None = None,
     ) -> None:

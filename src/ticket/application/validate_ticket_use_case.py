@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
 from ticket.domain.ticket import Ticket
-from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketRepository
+from ticket.infra.persistence.sqlite_ticket_repository import SqliteTicketsRepository
 from user.domain.user_role import UserRole
 
 from .dtos import ValidateTicketInputDto
@@ -20,7 +20,7 @@ from .errors import (
 class ValidateTicketUseCase:
     def __init__(
         self,
-        tickets_repository: SqliteTicketRepository,
+        tickets_repository: SqliteTicketsRepository,
         events_repository: SqliteEventRepository,
     ) -> None:
         self._tickets_repository = tickets_repository
