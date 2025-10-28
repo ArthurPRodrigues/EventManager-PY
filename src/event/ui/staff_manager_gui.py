@@ -1,5 +1,3 @@
-import FreeSimpleGUI as sg
-
 from event.application.list_staffs_with_email_and_name_use_case import (
     ListStaffsInputDto,
 )
@@ -8,7 +6,6 @@ from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
 from shared.ui.components.table_component import TableComponent
 from shared.ui.styles import BUTTON_SIZES, COLORS, WINDOW_SIZES
-from user.domain.user_role import UserRole
 
 
 class StaffManagerGUI(BaseGUI):
@@ -50,8 +47,8 @@ class StaffManagerGUI(BaseGUI):
         ])
 
         self.event_map = {
-            "-ADD_STAFF-": self.handle_add_staff,
-            "-REMOVE_STAFF-": self.handle_remove_staff,
+            "-ADD_STAFF-": self._handle_add_staff,
+            "-REMOVE_STAFF-": self._handle_remove_staff,
         }
 
     def handle_events(self, event, values):
@@ -59,66 +56,11 @@ class StaffManagerGUI(BaseGUI):
         if handler:
             handler(values)
 
-    def handle_add_staff(self, values):
-        input_values = sg.Window(
-            "Add Staff",
-            [
-                [sg.Text("Staff Email:")],
-                [sg.Input(key="-EMAIL-")],
-                [sg.Button("Add"), sg.Button("Cancel")],
-            ],
-            modal=True,
-            keep_on_top=True,
-        ).read(close=True)
+    def _handle_add_staff(self, values):
+        self.show_warning_popup("Method not implemented")
 
-        if input_values[0] == "Add" and input_values[1]["-EMAIL-"]:
-            email = input_values[1]["-EMAIL-"]
-            try:
-                staff = self.use_cases.user_repo.get_by_email_and_role(
-                    email, UserRole.STAFF
-                )
-                if not staff:
-                    self.show_error_popup(f"No staff found with email: {email}")
-                    return
-
-                event = self.use_cases.event_repo.get_by_id(self.event_id)
-                if not event:
-                    self.show_error_popup("Event not found")
-                    return
-
-                updated_event = event.add_staff(str(staff.id))
-                self.use_cases.event_repo.update(updated_event)
-
-                self.show_success_popup(f"Staff {staff.name} added successfully!")
-                self.table.refresh(self.window)
-            except Exception as e:
-                self.show_error_popup(f"Error adding staff: {e}")
-
-    def handle_remove_staff(self, values):
-        selected_row = self.table.get_selected_row_data(self.window)
-        if not selected_row:
-            self.show_error_popup("Please select a staff member to remove")
-            return
-
-        if (
-            sg.popup_yes_no("Are you sure you want to remove this staff member?")
-            == "Yes"
-        ):
-            try:
-                staff_id = selected_row[0]
-
-                event = self.use_cases.event_repo.find_by_id(self.event_id)
-                if not event:
-                    self.show_error_popup("Event not found")
-                    return
-
-                updated_event = event.remove_staff(str(staff_id))
-                self.use_cases.event_repo.update(updated_event)
-
-                self.show_success_popup("Staff removed successfully!")
-                self.table.refresh(self.window)
-            except Exception as e:
-                self.show_error_popup(f"Error removing staff: {e}")
+    def _handle_remove_staff(self, values):
+        self.show_warning_popup("Method not implemented")
 
     def create_layout(self):
         layout = [
