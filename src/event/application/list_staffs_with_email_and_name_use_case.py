@@ -10,9 +10,9 @@ from user.infra.persistence.sqlite_users_repository import SqliteUsersRepository
 class ListStaffsInputDto:
     page: int = 1
     size: int = 10
-    name: str | None
-    email: str | None
-    event_id: str | None
+    name: str | None = None
+    email: str | None = None
+    event_id: str | None = None
 
 
 class ListStaffWithEmailAndNameUseCase:
