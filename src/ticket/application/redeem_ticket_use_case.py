@@ -88,4 +88,7 @@ class RedeemTicketUseCase:
         self._events_repository.update(updated_event)
 
         if send_email:
-            self._send_email_to_client(client_id, ticket_list)
+            try:
+                self._send_email_to_client(client_id, ticket_list)
+            except Exception:
+                pass
