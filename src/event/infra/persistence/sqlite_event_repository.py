@@ -92,3 +92,54 @@ class SqliteEventRepository:
         return PaginatedEventsDto(
             event_list=event_list, total_event_count=int(total_event_count)
         )
+
+    # NOTE: Implemented only for demonstration purposes
+    def get_by_id(self, id: int) -> Event | None:
+        with self._db.connect() as conn:
+            row = conn.execute(
+                """
+                SELECT id, name, location, created_at, start_date, end_date, tickets_available, organizer_id, staffs_id
+                FROM events
+                WHERE id = ?
+                """,
+                (id,),
+            ).fetchone()
+
+        if not row:
+            return None
+
+        (
+            id_,
+            name,
+            location,
+            created_at,
+            start_date,
+            end_date,
+            tickets_available,
+            organizer_id,
+            staffs_id,
+        ) = row
+
+        parsed_created_at = datetime.fromisoformat(
+            created_at.replace("Z", "+00:00"),
+        )
+
+        parsed_start_date = datetime.fromisoformat(
+            start_date.replace("Z", "+00:00"),
+        )
+
+        parsed_end_date = datetime.fromisoformat(
+            end_date.replace("Z", "+00:00"),
+        )
+
+        return Event(
+            id=id_,
+            name=name,
+            location=location,
+            created_at=parsed_created_at,
+            start_date=parsed_start_date,
+            end_date=parsed_end_date,
+            tickets_available=tickets_available,
+            organizer_id=organizer_id,
+            staffs_id=staffs_id.split(",") if staffs_id else None,
+        )
