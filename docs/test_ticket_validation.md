@@ -1,15 +1,46 @@
 # Guia de Teste - Validação de Ingressos
 
-## Instruções de Login
+## Como Executar os Testes
 
-### Usuários Disponíveis
+1. **Preparar o banco de dados:**
 
-| Tipo      | Email              | Senha | ID  |
-| --------- | ------------------ | ----- | --- |
-| STAFF     | staff@test.com     | 123   | 1   |
-| ORGANIZER | organizer@test.com | 123   | 2   |
+   **1.1 Remover o banco de dados existente:**
 
----
+   ```bash
+   rm data/app.db
+   ```
+
+   **1.2 Executar o aplicativo para recriar o banco de dados:**
+
+   ```bash
+   make run
+   ```
+
+   **1.3 Executar o script de teste:**
+
+   ```bash
+   sqlite3 data/app.db < src/scripts/test_ticket_validation.sql
+   ```
+
+## Query de Visualização
+
+Para visualizar todos os tickets com suas informações de evento relevantes:
+
+```sql
+SELECT
+    t.code AS ticket_code,
+    t.status AS ticket_status,
+    t.client_id,
+    e.id AS event_id,
+    e.name AS event_name,
+    e.start_date,
+    e.end_date,
+    e.organizer_id,
+    e.staffs_id
+FROM tickets t
+LEFT JOIN events e ON t.event_id = e.id
+ORDER BY t.code;
+```
 
 ## Cenários para STAFF (1-4)
 
@@ -114,25 +145,3 @@
 | 5       | ORGANIZER | TKT005 | ✅ Sucesso           | Organizador é o dono        |
 | 6       | ORGANIZER | TKT006 | ❌ Não autorizado    | Evento de outro organizador |
 | 7       | ORGANIZER | TKT007 | ❌ Já validado       | Status VALIDATED            |
-
----
-
-## Como Executar os Testes
-
-1. **Preparar o banco de dados:**
-
-   ```bash
-   sqlite3 data/app.db < src/scripts/test_ticket_validation.sql
-   ```
-
-2. **Testar cenários 1-4:**
-
-   - Fazer login como **Staff** (staff@test.com / 123)
-   - Validar ingressos TKT001, TKT002, TKT003, TKT004
-
-3. **Testar cenários 5-7:**
-
-   - Fazer login como **Organizer** (organizer@test.com / 123)
-   - Validar ingressos TKT005, TKT006, TKT007
-
-4. **Verificar os resultados** conforme a tabela de resumo
