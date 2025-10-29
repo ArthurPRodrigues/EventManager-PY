@@ -48,6 +48,20 @@ make install-dev      # production + dev
 .\build.bat install-dev      # production + dev
 ```
 
+### Email
+
+⚠️ **Important:** Copy `.env-example` to `.env` and fill the SMTP configuration below to receive the email sent in UC05 (redeem ticket).
+
+Required environment variables:
+- EMAIL_SMTP_HOST (e.g. smtp.gmail.com)
+- EMAIL_SMTP_PORT (e.g. 587)
+- EMAIL_HOST_USER (sender email address)
+- EMAIL_HOST_PASSWORD (password or app password)
+
+Notes:
+- If using Gmail with 2FA, create an App Password and use it as EMAIL_HOST_PASSWORD.
+- If the email is missing or invalid, the application will skip sending and the ticket redemption will complete normally.
+
 ## Overview
 
 Desktop application for event and ticket management, built in **Python** with **FreeSimpleGUI** for the GUI and **SQLite** for the database.
