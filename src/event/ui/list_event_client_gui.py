@@ -161,6 +161,6 @@ class ListEventClientGui(BaseGUI):
                 event.created_at,
                 event.start_date,
                 event.end_date,
-                event.tickets_available,
+                event.max_tickets,
             ])
         return table_data
