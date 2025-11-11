@@ -25,6 +25,12 @@ class TicketNotFoundError(AppError):
         super().__init__(message)
 
 
+class TicketCodeAlreadyExistsError(AppError):
+    def __init__(self) -> None:
+        message: str = "Generated ticket code already exists. Try again."
+        super().__init__(message)
+
+
 class TicketValidationTimeError(AppError):
     def __init__(self, start_date: datetime, end_date: datetime, event_id: int) -> None:
         message: str = f"Ticket validation is only allowed between {start_date} and {end_date} for event ID {event_id}."
