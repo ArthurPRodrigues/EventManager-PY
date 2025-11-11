@@ -33,5 +33,5 @@ class TicketCodeAlreadyExistsError(AppError):
 
 class TicketValidationTimeError(AppError):
     def __init__(self, start_date: datetime, end_date: datetime, event_id: int) -> None:
-        message: str = f"Cannot validate ticket for event with ID '{event_id}' because the event has either not started ({start_date}) or has already finished ({end_date})."
+        message: str = f"Ticket validation is only allowed between {start_date} and {end_date} for event ID {event_id}."
         super().__init__(message)

@@ -75,6 +75,11 @@ class ValidateTicketGUI(BaseGUI):
         if handler:
             handler(values)
 
+    def _validate_and_normalize_ticket_code(self, ticket_code: str) -> str | None:
+        if not ticket_code or not ticket_code.strip():
+            return None
+        return ticket_code.strip().upper()
+
     def _handle_validate_ticket(self, _):
         confirmed, ticket_code = self.show_input_dialog(
             dialog_title="Validate Ticket",
@@ -85,7 +90,8 @@ class ValidateTicketGUI(BaseGUI):
         )
 
         if confirmed:
-            if not ticket_code or not ticket_code.strip():
+            normalized_code = self._validate_and_normalize_ticket_code(ticket_code)
+            if not normalized_code:
                 self.show_warning_popup("Ticket ID cannot be empty.")
                 return
 
@@ -93,11 +99,11 @@ class ValidateTicketGUI(BaseGUI):
                 input_dto = ValidateTicketInputDto(
                     user_id=self.auth_context.id,
                     user_role=self.auth_context.role,
-                    code=ticket_code.strip().upper(),
+                    code=normalized_code,
                 )
                 self.use_cases.validate_ticket_use_case.execute(input_dto)
                 self.show_success_popup(
-                    f"Ticket '{ticket_code}' validated successfully!"
+                    f"Ticket '{normalized_code}' validated successfully!"
                 )
             except Exception as e:
                 self.show_error_popup(f"Error validating ticket: {e!s}")

@@ -63,5 +63,5 @@ class ValidateTicketUseCase:
             if event.organizer_id != user_id:
                 raise UnauthorizedValidationError(user_id, user_role, code)
         elif user_role == UserRole.STAFF:
-            if user_id not in event.staffs_id:
+            if str(user_id) not in event.staffs_id:
                 raise UnauthorizedValidationError(user_id, user_role, code)
