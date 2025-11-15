@@ -39,7 +39,7 @@ class SqliteTicketsRepository:
         )
 
     def update(self, ticket: Ticket) -> None:
-        created_at_str = ticket.created_at.isoformat()
+        created_at_str = ticket.created_at.isoformat().replace("+00:00", "Z")
 
         with self._db.connect() as conn:
             conn.execute(
