@@ -1,6 +1,8 @@
 import FreeSimpleGUI as sg
 
+from event.application.delete_event_use_case import DeleteEventInputDto
 from event.application.list_event_use_case import ListEventInputDto
+from event.ui.event_form_gui import EventFormGUI
 from shared.ui.base_gui import BaseGUI
 from shared.ui.components.action_buttons_component import ActionButtonsComponent
 from shared.ui.components.header_component import HeaderComponent
@@ -13,7 +15,7 @@ class ListEventOrganizerGui(BaseGUI):
     def __init__(self, use_cases=None, navigator=None, auth_context=None):
         super().__init__(
             title="Event Organizer",
-            size=WINDOW_SIZES["ARTHUR"],
+            size=WINDOW_SIZES["EVENT_LIST_WIDE"],
             use_cases=use_cases,
             navigator=navigator,
             auth_context=auth_context,
@@ -108,13 +110,42 @@ class ListEventOrganizerGui(BaseGUI):
         self.navigator.navigate_to("tickets_redeemed")
 
     def handle_create_event(self):
-        self.navigator.navigate_to("create_event")
+        self.navigator.push_screen(
+            EventFormGUI, auth_context=self.auth_context, operation="CREATE"
+        )
 
     def handle_delete_selected(self):
-        self.navigator.navigate_to("delete_selected")
+        selected_data = self.table.get_selected_row_data(self.window)
+        if selected_data:
+            event_id = selected_data[0]
+            event_name = selected_data[1]
+            if self.show_confirmation_popup(
+                f"Are you sure you want to delete the event '{event_name}'?"
+            ):
+                try:
+                    input_dto = DeleteEventInputDto(event_id=event_id)
+                    self.use_cases.delete_event_use_case.execute(input_dto)
+                    self.show_success_popup(
+                        f"Event {event_name} deleted successufully!"
+                    )
+                    self.table.refresh(self.window)
+                except Exception as e:
+                    self.show_error_popup(f"Error deleting event: {e}")
+        else:
+            self.show_warning_popup("No event selected!")
 
     def handle_edit_selected(self):
-        self.navigator.navigate_to("edit_selected")
+        selected_data = self.table.get_selected_row_data(self.window)
+        if selected_data:
+            event = selected_data
+            self.navigator.push_screen(
+                EventFormGUI,
+                auth_context=self.auth_context,
+                event=event,
+                operation="UPDATE",
+            )
+        else:
+            self.show_warning_popup("No event selected!")
 
     def create_layout(self):
         filter_row = [
@@ -168,6 +199,6 @@ class ListEventOrganizerGui(BaseGUI):
                 event.start_date,
                 event.end_date,
                 event.location,
-                event.tickets_available,
+                event.max_tickets,
             ])
         return table_data
