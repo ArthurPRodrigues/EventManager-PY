@@ -40,18 +40,9 @@ class Event:
         max_tickets: int,
         organizer_id: int,
     ) -> Event:
-        if (
-            Event.validate_fields(
-                name,
-                location,
-                created_at,
-                start_date,
-                end_date,
-                max_tickets,
-                organizer_id,
-            )
-            is True
-        ) and Event.validate_date(start_date, end_date, created_at) is True:
+        if Event.all_validations(
+            name, location, created_at, start_date, end_date, organizer_id, max_tickets
+        ):
             return Event(
                 name=name,
                 location=location,
@@ -64,14 +55,33 @@ class Event:
             )
 
     def add_staff(self, staff_id: str) -> Event:
+        if self.staffs_id is None:
+            return replace(self, staffs_id=[staff_id])
         if staff_id in self.staffs_id:
             raise StaffAlreadyAddedError(staff_id)
         return replace(self, staffs_id=[*self.staffs_id, staff_id])
 
+    def remove_staff(self, staff_id: str) -> Event:
+        if self.staffs_id is None or staff_id not in self.staffs_id:
+            return self
+        return replace(self, staffs_id=[s for s in self.staffs_id if s != staff_id])
+
+    def get_staffs(self) -> list[str]:
+        return self.staffs_id or []
+
+    def has_staff(self, staff_id: str) -> bool:
+        return self.staffs_id is not None and staff_id in self.staffs_id
+
     @staticmethod
-    def validate_fields(
-        name, location, created_at, start_date, end_date, max_tickets, organizer_id
-    ) -> bool:
+    def all_validations(
+        name,
+        location,
+        created_at,
+        start_date,
+        end_date,
+        organizer_id,
+        max_tickets,
+    ):
         if not name or not isinstance(name, str) or not name.strip():
             raise InvalidNameError(name)
         if not location or not isinstance(location, str) or not location.strip():
@@ -82,19 +92,16 @@ class Event:
             raise InvalidStartDateError(start_date)
         if not end_date or not isinstance(end_date, datetime):
             raise InvalidEndDateError(end_date)
-        if not isinstance(max_tickets, int) or max_tickets < 0:
-            raise InvalidMaxTicketsError(max_tickets)
         if not organizer_id or not isinstance(organizer_id, int):
             raise InvalidOrganizerIdError(organizer_id)
 
-        return True
-
-    @staticmethod
-    def validate_date(start_date, end_date, created_at) -> bool:
         if start_date < created_at or end_date < created_at:
             raise PastDateError(start_date if start_date < created_at else end_date)
 
         if end_date < start_date:
             raise IncorrectEndDateError()
+
+        if not isinstance(max_tickets, int) or max_tickets < 0:
+            raise InvalidMaxTicketsError(max_tickets)
 
         return True

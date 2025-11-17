@@ -3,7 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from datetime import datetime
 
-from event.application.errors import EventNotFoundError, IncorrectTicketQuantityError
+from event.application.errors import (
+    EventNotFoundError,
+    IncorrectTicketQuantityError,
+    PastDateError,
+)
 from event.domain.errors import InvalidOrganizerIdError
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
@@ -39,14 +43,16 @@ class UpdateEventUseCase:
         if not organizer_id or not self._users_repository.get_by_id(organizer_id):
             raise InvalidOrganizerIdError(organizer_id)
 
-        if input_dto.max_tickets < event.tickets_redeemed:
+        if (
+            type(input_dto.max_tickets) is int
+            and input_dto.max_tickets < event.tickets_redeemed
+        ):
             raise IncorrectTicketQuantityError(
                 input_dto.max_tickets, event.tickets_redeemed
-            )  # por algum motivo não ta pegando corretamente a qtd de tickets_redeemed
+            )
 
-        print(
-            f"Tickets redeemed: {event.tickets_redeemed}, Max Tickets: {input_dto.max_tickets}"
-        )
+        if input_dto.end_date < datetime.now():
+            raise PastDateError(input_dto.end_date)
 
         updated_event = Event.create(
             name=input_dto.name,

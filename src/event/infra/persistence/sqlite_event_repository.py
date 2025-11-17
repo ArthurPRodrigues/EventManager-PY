@@ -104,10 +104,10 @@ class SqliteEventRepository:
                     """,
                     (
                         event.name,
-                        event.created_at.isoformat(),
-                        event.end_date.isoformat(),
+                        event.created_at,
+                        event.end_date,
                         event.location,
-                        event.start_date.isoformat(),
+                        event.start_date,
                         event.max_tickets,
                         event.organizer_id,
                         event.tickets_redeemed,
@@ -149,6 +149,7 @@ class SqliteEventRepository:
         )
 
     def update(self, event: Event) -> None:
+        assert event is not None
         with self._db.connect() as conn:
             conn.execute(
                 """
