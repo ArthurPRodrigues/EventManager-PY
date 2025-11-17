@@ -106,7 +106,7 @@ class ListEventOrganizerGui(BaseGUI):
     # ⚠️ navigate_to method doesn't exist in navigator ⚠️
     # @ArthurPRodrigues
     def handle_tickets_redeemed(self):
-        self.navigator.navigate_to("tickets_redeemed")
+        self.show_warning_popup("Not implemented.")
 
     def handle_create_event(self):
         self.navigator.push_screen(
@@ -174,7 +174,7 @@ class ListEventOrganizerGui(BaseGUI):
                 filter_mode=self.current_filter_mode,
             )
 
-            paginated_events = self.use_cases.list_event_use_case.execute(input_dto)
+            paginated_events = self.use_cases.list_event_use_case.list_event(input_dto)
 
             event_list, total_event_count = (
                 paginated_events.event_list,
