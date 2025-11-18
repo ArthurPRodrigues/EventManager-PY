@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from datetime import datetime
+from datetime import UTC, datetime
 
 from event.application.dtos import PaginatedEventsDto
 from event.domain.event import Event
@@ -79,9 +79,9 @@ class SqliteEventRepository:
                 id=row[0],
                 name=row[1],
                 location=row[2],
-                created_at=datetime.fromisoformat(row[3]),
-                start_date=datetime.fromisoformat(row[4]),
-                end_date=datetime.fromisoformat(row[5]),
+                created_at=datetime.fromisoformat(row[3]).replace(tzinfo=UTC),
+                start_date=datetime.fromisoformat(row[4]).replace(tzinfo=UTC),
+                end_date=datetime.fromisoformat(row[5]).replace(tzinfo=UTC),
                 initial_max_tickets=row[6],
                 max_tickets=row[7],
                 tickets_redeemed=row[8],
@@ -139,9 +139,9 @@ class SqliteEventRepository:
             id=row[0],
             name=row[1],
             location=row[2],
-            created_at=datetime.fromisoformat(row[3]),
-            start_date=datetime.fromisoformat(row[4]),
-            end_date=datetime.fromisoformat(row[5]),
+            created_at=datetime.fromisoformat(row[3]).replace(tzinfo=UTC),
+            start_date=datetime.fromisoformat(row[4]).replace(tzinfo=UTC),
+            end_date=datetime.fromisoformat(row[5]).replace(tzinfo=UTC),
             max_tickets=row[6],
             organizer_id=row[7],
             initial_max_tickets=row[8],
