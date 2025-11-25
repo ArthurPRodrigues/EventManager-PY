@@ -45,3 +45,9 @@ class IncorrectTicketQuantityError(AppError):
     def __init__(self, max_tickets: int, tickets_redeemed: int) -> None:
         message = f"This event has {tickets_redeemed} tickets already redeemed, so the maximum tickets cannot be set to {max_tickets}."
         super().__init__(message)
+
+
+class TicketsLowerThanAcceptedError(AppError):
+    def __init__(self) -> None:
+        message = "The number of tickets needs to be greater than zero."
+        super().__init__(message)

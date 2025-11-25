@@ -3,12 +3,15 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from datetime import datetime
 
-from event.application.errors import IncorrectEndDateError, PastDateError
+from event.application.errors import (
+    IncorrectEndDateError,
+    PastDateError,
+    TicketsLowerThanAcceptedError,
+)
 from event.domain.errors import (
     InvalidCreatedAtError,
     InvalidEndDateError,
     InvalidLocationError,
-    InvalidMaxTicketsError,
     InvalidNameError,
     InvalidOrganizerIdError,
     InvalidStartDateError,
@@ -101,7 +104,7 @@ class Event:
         if end_date < start_date:
             raise IncorrectEndDateError()
 
-        if not isinstance(max_tickets, int) or max_tickets < 0:
-            raise InvalidMaxTicketsError(max_tickets)
+        if not isinstance(max_tickets, int) or max_tickets <= 0:
+            raise TicketsLowerThanAcceptedError()
 
         return True
