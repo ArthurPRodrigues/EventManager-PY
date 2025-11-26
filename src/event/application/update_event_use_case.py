@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from datetime import datetime
+from datetime import UTC, datetime
 
 from event.application.errors import (
     EventNotFoundError,
@@ -51,7 +51,7 @@ class UpdateEventUseCase:
                 input_dto.max_tickets, event.tickets_redeemed
             )
 
-        if input_dto.end_date < datetime.now():
+        if input_dto.end_date < datetime.now(UTC):
             raise PastDateError(input_dto.end_date)
 
         updated_event = Event.create(

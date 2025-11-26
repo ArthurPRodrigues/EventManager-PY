@@ -79,6 +79,14 @@ class ListEventOrganizerGui(BaseGUI):
             "-EDIT_SELECTED-": self.handle_edit_selected,
         }
 
+    def _status_indicator(self, max_tickets, tickets_redeemed) -> int:
+        tickets_available = max_tickets - tickets_redeemed
+        return tickets_available
+
+    def _tickets_available(self, max_tickets, tickets_redeemed):
+        tickets_available = max(0, max_tickets - tickets_redeemed)
+        return tickets_available
+
     def handle_events(self, event, values):
         if event in ("-ORG_F_ALL-", "-ORG_F_WITH-", "-ORG_F_SOLD-"):
             if values.get("-ORG_F_ALL-"):
@@ -194,9 +202,12 @@ class ListEventOrganizerGui(BaseGUI):
             table_data.append([
                 event.id,
                 event.name,
-                event.start_date,
-                event.end_date,
                 event.location,
+                event.start_date.strftime("%d/%m/%Y %Hh%M"),
+                event.end_date.strftime("%d/%m/%Y %Hh%M"),
+                self._status_indicator(event.max_tickets, event.tickets_redeemed),
+                self._tickets_available(event.max_tickets, event.tickets_redeemed),
                 event.max_tickets,
+                event.tickets_redeemed,
             ])
         return table_data

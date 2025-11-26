@@ -159,8 +159,12 @@ class SqliteEventRepository:
                 """,
                 (
                     event.name,
-                    event.end_date.isoformat(),
-                    event.start_date.isoformat(),
+                    event.end_date.isoformat()
+                    if event.end_date.tzinfo
+                    else event.end_date.replace(tzinfo=UTC).isoformat(),
+                    event.start_date.isoformat()
+                    if event.start_date.tzinfo
+                    else event.start_date.replace(tzinfo=UTC).isoformat(),
                     event.location,
                     event.max_tickets,
                     event.tickets_redeemed,

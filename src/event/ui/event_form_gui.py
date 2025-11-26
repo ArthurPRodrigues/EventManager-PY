@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 
 import FreeSimpleGUI as sg
 
@@ -128,7 +128,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=self.event[2],
+                        default_text=self.event[3],
                         key="-START_DATE-",
                         tooltip="Enter the event's starting date in the format DD/MM/YYYY HHhMM",
                         font=FONTS["INPUT"],
@@ -137,7 +137,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=self.event[3],
+                        default_text=self.event[4],
                         key="-END_DATE-",
                         tooltip="Enter the event's ending date in the format DD/MM/YYYY HHhMM",
                         font=FONTS["INPUT"],
@@ -146,7 +146,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=self.event[4],
+                        default_text=self.event[2],
                         key="-LOCATION-",
                         tooltip="Enter the event's location",
                         font=FONTS["INPUT"],
@@ -155,7 +155,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=self.event[5],
+                        default_text=self.event[7],
                         key="-MAX_TICKETS-",
                         tooltip="Enter the event's max ticket quantity",
                         font=FONTS["INPUT"],
@@ -326,8 +326,12 @@ class EventFormGUI(BaseGUI):
                 try:
                     input_dto = CreateEventInputDto(
                         name=name,
-                        start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
-                        end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
+                        start_date=datetime.strptime(
+                            start_date, "%d/%m/%Y %Hh%M"
+                        ).replace(tzinfo=UTC),
+                        end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M").replace(
+                            tzinfo=UTC
+                        ),
                         location=location,
                         max_tickets=tickets_transformed,
                         organizer_id=self.auth_context.id,
@@ -359,8 +363,12 @@ class EventFormGUI(BaseGUI):
                     input_dto = UpdateEventInputDto(
                         event_id=self.event[0],
                         name=name,
-                        start_date=datetime.strptime(start_date, "%d/%m/%Y %Hh%M"),
-                        end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M"),
+                        start_date=datetime.strptime(
+                            start_date, "%d/%m/%Y %Hh%M"
+                        ).replace(tzinfo=UTC),
+                        end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M").replace(
+                            tzinfo=UTC
+                        ),
                         location=location,
                         max_tickets=tickets_transformed,
                         organizer_id=self.auth_context.id,

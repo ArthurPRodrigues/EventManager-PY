@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 
 from event.domain.event import Event
 from event.infra.persistence.sqlite_event_repository import SqliteEventRepository
@@ -29,7 +29,7 @@ class CreateEventUseCase:
             location=input_dto.location,
             max_tickets=input_dto.max_tickets,
             organizer_id=input_dto.organizer_id,
-            created_at=datetime.now(),
+            created_at=datetime.now(UTC),
         )
 
         created_event = self._events_repository.add(event)

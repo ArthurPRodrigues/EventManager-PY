@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 
 from shared.domain.auth_context import AuthContext
 
@@ -7,7 +7,7 @@ from shared.domain.auth_context import AuthContext
 def log_error(message: str, auth_context: AuthContext = None):
     os.makedirs("logs", exist_ok=True)
 
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")
 
     user_email = auth_context.email if auth_context else "N/A"
     user_role = auth_context.role.value if auth_context else "N/A"
