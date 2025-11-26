@@ -167,8 +167,8 @@ class ListEventClientGui(BaseGUI):
                 event.id,
                 event.name,
                 event.location,
-                event.start_date.strftime("%d/%m/%Y %Hh%M"),
-                event.end_date.strftime("%d/%m/%Y %Hh%M"),
+                event.start_date.astimezone().strftime("%d/%m/%Y %Hh%M"),
+                event.end_date.astimezone().strftime("%d/%m/%Y %Hh%M"),
                 self._status_indicator(
                     event.initial_max_tickets, event.max_tickets, event.tickets_redeemed
                 ),

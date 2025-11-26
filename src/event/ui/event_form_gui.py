@@ -328,10 +328,10 @@ class EventFormGUI(BaseGUI):
                         name=name,
                         start_date=datetime.strptime(
                             start_date, "%d/%m/%Y %Hh%M"
-                        ).replace(tzinfo=UTC),
-                        end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M").replace(
-                            tzinfo=UTC
-                        ),
+                        ).astimezone(UTC),
+                        end_date=datetime.strptime(
+                            end_date, "%d/%m/%Y %Hh%M"
+                        ).astimezone(UTC),
                         location=location,
                         max_tickets=tickets_transformed,
                         organizer_id=self.auth_context.id,
@@ -365,10 +365,10 @@ class EventFormGUI(BaseGUI):
                         name=name,
                         start_date=datetime.strptime(
                             start_date, "%d/%m/%Y %Hh%M"
-                        ).replace(tzinfo=UTC),
-                        end_date=datetime.strptime(end_date, "%d/%m/%Y %Hh%M").replace(
-                            tzinfo=UTC
-                        ),
+                        ).astimezone(UTC),
+                        end_date=datetime.strptime(
+                            end_date, "%d/%m/%Y %Hh%M"
+                        ).astimezone(UTC),
                         location=location,
                         max_tickets=tickets_transformed,
                         organizer_id=self.auth_context.id,

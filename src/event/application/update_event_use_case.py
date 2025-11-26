@@ -51,7 +51,10 @@ class UpdateEventUseCase:
                 input_dto.max_tickets, event.tickets_redeemed
             )
 
-        if input_dto.end_date < datetime.now(UTC):
+        now = datetime.now(UTC)
+        if input_dto.start_date < now:
+            raise PastDateError(input_dto.start_date)
+        if input_dto.end_date < now:
             raise PastDateError(input_dto.end_date)
 
         updated_event = Event.create(
