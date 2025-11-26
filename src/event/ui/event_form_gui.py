@@ -112,7 +112,9 @@ class EventFormGUI(BaseGUI):
                 ),
             ],
         ]
-
+        if self.event:
+            print(f"dado: {self.event[2]} tipo: {type(self.event[1])}")
+            print(f"dado: {self.event[3]} tipo: {type(self.event[3])}")
         if self.operation == "UPDATE" and self.event:
             inputs = [
                 [
@@ -126,9 +128,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=datetime.fromisoformat(self.event[3]).strftime(
-                            "%d/%m/%Y %Hh%M"
-                        ),
+                        default_text=self.event[2],
                         key="-START_DATE-",
                         tooltip="Enter the event's starting date in the format DD/MM/YYYY HHhMM",
                         font=FONTS["INPUT"],
@@ -137,9 +137,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=datetime.fromisoformat(self.event[4]).strftime(
-                            "%d/%m/%Y %Hh%M"
-                        ),
+                        default_text=self.event[3],
                         key="-END_DATE-",
                         tooltip="Enter the event's ending date in the format DD/MM/YYYY HHhMM",
                         font=FONTS["INPUT"],
@@ -148,7 +146,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=self.event[5],
+                        default_text=self.event[4],
                         key="-LOCATION-",
                         tooltip="Enter the event's location",
                         font=FONTS["INPUT"],
@@ -157,7 +155,7 @@ class EventFormGUI(BaseGUI):
                 ],
                 [
                     sg.Input(
-                        default_text=self.event[6],
+                        default_text=self.event[5],
                         key="-MAX_TICKETS-",
                         tooltip="Enter the event's max ticket quantity",
                         font=FONTS["INPUT"],
